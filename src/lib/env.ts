@@ -18,6 +18,7 @@ const serverSchema = z.object({
   ERRORS_DB_FILE_NAME: z.string(),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
 });
 
 const schema = serverSchema.extend(publicSchema.shape);
