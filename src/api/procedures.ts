@@ -55,7 +55,7 @@ export async function createHOACheckout(input: {
         price_data: {
           currency: "usd",
           product_data: {
-            name: `FrontDoor — ${input.community} HOA`,
+            name: `GatePass — ${input.community} HOA`,
             description: `${input.units} units × $10/unit/year — Founding community rate`,
           },
           unit_amount: totalCents,
@@ -131,7 +131,7 @@ export async function createContractorCheckout(input: {
         price_data: {
           currency: "usd",
           product_data: {
-            name: "FrontDoor — Founding Contractor Seat",
+            name: "GatePass — Founding Contractor Seat",
             description: `${input.category} · Austin Metro · Seat #${position} of 25`,
           },
           unit_amount: 9900, // $99
@@ -179,7 +179,7 @@ export async function getAustinPermits(zip?: string) {
     if (zip) url.searchParams.set("zip", zip);
 
     const res = await fetch(url.toString(), {
-      headers: { "X-App-Token": "FrontDoor-Phase1" },
+      headers: { "X-App-Token": "GatePass-Phase1" },
     });
 
     if (!res.ok) throw new Error("API error");

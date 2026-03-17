@@ -303,7 +303,7 @@ function Landing({ onNav }: { onNav: (v: View) => void }) {
       <nav className="fd-nav">
         <div style={{ display: "flex", alignItems: "center", gap: 10, color: T.forest }}>
           <Icon.Door />
-          <span style={{ fontFamily: T.fontSerif, fontSize: 20, fontWeight: 600, color: T.charcoal, letterSpacing: "-0.01em" }}>FrontDoor</span>
+          <span style={{ fontFamily: T.fontSerif, fontSize: 20, fontWeight: 600, color: T.charcoal, letterSpacing: "-0.01em" }}>GatePass</span>
         </div>
         <div className="fd-nav-links">
           <div className="fd-nav-secondary">
@@ -321,7 +321,7 @@ function Landing({ onNav }: { onNav: (v: View) => void }) {
           <span style={{ fontFamily: T.fontMono, fontSize: 11, fontWeight: 500, color: T.forest, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Now enrolling Austin HOAs</span>
         </div>
         <h1 className="anim-up-2" style={{ fontFamily: T.fontSerif, fontSize: "clamp(48px, 6vw, 80px)", fontWeight: 700, color: T.charcoal, lineHeight: 1.05, letterSpacing: "-0.03em", maxWidth: 800, marginBottom: 28 }}>
-          The digital front door<br /><span style={{ color: T.forest }}>to every home.</span>
+          The permission layer<br /><span style={{ color: T.forest }}>for every neighborhood.</span>
         </h1>
         <p className="anim-up-3" style={{ fontFamily: T.fontSans, fontSize: 18, color: T.inkMid, lineHeight: 1.7, maxWidth: 540, marginBottom: 48 }}>
           Neighborhood infrastructure that gives homeowners full control over who can reach them — and gives contractors access to a warm, verified audience.
@@ -376,7 +376,7 @@ function Landing({ onNav }: { onNav: (v: View) => void }) {
           <div>
             <div style={{ fontFamily: T.fontMono, fontSize: 11, color: T.forest, textTransform: "uppercase" as const, letterSpacing: "0.1em", marginBottom: 16 }}>For HOA Boards</div>
             <h2 style={{ fontFamily: T.fontSerif, fontSize: "clamp(28px, 3vw, 44px)", fontWeight: 700, color: T.charcoal, letterSpacing: "-0.02em", marginBottom: 20, lineHeight: 1.15 }}>After the next hail storm,<br />your phone rings nonstop.</h2>
-            <p style={{ fontFamily: T.fontSans, fontSize: 16, color: T.inkMid, lineHeight: 1.7, marginBottom: 32 }}>40 contractors will knock on every door in your neighborhood for weeks. Your residents will complain to you. FrontDoor stops that — and replaces it with a verified contractor network residents actually want.</p>
+            <p style={{ fontFamily: T.fontSans, fontSize: 16, color: T.inkMid, lineHeight: 1.7, marginBottom: 32 }}>40 contractors will knock on every door in your neighborhood for weeks. Your residents will complain to you. GatePass stops that — and replaces it with a verified contractor network residents actually want.</p>
             {["HOA board authorizes platform — instant community enrollment", "Resident permission toggles — they control what reaches them", "Compliance dashboard — see who's soliciting your community", "Founding rate: $10/unit/year (goes to $15 at public launch)"].map(f => (
               <div key={f} style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
                 <div style={{ width: 20, height: 20, borderRadius: "50%", background: T.forestPale, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}><Icon.Check /></div>
@@ -433,8 +433,8 @@ function Landing({ onNav }: { onNav: (v: View) => void }) {
       {/* Footer */}
       <footer style={{ background: T.charcoal, padding: 40 }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, color: T.forestLight }}><Icon.Door /><span style={{ fontFamily: T.fontSerif, fontSize: 16, color: T.white }}>FrontDoor</span></div>
-          <div style={{ fontFamily: T.fontSans, fontSize: 12, color: `${T.white}40` }}>© 2026 FrontDoor · Austin, TX · Neighborhood infrastructure</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, color: T.forestLight }}><Icon.Door /><span style={{ fontFamily: T.fontSerif, fontSize: 16, color: T.white }}>GatePass</span></div>
+          <div style={{ fontFamily: T.fontSans, fontSize: 12, color: `${T.white}40` }}>© 2026 GatePass · Austin, TX · Neighborhood infrastructure</div>
         </div>
       </footer>
     </div>
@@ -460,7 +460,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
       <header style={{ padding: "0 40px", height: 64, borderBottom: `1px solid ${T.stone}40`, display: "flex", alignItems: "center", gap: 16, background: `${T.cream}E8`, backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 100 }}>
         <button onClick={onBack} style={{ background: "none", border: "none", color: T.inkLight, display: "flex", alignItems: "center", gap: 8, fontFamily: T.fontSans, fontSize: 13 }}><Icon.ArrowLeft size={16} /> Back</button>
         <div style={{ width: 1, height: 20, background: T.stone }} />
-        <div style={{ display: "flex", alignItems: "center", gap: 8, color: T.forest }}><Icon.Door /><span style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 600, color: T.charcoal }}>FrontDoor</span></div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, color: T.forest }}><Icon.Door />          <span style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 600, color: T.charcoal }}>GatePass</span></div>
         <Tag>HOA Enrollment</Tag>
       </header>
 
@@ -545,7 +545,7 @@ function ContractorWaitlist({ onBack }: { onBack: () => void }) {
       <header style={{ padding: "0 40px", height: 64, borderBottom: `1px solid ${T.stone}40`, display: "flex", alignItems: "center", gap: 16, background: `${T.cream}E8`, backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 100 }}>
         <button onClick={onBack} style={{ background: "none", border: "none", color: T.inkLight, display: "flex", alignItems: "center", gap: 8, fontFamily: T.fontSans, fontSize: 13 }}><Icon.ArrowLeft size={16} /> Back</button>
         <div style={{ width: 1, height: 20, background: T.stone }} />
-        <div style={{ display: "flex", alignItems: "center", gap: 8, color: T.forest }}><Icon.Door /><span style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 600, color: T.charcoal }}>FrontDoor</span></div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, color: T.forest }}><Icon.Door />          <span style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 600, color: T.charcoal }}>GatePass</span></div>
         <Tag bg={T.goldLight} color={T.gold}>Contractor Waitlist</Tag>
       </header>
 
@@ -633,7 +633,7 @@ function DemoView({ onBack }: { onBack: () => void }) {
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button onClick={onBack} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.6)", display: "flex", alignItems: "center" }}><Icon.ArrowLeft size={18} /></button>
           <div>
-            <div style={{ fontFamily: T.fontSerif, fontSize: 16, fontWeight: 600, color: T.white, letterSpacing: "-0.01em" }}>FrontDoor</div>
+            <div style={{ fontFamily: T.fontSerif, fontSize: 16, fontWeight: 600, color: T.white, letterSpacing: "-0.01em" }}>GatePass</div>
             <div style={{ fontFamily: T.fontMono, fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: "0.04em" }}>1847 OAKWOOD DR · AUSTIN TX 78752</div>
           </div>
         </div>
@@ -732,7 +732,7 @@ function SuccessScreen({ type, position }: { type: "hoa" | "contractor"; positio
         {type === "hoa" ? (
           <>
             <h1 style={{ fontFamily: T.fontSerif, fontSize: 36, fontWeight: 700, color: T.charcoal, marginBottom: 16, letterSpacing: "-0.02em" }}>Your HOA is enrolled.</h1>
-            <p style={{ fontFamily: T.fontSans, fontSize: 16, color: T.inkMid, lineHeight: 1.7, marginBottom: 32 }}>We'll reach out within 24 hours to configure your community dashboard and get residents set up. Welcome to FrontDoor.</p>
+            <p style={{ fontFamily: T.fontSans, fontSize: 16, color: T.inkMid, lineHeight: 1.7, marginBottom: 32 }}>We'll reach out within 24 hours to configure your community dashboard and get residents set up. Welcome to GatePass.</p>
           </>
         ) : (
           <>
@@ -740,7 +740,7 @@ function SuccessScreen({ type, position }: { type: "hoa" | "contractor"; positio
             <p style={{ fontFamily: T.fontSans, fontSize: 16, color: T.inkMid, lineHeight: 1.7, marginBottom: 32 }}>Your founding seat is reserved. You'll hear from us before the Austin launch. No more cold doors — only homeowners who want to hear from you.</p>
           </>
         )}
-        <Btn onClick={() => { window.history.replaceState({}, "", "/"); window.location.reload(); }}>Back to FrontDoor</Btn>
+        <Btn onClick={() => { window.history.replaceState({}, "", "/"); window.location.reload(); }}>Back to GatePass</Btn>
       </div>
     </div>
   );

@@ -1,10 +1,12 @@
-# FrontDoor — APP.md
+# GatePass — APP.md
 
 ## What This App Does
 
-FrontDoor is a neighborhood infrastructure platform — an HOA-first permission layer between homeowners and contractors. HOAs pay $10/unit/year to give their community digital door control, permit intelligence, and a vetted contractor network. Contractors pay a $99 founding deposit to reserve one of 25 seats for first-access to verified, opted-in leads.
+GatePass is a neighborhood infrastructure platform — an HOA-first permission layer between homeowners and contractors. HOAs pay $10/unit/year to give their community digital gate control, permit intelligence, and a vetted contractor network. Contractors pay a $99 founding deposit to reserve one of 25 seats for first-access to verified, opted-in leads.
 
 Austin TX only. Metro 1.
+
+**Note:** Previously named FrontDoor. Renamed to GatePass March 17, 2026 — trademark conflict with Frontdoor Inc. (FTDR, publicly traded home warranty company).
 
 ## Live URL
 
@@ -55,20 +57,30 @@ Stripe webhooks for `checkout.session.completed` need to be wired to mark `paid=
 - Cream base: `#F4F1EC` | Forest green: `#2A5240` | Gold: `#B8883A`
 - Fonts: Playfair Display (headings) + DM Sans (body) + DM Mono (labels/mono)
 - Architectural grid background (4% opacity green grid, 40px cells)
-- Inspiration: tiled pool room, colored arches, urban construction, crop fields
 
-## Views
+## Domain Plan
 
-1. **Landing** — hero, stats counter (live HOA units + contractor seats left), how-it-works, HOA targets, CTA
-2. **HOA Onboarding** — 2-step form (community details → board contact) → Stripe Checkout
-3. **Contractor Waitlist** — scarcity bar (X of 25 seats), form → Stripe Checkout
-4. **Demo** — permit feed (real Austin data or mock), digital knock simulation, permission toggles
-5. **Success screens** — HOA confirmation, Contractor confirmation with position number
+- Target domain: `gatepass.io` or `getgatepass.com`
+- Business email: `joseph@gatepass.io`
+- Required before submitting cloud credit applications (Google, Azure, AWS)
+
+## Grant Applications (March 2026)
+
+All application documents written and ready to submit:
+- **NAR REACH Commercial** — deadline March 31, 2026
+- **NAR REACH Residential** — deadline April 2026
+- **Capital Factory** — rolling, cold email ready for investor_relations@capitalfactory.com
+- **Google Cloud for Startups** — rolling, needs business email first
+- **Microsoft Founders Hub** — rolling, needs LinkedIn updated + business email
+- **AWS Activate Founders** — rolling, fastest approval
 
 ## Next Steps
 
+- [ ] Register domain (gatepass.io or getgatepass.com)
+- [ ] Set up business email (joseph@gatepass.io)
 - [ ] Wire Stripe webhook → mark paid=true on success
 - [ ] Add Resend email confirmation on HOA/Contractor signup
 - [ ] Connect to real Austin Open Data API token
 - [ ] Add Stripe live key when going to production
 - [ ] Build homeowner-facing portal (Phase 2)
+- [ ] File Texas LLC ($300 at sos.state.tx.us)

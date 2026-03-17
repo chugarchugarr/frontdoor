@@ -1,8 +1,8 @@
-// ─── FrontDoor Email via Resend ───────────────────────────────────────
+// ─── GatePass Email via Resend ────────────────────────────────────────
 // All transactional emails. Uses Resend API directly (no SDK needed).
 
 const RESEND_KEY = process.env.RESEND_API_KEY;
-const FROM = "FrontDoor <hello@frontdoor.community>";
+const FROM = "GatePass <hello@gatepass.io>";
 
 async function send(to: string, subject: string, html: string) {
   if (!RESEND_KEY) {
@@ -34,7 +34,7 @@ export async function sendHOAConfirmation(input: {
   const amount = `$${(input.amountCents / 100).toLocaleString()}`;
   await send(
     input.to,
-    `Welcome to FrontDoor — ${input.community} is enrolled`,
+    `Welcome to GatePass — ${input.community} is enrolled`,
     `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -44,14 +44,14 @@ export async function sendHOAConfirmation(input: {
       <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #D4CFC6;">
         <!-- Header -->
         <tr><td style="background:#2A5240;padding:32px 40px;">
-          <p style="margin:0;color:#F4F1EC;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Courier New',monospace;">FrontDoor</p>
+          <p style="margin:0;color:#F4F1EC;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Courier New',monospace;">GatePass</p>
           <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.02em;">You're enrolled.</h1>
         </td></tr>
         <!-- Body -->
         <tr><td style="padding:40px;">
           <p style="margin:0 0 20px;color:#4A4A44;font-size:15px;line-height:1.7;">Hi ${input.name},</p>
           <p style="margin:0 0 20px;color:#4A4A44;font-size:15px;line-height:1.7;">
-            <strong>${input.community}</strong> is now a founding FrontDoor community. You've locked in the $10/unit/year rate before we move to $15 at public launch.
+            <strong>${input.community}</strong> is now a founding GatePass community. You've locked in the $10/unit/year rate before we move to $15 at public launch.
           </p>
           <!-- Receipt box -->
           <table width="100%" cellpadding="0" cellspacing="0" style="background:#EAF0EC;border-radius:6px;border:1px solid rgba(42,82,64,0.15);margin:0 0 28px;">
@@ -80,11 +80,11 @@ export async function sendHOAConfirmation(input: {
           <p style="margin:0 0 20px;color:#4A4A44;font-size:15px;line-height:1.7;">
             We'll reach out within 2 business days to schedule your community onboarding. In the meantime, reply to this email with any questions.
           </p>
-          <p style="margin:0;color:#4A4A44;font-size:15px;line-height:1.7;">— The FrontDoor Team</p>
+          <p style="margin:0;color:#4A4A44;font-size:15px;line-height:1.7;">— The GatePass Team</p>
         </td></tr>
         <!-- Footer -->
         <tr><td style="padding:20px 40px;border-top:1px solid #EAE6DE;">
-          <p style="margin:0;color:#8A8A82;font-size:11px;font-family:'Courier New',monospace;">Austin TX · Metro 1 · frontdoor.community</p>
+          <p style="margin:0;color:#8A8A82;font-size:11px;font-family:'Courier New',monospace;">Austin TX · Metro 1 · gatepass.io</p>
         </td></tr>
       </table>
     </td></tr>
@@ -104,7 +104,7 @@ export async function sendContractorConfirmation(input: {
 }) {
   await send(
     input.to,
-    `Your seat is reserved — FrontDoor Contractor #${input.position}`,
+    `Your seat is reserved — GatePass Contractor #${input.position}`,
     `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -114,7 +114,7 @@ export async function sendContractorConfirmation(input: {
       <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #D4CFC6;">
         <!-- Header -->
         <tr><td style="background:#B8883A;padding:32px 40px;">
-          <p style="margin:0;color:rgba(255,255,255,0.7);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Courier New',monospace;">FrontDoor · Contractor Seat</p>
+          <p style="margin:0;color:rgba(255,255,255,0.7);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Courier New',monospace;">GatePass · Contractor Seat</p>
           <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.02em;">Seat #${input.position} secured.</h1>
         </td></tr>
         <!-- Body -->
@@ -148,13 +148,13 @@ export async function sendContractorConfirmation(input: {
             </td></tr>
           </table>
           <p style="margin:0 0 20px;color:#4A4A44;font-size:15px;line-height:1.7;">
-            Your $99 deposit is fully refundable if FrontDoor doesn't launch within 6 months. You'll be among the first contacted when homeowner leads are live.
+            Your $99 deposit is fully refundable if GatePass doesn't launch within 6 months. You'll be among the first contacted when homeowner leads are live.
           </p>
-          <p style="margin:0;color:#4A4A44;font-size:15px;line-height:1.7;">— The FrontDoor Team</p>
+          <p style="margin:0;color:#4A4A44;font-size:15px;line-height:1.7;">— The GatePass Team</p>
         </td></tr>
         <!-- Footer -->
         <tr><td style="padding:20px 40px;border-top:1px solid #EAE6DE;">
-          <p style="margin:0;color:#8A8A82;font-size:11px;font-family:'Courier New',monospace;">Austin TX · Metro 1 · frontdoor.community</p>
+          <p style="margin:0;color:#8A8A82;font-size:11px;font-family:'Courier New',monospace;">Austin TX · Metro 1 · gatepass.io</p>
         </td></tr>
       </table>
     </td></tr>
