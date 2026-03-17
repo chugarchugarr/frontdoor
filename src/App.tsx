@@ -59,6 +59,38 @@ const GRID_CSS = `
   .tab-btn { transition: all 0.15s; }
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-thumb { background: ${T.stone}; border-radius: 3px; }
+  /* Responsive layout classes */
+  .hoa-cta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .fd-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: ${T.cream}E8; backdrop-filter: blur(12px);
+    border-bottom: 1px solid ${T.stone}40;
+    padding: 0 40px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .fd-nav-links { display: flex; align-items: center; gap: 24px; }
+  .fd-nav-secondary { display: flex; gap: 24px; align-items: center; }
+  .fd-hero { padding: 160px 40px 100px; max-width: 1100px; margin: 0 auto; }
+  .fd-section-pad { padding: 100px 40px; }
+  .fd-how-pad { background: ${T.charcoal}; padding: 100px 40px; }
+  @media (max-width: 768px) {
+    .hoa-cta-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .fd-nav { padding: 0 20px; }
+    .fd-nav-secondary { display: none; }
+    .fd-hero { padding: 100px 20px 60px; }
+    .fd-section-pad { padding: 60px 20px; }
+    .fd-how-pad { padding: 60px 20px; }
+  }
 `;
 
 // ─── Icons ────────────────────────────────────────────────────────────
@@ -268,20 +300,22 @@ function Landing({ onNav }: { onNav: (v: View) => void }) {
       <style>{GRID_CSS}</style>
 
       {/* Nav */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: `${T.cream}E8`, backdropFilter: "blur(12px)", borderBottom: `1px solid ${T.stone}40`, padding: "0 40px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <nav className="fd-nav">
         <div style={{ display: "flex", alignItems: "center", gap: 10, color: T.forest }}>
           <Icon.Door />
           <span style={{ fontFamily: T.fontSerif, fontSize: 20, fontWeight: 600, color: T.charcoal, letterSpacing: "-0.01em" }}>FrontDoor</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <button onClick={() => onNav("demo")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", opacity: 0.7 }}>See Demo</button>
-          <button onClick={() => onNav("hoa")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", opacity: 0.7 }}>For HOAs</button>
+        <div className="fd-nav-links">
+          <div className="fd-nav-secondary">
+            <button onClick={() => onNav("demo")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", opacity: 0.7 }}>See Demo</button>
+            <button onClick={() => onNav("hoa")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", opacity: 0.7 }}>For HOAs</button>
+          </div>
           <Btn variant="outline" onClick={() => onNav("contractor")} style={{ padding: "8px 18px", fontSize: 13 }}>Contractor Waitlist</Btn>
         </div>
       </nav>
 
       {/* Hero */}
-      <section style={{ paddingTop: 160, paddingBottom: 100, maxWidth: 1100, margin: "0 auto", padding: "160px 40px 100px" }}>
+      <section className="fd-hero">
         <div className="anim-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", background: T.forestPale, borderRadius: 20, border: `1px solid ${T.forest}20`, marginBottom: 32 }}>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest }} />
           <span style={{ fontFamily: T.fontMono, fontSize: 11, fontWeight: 500, color: T.forest, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Now enrolling Austin HOAs</span>
@@ -314,7 +348,7 @@ function Landing({ onNav }: { onNav: (v: View) => void }) {
       </section>
 
       {/* How it works */}
-      <section style={{ background: T.charcoal, padding: "100px 40px" }}>
+      <section className="fd-how-pad">
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ fontFamily: T.fontMono, fontSize: 11, color: T.forest, textTransform: "uppercase" as const, letterSpacing: "0.1em", marginBottom: 16 }}>How It Works</div>
           <h2 style={{ fontFamily: T.fontSerif, fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 700, color: T.white, marginBottom: 64, letterSpacing: "-0.02em", maxWidth: 600 }}>Infrastructure that works for both sides.</h2>
@@ -337,8 +371,8 @@ function Landing({ onNav }: { onNav: (v: View) => void }) {
       </section>
 
       {/* HOA CTA */}
-      <section style={{ padding: "100px 40px" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
+      <section className="fd-section-pad">
+        <div className="hoa-cta-grid">
           <div>
             <div style={{ fontFamily: T.fontMono, fontSize: 11, color: T.forest, textTransform: "uppercase" as const, letterSpacing: "0.1em", marginBottom: 16 }}>For HOA Boards</div>
             <h2 style={{ fontFamily: T.fontSerif, fontSize: "clamp(28px, 3vw, 44px)", fontWeight: 700, color: T.charcoal, letterSpacing: "-0.02em", marginBottom: 20, lineHeight: 1.15 }}>After the next hail storm,<br />your phone rings nonstop.</h2>
