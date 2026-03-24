@@ -9,6 +9,8 @@ datasource db {
   url      = env("DB_FILE_NAME")
 }
 
+// ─── Platform ─────────────────────────────────────────────────────────
+
 model User {
   // Adaptive AI platform columns (do not change)
   id     String  @id
@@ -17,37 +19,372 @@ model User {
   handle String?
 }
 
+// ─── Core: HOA & Homeowners ───────────────────────────────────────────
+
 model HOA {
-  id          String   @id @default(cuid())
-  name        String
-  community   String
-  city        String   @default("Austin")
-  state       String   @default("TX")
-  zip         String
-  units       Int
-  contactName String
+  id           String   @id @default(cuid())
+  name         String
+  community    String
+  city         String   @default("Austin")
+  state        String   @default("TX")
+  zip          String
+  units        Int
+  contactName  String
   contactEmail String
   contactPhone String?
   stripeSessionId String?
-  paid        Boolean  @default(false)
-  paidAt      DateTime?
-  amountCents Int?
-  createdAt   DateTime @default(now())
+  paid         Boolean  @default(false)
+  paidAt       DateTime?
+  amountCents  Int?
+  // OS upgrade fields
+  plan         String   @default("starter")  // starter | full | enterprise
+  pricePerUnit Int      @default(1000)        // cents
+  onboardedAt  DateTime?
+  createdAt    DateTime @default(now())
+
+  homeowners   Homeowner[]
+  violations   Violation[]
+  meetings     Meeting[]
+  arcRequests  ARCRequest[]
+  workOrders   WorkOrder[]
+  amenities    Amenity[]
+  announcements Announcement[]
+  votes        Vote[]
+  budgets      Budget[]
+}
+
+model Homeowner {
+  id           String   @id @default(cuid())
+  hoaId        String
+  hoa          HOA      @relation(fields: [hoaId], references: [id])
+  name         String
+  email        String
+  phone        String?
+  address      String
+  unit         String?
+  role         String   @default("resident") // resident | board | president | treasurer | secretary
+  stripeCustomerId String?
+  moveInDate   DateTime?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  permissions  HomeownerPermission[]
+  duesAccount  DuesAccount?
+  violations   Violation[]
+  arcRequests  ARCRequest[]
+  workOrders   WorkOrder[]
+  reservations Reservation[]
+  messages     Message[]
+  votes        VoteCast[]
+}
+
+model HomeownerPermission {
+  id           String   @id @default(cuid())
+  homeownerId  String
+  homeowner    Homeowner @relation(fields: [homeownerId], references: [id])
+  category     String   // roofing | plumbing | solar | general | etc
+  allowed      Boolean  @default(true)
+  updatedAt    DateTime @updatedAt
 }
 
 model ContractorWaitlist {
-  id           String   @id @default(cuid())
-  company      String
-  contactName  String
-  email        String
-  phone        String?
-  category     String
-  zip          String
-  city         String   @default("Austin")
-  state        String   @default("TX")
+  id              String   @id @default(cuid())
+  company         String
+  contactName     String
+  email           String
+  phone           String?
+  category        String
+  zip             String
+  city            String   @default("Austin")
+  state           String   @default("TX")
   stripeSessionId String?
-  paid         Boolean  @default(false)
-  paidAt       DateTime?
-  position     Int?
-  createdAt    DateTime @default(now())
+  paid            Boolean  @default(false)
+  paidAt          DateTime?
+  position        Int?
+  createdAt       DateTime @default(now())
+}
+
+// ─── PayOS: Dues & Financials ─────────────────────────────────────────
+
+model DuesAccount {
+  id              String   @id @default(cuid())
+  homeownerId     String   @unique
+  homeowner       Homeowner @relation(fields: [homeownerId], references: [id])
+  balanceCents    Int      @default(0)    // current balance owed (positive = owed, negative = credit)
+  monthlyDueCents Int      @default(0)    // set by HOA
+  autopayEnabled  Boolean  @default(false)
+  stripePaymentMethodId String?
+  lastChargedAt   DateTime?
+  nextDueDate     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  transactions    Transaction[]
+}
+
+model Transaction {
+  id              String   @id @default(cuid())
+  duesAccountId   String
+  duesAccount     DuesAccount @relation(fields: [duesAccountId], references: [id])
+  type            String   // charge | payment | late_fee | credit | assessment | refund
+  amountCents     Int
+  description     String
+  stripePaymentIntentId String?
+  status          String   @default("pending") // pending | completed | failed | refunded
+  dueDate         DateTime?
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model Budget {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id])
+  year            Int
+  month           Int?     // null = annual budget
+  category        String   // maintenance | utilities | insurance | reserves | admin | amenities | other
+  name            String
+  budgetedCents   Int
+  actualCents     Int      @default(0)
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// ─── FineBot: Violations ──────────────────────────────────────────────
+
+model Violation {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id])
+  homeownerId     String?
+  homeowner       Homeowner? @relation(fields: [homeownerId], references: [id])
+  address         String
+  category        String   // landscaping | parking | architectural | noise | trash | pet | other
+  description     String
+  severity        String   @default("minor") // minor | moderate | major
+  status          String   @default("open")  // open | noticed | responded | resolved | escalated | fined
+  photoUrls       String?  // JSON array of photo URLs
+  reportedBy      String?  // board member name/email
+  noticeCount     Int      @default(0)
+  latestNoticeAt  DateTime?
+  nextNoticeAt    DateTime?
+  fineCents       Int?
+  resolvedAt      DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  notices         ViolationNotice[]
+}
+
+model ViolationNotice {
+  id              String   @id @default(cuid())
+  violationId     String
+  violation       Violation @relation(fields: [violationId], references: [id])
+  noticeNumber    Int      // 1, 2, 3...
+  sentAt          DateTime @default(now())
+  sentTo          String
+  method          String   @default("email") // email | certified_mail | door_hanger
+  dueDate         DateTime
+  body            String
+  acknowledged    Boolean  @default(false)
+  acknowledgedAt  DateTime?
+}
+
+// ─── ARC Agent: Architectural Review ─────────────────────────────────
+
+model ARCRequest {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id])
+  homeownerId     String
+  homeowner       Homeowner @relation(fields: [homeownerId], references: [id])
+  address         String
+  projectType     String   // fence | paint | addition | shed | pool | landscaping | roof | other
+  description     String
+  estimatedCost   Int?     // cents
+  startDate       DateTime?
+  documentUrls    String?  // JSON array
+  status          String   @default("submitted") // submitted | under_review | approved | denied | revision_requested | expired
+  reviewDeadline  DateTime
+  reviewedBy      String?
+  reviewNotes     String?
+  conditions      String?  // conditions of approval
+  submittedAt     DateTime @default(now())
+  decidedAt       DateTime?
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── BoardRoom: Governance & Meetings ────────────────────────────────
+
+model Meeting {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id])
+  title           String
+  type            String   @default("board")  // board | annual | special | committee | executive
+  scheduledAt     DateTime
+  location        String?
+  virtualLink     String?
+  agenda          String?  // markdown
+  minutes         String?  // markdown — filled after meeting
+  quorumRequired  Int?     // number of board members needed
+  quorumMet       Boolean?
+  status          String   @default("scheduled") // scheduled | in_progress | completed | cancelled
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  agendaItems     AgendaItem[]
+  votes           Vote[]
+}
+
+model AgendaItem {
+  id              String   @id @default(cuid())
+  meetingId       String
+  meeting         Meeting  @relation(fields: [meetingId], references: [id])
+  order           Int
+  title           String
+  description     String?
+  presenter       String?
+  duration        Int?     // minutes
+  status          String   @default("pending") // pending | discussed | tabled | action_required
+  notes           String?
+  createdAt       DateTime @default(now())
+}
+
+// ─── VoteBox: Elections & Surveys ────────────────────────────────────
+
+model Vote {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id])
+  meetingId       String?
+  meeting         Meeting? @relation(fields: [meetingId], references: [id])
+  title           String
+  description     String?
+  type            String   @default("motion") // motion | election | survey | bylaw_amendment | special_assessment
+  options         String   // JSON array of option strings
+  allowMultiple   Boolean  @default(false)
+  requiresQuorum  Boolean  @default(true)
+  quorumCount     Int?
+  status          String   @default("open")   // open | closed | cancelled | certified
+  opensAt         DateTime @default(now())
+  closesAt        DateTime
+  resultSummary   String?
+  certifiedAt     DateTime?
+  createdAt       DateTime @default(now())
+
+  casts           VoteCast[]
+}
+
+model VoteCast {
+  id              String   @id @default(cuid())
+  voteId          String
+  vote            Vote     @relation(fields: [voteId], references: [id])
+  homeownerId     String
+  homeowner       Homeowner @relation(fields: [homeownerId], references: [id])
+  selection       String   // JSON array of selected option(s)
+  castAt          DateTime @default(now())
+
+  @@unique([voteId, homeownerId])
+}
+
+// ─── WorkOrder: Maintenance Ops ──────────────────────────────────────
+
+model WorkOrder {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id])
+  homeownerId     String?
+  homeowner       Homeowner? @relation(fields: [homeownerId], references: [id])
+  title           String
+  description     String
+  category        String   // plumbing | electrical | landscaping | hvac | structural | pool | general
+  location        String   // common area name or address
+  priority        String   @default("normal")  // low | normal | high | urgent
+  status          String   @default("open")    // open | assigned | in_progress | completed | cancelled | on_hold
+  assignedTo      String?  // contractor name or ID
+  assignedAt      DateTime?
+  estimatedCost   Int?     // cents
+  actualCost      Int?     // cents
+  photoUrls       String?  // JSON array
+  completionNotes String?
+  boardApproved   Boolean  @default(false)
+  boardApprovedAt DateTime?
+  dueDate         DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── Amenity: Reservations ────────────────────────────────────────────
+
+model Amenity {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id])
+  name            String   // Pool | Clubhouse | Tennis Court A | BBQ Area | etc
+  description     String?
+  capacity        Int?
+  rules           String?
+  depositCents    Int?     @default(0)
+  openTime        String?  @default("08:00")  // HH:MM
+  closeTime       String?  @default("22:00")
+  advanceBookingDays Int?  @default(30)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  reservations    Reservation[]
+}
+
+model Reservation {
+  id              String   @id @default(cuid())
+  amenityId       String
+  amenity         Amenity  @relation(fields: [amenityId], references: [id])
+  homeownerId     String
+  homeowner       Homeowner @relation(fields: [homeownerId], references: [id])
+  date            String   // YYYY-MM-DD
+  startTime       String   // HH:MM
+  endTime         String   // HH:MM
+  guestCount      Int?
+  notes           String?
+  status          String   @default("confirmed") // pending | confirmed | cancelled | no_show
+  depositPaid     Boolean  @default(false)
+  depositRefunded Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([amenityId, date, startTime])
+}
+
+// ─── CommHub: Communications ──────────────────────────────────────────
+
+model Announcement {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id])
+  title           String
+  body            String   // markdown
+  category        String   @default("general") // general | urgent | maintenance | events | financial | governance
+  pinned          Boolean  @default(false)
+  sentEmail       Boolean  @default(false)
+  sentAt          DateTime?
+  authorName      String
+  expiresAt       DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model Message {
+  id              String   @id @default(cuid())
+  homeownerId     String
+  homeowner       Homeowner @relation(fields: [homeownerId], references: [id])
+  subject         String
+  body            String
+  direction       String   // inbound | outbound
+  category        String   @default("general") // general | violation | arc | workorder | dues | other
+  status          String   @default("open") // open | read | replied | resolved
+  referenceId     String?  // ID of related violation/workorder/arc
+  referenceType   String?  // violation | workorder | arc | dues
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
