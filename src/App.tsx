@@ -89,7 +89,7 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
           <span style={{ fontFamily: T.fontSerif, fontSize: 19, fontWeight: 700, color: T.charcoal, letterSpacing: "-0.01em" }}>GatePass</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <button onClick={() => onNav("demo")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", cursor: "pointer", padding: "7px 12px" }}>Demo</button>
+          <button onClick={() => onNav("demo")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", cursor: "pointer", padding: "7px 12px" }}>Live Demo</button>
           <button onClick={() => onNav("hoa")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", cursor: "pointer", padding: "7px 12px" }}>For HOAs</button>
           <Btn variant="outline" onClick={() => onNav("contractor")} style={{ padding: "7px 14px", fontSize: 12 }}>Contractor Waitlist</Btn>
           {auth.status === "authenticated"
@@ -473,35 +473,105 @@ function ContractorWaitlist({ onBack }: { onBack: () => void }) {
   );
 }
 
-// ─── Demo / Permit Feed ───────────────────────────────────────────────
-function DemoView({ onBack }: { onBack: () => void }) {
+// ─── Live Demo — full OS shell, no auth required ─────────────────────
+const DEMO_HOA_ID = "cmn5kapjd0000jitlk3ehms51";
+
+function GatePassDemo({ onBack }: { onBack: () => void }) {
+  const [view, setView] = useState<OSView>("dashboard");
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <style>{GLOBAL_CSS}</style>
+
+      {/* Demo banner — sticky top, dismissible feel */}
+      <div style={{
+        background: "linear-gradient(90deg, #1a3d2b 0%, #2A5240 50%, #1a3d2b 100%)",
+        borderBottom: "1px solid rgba(90,158,122,0.3)",
+        padding: "9px 20px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        flexShrink: 0,
+        position: "sticky",
+        top: 0,
+        zIndex: 200,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#7EC99A", flexShrink: 0 }} className="ai-ring" />
+          <span style={{ fontFamily: T.fontMono, fontSize: 10, color: "#7EC99A", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            Live Demo
+          </span>
+          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "rgba(255,255,255,0.5)" }}>·</span>
+          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
+            Steiner Ranch HOA · All 9 AI agents active · Real data · Click anything
+          </span>
+        </div>
+        <button
+          onClick={onBack}
+          style={{
+            fontFamily: T.fontSans, fontSize: 12, color: "rgba(255,255,255,0.45)",
+            background: "none", border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 5, padding: "4px 12px", cursor: "pointer",
+            transition: "all 0.15s",
+            flexShrink: 0,
+          }}
+        >
+          ← Exit Demo
+        </button>
+      </div>
+
+      {/* Full OS shell */}
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        <Sidebar
+          current={view}
+          onNav={(v) => { if (v === "landing") onBack(); else setView(v); }}
+          hoaName="Steiner Ranch HOA (Demo)"
+        />
+        <main style={{ flex: 1, overflow: "auto", background: "var(--bg)" }}>
+          {view === "dashboard"  && <Dashboard hoaId={DEMO_HOA_ID} onNav={setView} />}
+          {view === "homeowners" && <Homeowners hoaId={DEMO_HOA_ID} />}
+          {view === "payos"      && <PayOS hoaId={DEMO_HOA_ID} />}
+          {view === "violations" && <Violations hoaId={DEMO_HOA_ID} />}
+          {view === "arc"        && <ARCAgent hoaId={DEMO_HOA_ID} />}
+          {view === "boardroom"  && <BoardRoom hoaId={DEMO_HOA_ID} />}
+          {view === "votebox"    && <VoteBox hoaId={DEMO_HOA_ID} />}
+          {view === "workorders" && <WorkOrders hoaId={DEMO_HOA_ID} />}
+          {view === "amenity"    && <AmenityModule hoaId={DEMO_HOA_ID} />}
+          {view === "commhub"    && <CommHub hoaId={DEMO_HOA_ID} />}
+          {view === "permits"    && <PermitFeedView />}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function PermitFeedView() {
   const { data: permits, isLoading } = useQuery({ queryKey: ["permits"], queryFn: () => rpc.getAustinPermits() });
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <style>{GLOBAL_CSS}</style>
-      <header style={{ background: T.forest, padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button onClick={onBack} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.6)", cursor: "pointer" }}><Icons.Back /></button>
-          <span style={{ fontFamily: T.fontSerif, fontSize: 16, fontWeight: 600, color: T.white }}>Austin Permit Feed</span>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <div>
+            <h2 style={{ fontFamily: T.fontSerif, fontSize: 22, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.01em", marginBottom: 4 }}>Austin Permit Feed</h2>
+            <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>Real-time contractor activity near your community.</div>
+          </div>
+          <Tag bg="rgba(90,158,122,0.12)" color="#7EC99A">Live · Open Data</Tag>
         </div>
-        <Tag bg="rgba(255,255,255,0.12)" color={T.white}>Live · Open Data</Tag>
-      </header>
-      <div style={{ padding: 24, maxWidth: 800, margin: "0 auto" }}>
-        <div style={{ marginBottom: 16, fontFamily: T.fontSans, fontSize: 13, color: T.inkLight }}>Real-time building permits from Austin Open Data — shows contractor activity in your neighborhood.</div>
-        {isLoading && <div style={{ textAlign: "center", padding: 40, color: T.inkLight }}>Loading permits...</div>}
+        {isLoading && <div style={{ textAlign: "center", padding: 48, color: "var(--text-light)", fontFamily: T.fontSans }}>Loading permits…</div>}
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {(permits ?? []).map((p: { id: string; type: string; contractor: string; value: string | null; address: string; date: string | null; status: string }) => (
-            <Card key={p.id} className="card-hover" style={{ padding: "16px 20px", transition: "all 0.2s" }}>
+            <Card key={p.id} className="card-hover" style={{ padding: "16px 20px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
-                  <div style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: T.ink }}>{p.type}</div>
-                  <div style={{ fontFamily: T.fontSans, fontSize: 12, color: T.inkLight }}>{p.contractor}</div>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{p.type}</div>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", marginTop: 2 }}>{p.contractor}</div>
                 </div>
                 {p.value && <div style={{ fontFamily: T.fontMono, fontSize: 12, fontWeight: 600, color: T.gold }}>{p.value}</div>}
               </div>
-              <div style={{ display: "flex", gap: 12, marginTop: 10, paddingTop: 10, borderTop: `1px solid ${T.stone}30`, flexWrap: "wrap" }}>
-                {p.address && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight }}>📍 {p.address}</span>}
-                {p.date && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight }}>{p.date}</span>}
+              <div style={{ display: "flex", gap: 12, marginTop: 10, paddingTop: 10, borderTop: `1px solid var(--border)`, flexWrap: "wrap" }}>
+                {p.address && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)" }}>📍 {p.address}</span>}
+                {p.date && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)" }}>{p.date}</span>}
                 {p.status && <Tag>{p.status}</Tag>}
               </div>
             </Card>
@@ -532,7 +602,7 @@ function HOAOSShell({ hoaId, onExit }: { hoaId: string; onExit: () => void }) {
         {view === "workorders"  && <WorkOrders hoaId={hoaId} />}
         {view === "amenity"     && <AmenityModule hoaId={hoaId} />}
         {view === "commhub"     && <CommHub hoaId={hoaId} />}
-        {view === "permits"     && <DemoView onBack={() => setView("dashboard")} />}
+        {view === "permits"     && <PermitFeedView />}
       </main>
     </div>
   );
@@ -615,7 +685,7 @@ export default function App() {
       {view === "landing"    && <Landing onNav={handleNav} />}
       {view === "hoa"        && <HOAOnboarding onBack={() => setView("landing")} />}
       {view === "contractor" && <ContractorWaitlist onBack={() => setView("landing")} />}
-      {view === "demo"       && <DemoView onBack={() => setView("landing")} />}
+      {view === "demo"       && <GatePassDemo onBack={() => setView("landing")} />}
       {view === "os-select"  && (
         auth.status === "authenticated"
           ? <HOASelector onSelect={(id) => { setActiveHoaId(id); setView("os"); }} onPublic={() => setView("landing")} />
