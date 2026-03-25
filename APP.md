@@ -1,86 +1,115 @@
-# GatePass — APP.md
+# GatePass — HOA Operating System
 
-## What This App Does
+**Purpose**: Full HOA operating system — 9 AI agent modules that replace HOA management companies
 
-GatePass is a neighborhood infrastructure platform — an HOA-first permission layer between homeowners and contractors. HOAs pay $10/unit/year to give their community digital gate control, permit intelligence, and a vetted contractor network. Contractors pay a $99 founding deposit to reserve one of 25 seats for first-access to verified, opted-in leads.
+**Type**: app
 
-Austin TX only. Metro 1.
+**Status**: active — Phase 2 (OS build complete, public launch prep)
 
-**Note:** Previously named FrontDoor. Renamed to GatePass March 17, 2026 — trademark conflict with Frontdoor Inc. (FTDR, publicly traded home warranty company).
+**Live URL**: https://frontdoor-userh9akm9bjl1wy8lioze14285.adaptive.ai
 
-## Live URL
+## What It Does
 
-https://frontdoor-userh9akm9bjl1wy8lioze14285.adaptive.ai
+GatePass is the OS for HOAs. Replaces the $50–150/unit/year management company with 9 AI agent modules at $20–22/unit/year.
+
+### 9 Modules
+
+| Module | Function | Status |
+|---|---|---|
+| GatePass Core | Gate access, visitor mgmt, permit intel, contractor vetting | ✅ Live |
+| PayOS | Dues collection, budgeting, financial reporting | ✅ Live |
+| FineBot | Violations logging, automated notices, escalation | ✅ Live |
+| ARC Agent | Architectural review, 45-day compliance tracking | ✅ Live |
+| WorkOrder | Maintenance requests, vendor routing, tracking | ✅ Live |
+| BoardRoom | Meetings, agendas, minutes, governance | ✅ Live |
+| VoteBox | Secure elections, motions, surveys | ✅ Live |
+| Amenity | Pool/clubhouse/court reservations | ✅ Live |
+| CommHub | Announcements, newsletters, messaging | ✅ Live |
 
 ## Business Model
 
-| Revenue Stream | Price | Notes |
+| Plan | Price | Modules |
 |---|---|---|
-| HOA subscription | $10/unit/year | Billed annually via Stripe |
-| Contractor founding seat | $99 deposit | Max 25 seats, refundable if no launch in 6mo |
-| Year 1 Target | $155K ARR | 20 HOAs + 30 contractors |
+| Starter | $20/unit/year | Core + CommHub + PayOS |
+| Full OS | $22/unit/year | All 9 modules |
+| Contractor Seat | $99 deposit (max 25) | Founding rate |
 
-## Target HOAs (Austin Metro 1)
-Steiner Ranch, Mueller, Avery Ranch, Lakeway, Circle C, Belterra, Teravista
+## Architecture
 
-## Tech Stack
-
-- **Frontend**: React + TypeScript + Vite (single file: `src/App.tsx`)
+- **Frontend**: React + TypeScript + Vite (`src/App.tsx` + `src/components/`)
 - **Backend**: Hono + Prisma + SQLite (`src/api/procedures.ts`)
-- **Payments**: Stripe Checkout (test mode — `sk_test_*`)
-- **Permit data**: Austin Open Data API (`data.austintexas.gov/resource/3syk-w9eu.json`) with mock fallback
+- **Payments**: Stripe Checkout (test mode)
+- **Permit data**: Austin Open Data API
 
-## Backend Procedures
+## Component Structure
 
-| Procedure | Input | Returns |
-|---|---|---|
-| `health` | — | `{ status, timestamp, db }` |
-| `createHOACheckout` | HOA + contact fields | `{ url, hoaId }` → Stripe redirect |
-| `getHOAStats` | — | `{ totalHOAs, paidHOAs, totalUnits, arr }` |
-| `createContractorCheckout` | Contractor fields | `{ url, contractorId, position }` → Stripe redirect |
-| `getContractorStats` | — | `{ total, paid, remaining, spotsLeft }` |
-| `getWaitlistPosition` | `id: string` | Contractor record or null |
-| `getAustinPermits` | `zip?: string` | Array of permit objects |
+```
+src/
+  App.tsx              — root shell (landing, HOA onboard, OS shell)
+  components/
+    tokens.ts          — design system (colors, fonts, CSS)
+    ui-kit.tsx         — shared components (Btn, Card, Modal, etc.)
+    Sidebar.tsx        — OS navigation
+    Dashboard.tsx      — HOA overview + stats
+    Homeowners.tsx     — resident roster + dues accounts
+    PayOS.tsx          — dues collection + budgeting
+    Violations.tsx     — FineBot violation tracking
+    ARCAgent.tsx       — architectural review
+    BoardRoom.tsx      — meetings + governance
+    VoteBox.tsx        — elections + surveys
+    WorkOrders.tsx     — maintenance ops
+    AmenityModule.tsx  — reservations
+    CommHub.tsx        — announcements + comms
+```
+
+## Backend Procedures (44 total)
+
+**Core**: `health`, `createHOACheckout`, `getHOAStats`, `getHOAList`, `getHOA`
+**Homeowners**: `addHomeowner`, `getHomeowners`
+**Contractor**: `createContractorCheckout`, `getContractorStats`, `getWaitlistPosition`
+**PayOS**: `chargeMonthlyDues`, `recordPayment`, `getFinancialSummary`, `getDuesAccount`, `addBudgetLine`
+**FineBot**: `createViolation`, `getViolations`, `sendViolationNotice`, `resolveViolation`
+**ARC**: `submitARCRequest`, `getARCRequests`, `reviewARCRequest`
+**BoardRoom**: `createMeeting`, `getMeetings`, `updateMeetingMinutes`, `addAgendaItem`
+**VoteBox**: `createVote`, `getVotes`, `castVote`, `getVoteResults`, `closeVote`
+**WorkOrder**: `createWorkOrder`, `getWorkOrders`, `updateWorkOrder`
+**Amenity**: `createAmenity`, `getAmenities`, `createReservation`, `cancelReservation`
+**CommHub**: `createAnnouncement`, `getAnnouncements`, `sendMessage`, `getMessages`, `getHOAMessages`
+**Dashboard**: `getOSDashboard`
+**Permits**: `getAustinPermits`
 
 ## Database Schema (SQLite via Prisma)
 
-- **User** — platform-managed (do not modify)
-- **HOA** — community name, zip, units, contact info, Stripe session ID, paid flag
-- **ContractorWaitlist** — company, contact, category, zip, position, Stripe session ID, paid flag
-
-## Stripe Webhook (TODO)
-
-Stripe webhooks for `checkout.session.completed` need to be wired to mark `paid=true` on HOA/ContractorWaitlist records. Use Stripe CLI or Adaptive webhook config for this when going to production.
-
-## Design System
-
-- Cream base: `#F4F1EC` | Forest green: `#2A5240` | Gold: `#B8883A`
-- Fonts: Playfair Display (headings) + DM Sans (body) + DM Mono (labels/mono)
-- Architectural grid background (4% opacity green grid, 40px cells)
-
-## Domain Plan
-
-- Target domain: `gatepass.io` or `getgatepass.com`
-- Business email: `joseph@gatepass.io`
-- Required before submitting cloud credit applications (Google, Azure, AWS)
-
-## Grant Applications (March 2026)
-
-All application documents written and ready to submit:
-- **NAR REACH Commercial** — deadline March 31, 2026
-- **NAR REACH Residential** — deadline April 2026
-- **Capital Factory** — rolling, cold email ready for investor_relations@capitalfactory.com
-- **Google Cloud for Startups** — rolling, needs business email first
-- **Microsoft Founders Hub** — rolling, needs LinkedIn updated + business email
-- **AWS Activate Founders** — rolling, fastest approval
+**Core**: User, HOA, Homeowner, HomeownerPermission, ContractorWaitlist
+**PayOS**: DuesAccount, Transaction, Budget
+**FineBot**: Violation, ViolationNotice
+**ARC**: ARCRequest
+**BoardRoom**: Meeting, AgendaItem
+**VoteBox**: Vote, VoteCast
+**WorkOrder**: WorkOrder
+**Amenity**: Amenity, Reservation
+**CommHub**: Announcement, Message
 
 ## Next Steps
 
-- [ ] Register domain (gatepass.io or getgatepass.com)
-- [ ] Set up business email (joseph@gatepass.io)
-- [ ] Wire Stripe webhook → mark paid=true on success
-- [ ] Add Resend email confirmation on HOA/Contractor signup
-- [ ] Connect to real Austin Open Data API token
-- [ ] Add Stripe live key when going to production
-- [ ] Build homeowner-facing portal (Phase 2)
-- [ ] File Texas LLC ($300 at sos.state.tx.us)
+- [ ] Wire Stripe webhook → mark paid=true on HOA/Contractor records
+- [ ] Add Resend email on HOA signup, violation notices, ARC decisions
+- [ ] Homeowner CSV import (bulk roster upload)
+- [ ] Register domain (gatepass.io)
+- [ ] Texas LLC filing ($300)
+- [ ] Move to production Stripe keys
+- [ ] NAR REACH grant deadline: March 31, 2026
+
+## Grant Applications
+
+- NAR REACH Commercial — deadline March 31, 2026
+- NAR REACH Residential — deadline April 2026
+- Capital Factory — rolling
+- Google Cloud for Startups — needs business email first
+- Microsoft Founders Hub — needs LinkedIn + business email
+- AWS Activate Founders — rolling, fastest
+
+## Design System
+
+- Cream: `#F4F1EC` | Forest: `#2A5240` | Gold: `#B8883A` | Charcoal: `#1C1C1A`
+- Fonts: Playfair Display (headings) + DM Sans (body) + DM Mono (labels)
