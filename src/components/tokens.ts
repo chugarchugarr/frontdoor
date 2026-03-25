@@ -70,7 +70,11 @@ export const GLOBAL_CSS = `
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
+  /* Force light theme — GatePass is always light regardless of OS/app theme */
+  :root,
+  .dark,
+  [data-theme="dark"],
+  [color-scheme="dark"] {
     --bg:           #FFFFFF;
     --bg-card:      #FFFFFF;
     --bg-card-hover:#F7F7F7;
@@ -89,32 +93,13 @@ export const GLOBAL_CSS = `
     --forest-glow:  0 0 0 3px rgba(42,82,64,0.12);
   }
 
-  .dark {
-    --bg:           #0A0A0A;
-    --bg-card:      #141414;
-    --bg-card-hover:#1A1A1A;
-    --bg-subtle:    #111111;
-    --bg-input:     #141414;
-    --border:       #262626;
-    --border-subtle:#1A1A1A;
-    --text:         #FAFAFA;
-    --text-mid:     #A3A3A3;
-    --text-light:   #525252;
-    --shadow-sm:    0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
-    --shadow-md:    0 4px 16px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35);
-    --shadow-lg:    0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4);
-    --shadow-xl:    0 24px 80px rgba(0,0,0,0.75), 0 8px 24px rgba(0,0,0,0.5);
-    --accent-glow:  0 0 0 3px rgba(58,110,84,0.2);
-    --forest-glow:  0 0 0 3px rgba(58,110,84,0.2);
-  }
-
   html, body {
-    background: var(--bg);
-    color: var(--text);
+    background: #FFFFFF !important;
+    color: #0A0A0A !important;
+    color-scheme: light !important;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background 0.2s, color 0.2s;
   }
 
   input, select, textarea { font-family: inherit; }
