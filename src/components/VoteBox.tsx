@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { SectionHeader, Btn, Card, StatusTag, Tag, EmptyState, Modal, FDInput, FDSelect, FDTextarea, Icons } from "./ui-kit";
+import { AIPanel, AIField, AIList } from "./AIPanel";
 
 export function VoteBox({ hoaId }: { hoaId: string }) {
   const qc = useQueryClient();
@@ -109,6 +110,28 @@ export function VoteBox({ hoaId }: { hoaId: string }) {
                       Closes {closes.toLocaleDateString()}
                     </div>
                   </div>
+                  <AIPanel
+                    label="VoteBox AI"
+                    description="tallies results, drafts resolution & minutes language"
+                    runFn={() => rpc.runVoteSummary(v.id)}
+                    fetchFn={() => rpc.getAIAnalysis({ type: "vote", id: v.id })}
+                    queryKey={["votes", hoaId]}
+                    alreadyAnalyzed={!!(v as VT & { aiAnalysis?: string | null }).aiAnalysis}
+                    renderResult={(data) => {
+                      const d = data as { outcome?: string; winner?: string; margin?: string; quorum_met?: boolean; resolution_language?: string; minutes_language?: string; dissenting_notes?: string[] };
+                      return (
+                        <div>
+                          {d.outcome && <AIField label="Outcome" value={d.outcome.toUpperCase()} color={d.outcome === "passed" ? T.success : d.outcome === "failed" ? T.danger : T.warn} />}
+                          {d.winner && <AIField label="Winner / Leading Option" value={d.winner} />}
+                          {d.margin && <AIField label="Margin" value={d.margin} />}
+                          {d.quorum_met != null && <AIField label="Quorum" value={d.quorum_met ? "✓ Met" : "✗ Not Met"} color={d.quorum_met ? T.success : T.danger} />}
+                          {d.dissenting_notes && <AIList label="Dissenting Notes" items={d.dissenting_notes} color={T.warn} />}
+                          {d.resolution_language && <AIField label="Resolution Language" value={<span style={{ whiteSpace: "pre-wrap" }}>{d.resolution_language}</span>} />}
+                          {d.minutes_language && <AIField label="Minutes Language" value={<span style={{ whiteSpace: "pre-wrap" }}>{d.minutes_language}</span>} />}
+                        </div>
+                      );
+                    }}
+                  />
                 </Card>
               );
             })}

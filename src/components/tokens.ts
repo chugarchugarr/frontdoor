@@ -59,6 +59,8 @@ export const GLOBAL_CSS = `
   .tab-btn.active { border-bottom: 2px solid ${T.forest}; color: ${T.forest}; }
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-thumb { background: ${T.stone}; border-radius:3px; }
+  @keyframes aiPulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(1.4); } }
+  .ai-pulse { animation: aiPulse 1.2s ease-in-out infinite; }
   @media (max-width: 768px) {
     .sidebar { display: none !important; }
     .main-pad { padding: 16px !important; }

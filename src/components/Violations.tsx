@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { SectionHeader, Btn, Card, StatusTag, Tag, EmptyState, Modal, FDInput, FDSelect, FDTextarea, Icons, Label } from "./ui-kit";
+import { AIPanel, AIField, AIList, AIScore, AIBadge } from "./AIPanel";
 
 const CATEGORIES = ["landscaping","parking","architectural","noise","trash","pet","other"];
 const SEVERITIES = ["minor","moderate","major"];
@@ -98,6 +99,30 @@ export function Violations({ hoaId }: { hoaId: string }) {
                 {new Date(v.createdAt).toLocaleDateString()}
               </div>
             </div>
+            <AIPanel
+              label="FineBot AI"
+              description="classifies violation, cites CC&Rs, drafts notice"
+              runFn={() => rpc.runViolationClassification(v.id)}
+              fetchFn={() => rpc.getAIAnalysis({ type: "violation", id: v.id })}
+              queryKey={["violations", hoaId]}
+              alreadyAnalyzed={!!(v as ViolationRow & { aiAnalysis?: string | null }).aiAnalysis}
+              renderResult={(data) => {
+                const d = data as { category?: string; severity?: string; ccr_section?: string; fine_recommended_cents?: number; notice_draft?: string; escalation_risk?: number; flags?: string[] };
+                return (
+                  <div>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+                      {d.category && <AIBadge value={d.category} map={{ landscaping: { color: T.forest, bg: T.forestPale }, parking: { color: T.blue, bg: T.bluePale }, architectural: { color: T.gold, bg: T.goldLight }, noise: { color: T.purple, bg: T.purplePale }, trash: { color: T.inkMid, bg: T.creamDark } }} />}
+                      {d.severity && <AIBadge value={d.severity} map={{ minor: { color: T.inkMid, bg: T.creamDark }, moderate: { color: T.warn, bg: T.warnPale }, major: { color: T.danger, bg: T.dangerPale } }} />}
+                    </div>
+                    {d.ccr_section && <AIField label="CC&R Section" value={d.ccr_section} />}
+                    {d.fine_recommended_cents != null && <AIField label="Recommended Fine" value={`$${(d.fine_recommended_cents/100).toFixed(0)}`} color={T.danger} />}
+                    {d.escalation_risk != null && <AIScore label="Escalation Risk" score={d.escalation_risk} />}
+                    {d.flags && <AIList label="Flags" items={d.flags} color={T.danger} />}
+                    {d.notice_draft && <AIField label="Draft Notice" value={<span style={{ whiteSpace: "pre-wrap" }}>{d.notice_draft}</span>} />}
+                  </div>
+                );
+              }}
+            />
           </Card>
         ))}
       </div>

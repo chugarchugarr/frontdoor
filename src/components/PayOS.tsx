@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { SectionHeader, Btn, Card, Tag, EmptyState, Modal, FDInput, FDSelect, Icons, StatCard } from "./ui-kit";
+import { AIPanel, AIField, AIList } from "./AIPanel";
 
 const BUDGET_CATS = ["maintenance","utilities","insurance","reserves","admin","amenities","other"];
 
@@ -88,24 +89,49 @@ export function PayOS({ hoaId }: { hoaId: string }) {
                 const bal = h.duesAccount?.balanceCents ?? 0;
                 const monthly = h.duesAccount?.monthlyDueCents ?? 0;
                 return (
-                  <Card key={h.id} style={{ padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <div>
-                      <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: T.ink }}>{h.name}</div>
-                      <div style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight }}>{h.address}</div>
-                    </div>
-                    <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>Monthly</div>
-                        <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600 }}>${(monthly/100).toFixed(0)}</div>
+                  <Card key={h.id} style={{ padding: "14px 20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div>
+                        <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: T.ink }}>{h.name}</div>
+                        <div style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight }}>{h.address}</div>
                       </div>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>Balance Owed</div>
-                        <div style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 700, color: bal > 0 ? T.danger : T.success }}>
-                          {bal > 0 ? `$${(bal/100).toLocaleString()}` : "Current"}
+                      <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>Monthly</div>
+                          <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600 }}>${(monthly/100).toFixed(0)}</div>
                         </div>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>Balance Owed</div>
+                          <div style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 700, color: bal > 0 ? T.danger : T.success }}>
+                            {bal > 0 ? `$${(bal/100).toLocaleString()}` : "Current"}
+                          </div>
+                        </div>
+                        {h.duesAccount?.autopayEnabled && <Tag color={T.success} bg={T.successPale}>Autopay</Tag>}
                       </div>
-                      {h.duesAccount?.autopayEnabled && <Tag color={T.success} bg={T.successPale}>Autopay</Tag>}
                     </div>
+                    {bal > 0 && (
+                      <AIPanel
+                        label="PayOS AI"
+                        description="delinquency analysis + collection email draft"
+                        runFn={() => rpc.runDelinquencyAnalysis({ hoaId, homeownerId: h.id })}
+                        fetchFn={() => rpc.getAIAnalysis({ type: "dues", id: h.id })}
+                        queryKey={["financial", hoaId]}
+                        renderResult={(data) => {
+                          const d = data as { risk_level?: string; overdue_months?: number; recommended_action?: string; escalate_to_attorney?: boolean; collection_email?: string; payment_plan_suggestion?: string; flags?: string[] };
+                          return (
+                            <div>
+                              {d.risk_level && <AIField label="Risk Level" value={d.risk_level.toUpperCase()} color={d.risk_level === "high" ? T.danger : d.risk_level === "medium" ? T.warn : T.success} />}
+                              {d.overdue_months != null && <AIField label="Overdue Months" value={`${d.overdue_months} months`} />}
+                              {d.recommended_action && <AIField label="Recommended Action" value={d.recommended_action} />}
+                              {d.escalate_to_attorney && <AIField label="Attorney Referral" value="⚠️ Recommend legal escalation" color={T.danger} />}
+                              {d.payment_plan_suggestion && <AIField label="Payment Plan" value={d.payment_plan_suggestion} />}
+                              {d.flags && <AIList label="Flags" items={d.flags} color={T.danger} />}
+                              {d.collection_email && <AIField label="Draft Collection Email" value={<span style={{ whiteSpace: "pre-wrap" }}>{d.collection_email}</span>} />}
+                            </div>
+                          );
+                        }}
+                      />
+                    )}
                   </Card>
                 );
               })}

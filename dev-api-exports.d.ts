@@ -25,63 +25,50 @@ export declare function getHOAStats(): Promise<{
 	arr: number;
 }>;
 export declare function getHOAList(): Promise<({
+	_count: {
+		violations: number;
+		arcRequests: number;
+		workOrders: number;
+		meetings: number;
+	};
 	homeowners: {
 		id: string;
 		role: string;
 	}[];
-	_count: {
-		violations: number;
-		meetings: number;
-		arcRequests: number;
-		workOrders: number;
-	};
 } & {
 	id: string;
-	name: string;
-	community: string;
+	contactName: string;
+	zip: string;
 	city: string;
 	state: string;
-	zip: string;
-	units: number;
-	contactName: string;
-	contactEmail: string;
-	contactPhone: string | null;
 	stripeSessionId: string | null;
 	paid: boolean;
 	paidAt: Date | null;
+	createdAt: Date;
+	name: string;
+	community: string;
+	units: number;
+	contactEmail: string;
+	contactPhone: string | null;
 	amountCents: number | null;
 	plan: string;
 	pricePerUnit: number;
 	onboardedAt: Date | null;
-	createdAt: Date;
 })[]>;
 export declare function getHOA(id: string): Promise<({
-	homeowners: {
-		id: string;
-		name: string;
-		createdAt: Date;
-		hoaId: string;
-		email: string;
-		phone: string | null;
-		address: string;
-		unit: string | null;
-		role: string;
-		stripeCustomerId: string | null;
-		moveInDate: Date | null;
-		active: boolean;
-	}[];
 	violations: {
 		id: string;
+		category: string;
 		createdAt: Date;
-		description: string;
 		hoaId: string;
 		address: string;
-		category: string;
 		homeownerId: string | null;
+		aiAnalysis: string | null;
+		aiAnalyzedAt: Date | null;
 		updatedAt: Date;
-		status: string;
-		notes: string | null;
+		description: string;
 		severity: string;
+		status: string;
 		photoUrls: string | null;
 		reportedBy: string | null;
 		noticeCount: number;
@@ -89,31 +76,17 @@ export declare function getHOA(id: string): Promise<({
 		nextNoticeAt: Date | null;
 		fineCents: number | null;
 		resolvedAt: Date | null;
-	}[];
-	meetings: {
-		type: string;
-		id: string;
-		createdAt: Date;
-		hoaId: string;
-		scheduledAt: Date;
-		updatedAt: Date;
-		status: string;
-		title: string;
-		location: string | null;
-		virtualLink: string | null;
-		agenda: string | null;
-		minutes: string | null;
-		quorumRequired: number | null;
-		quorumMet: boolean | null;
+		notes: string | null;
 	}[];
 	arcRequests: {
 		id: string;
-		description: string;
 		hoaId: string;
 		address: string;
-		submittedAt: Date;
 		homeownerId: string;
+		aiAnalysis: string | null;
+		aiAnalyzedAt: Date | null;
 		updatedAt: Date;
+		description: string;
 		status: string;
 		projectType: string;
 		estimatedCost: number | null;
@@ -123,21 +96,25 @@ export declare function getHOA(id: string): Promise<({
 		reviewedBy: string | null;
 		reviewNotes: string | null;
 		conditions: string | null;
+		submittedAt: Date;
 		decidedAt: Date | null;
 	}[];
 	workOrders: {
 		id: string;
-		createdAt: Date;
-		description: string;
-		hoaId: string;
 		category: string;
+		createdAt: Date;
+		hoaId: string;
 		homeownerId: string | null;
+		aiAnalysis: string | null;
+		aiAnalyzedAt: Date | null;
 		updatedAt: Date;
+		description: string;
 		status: string;
-		dueDate: Date | null;
 		photoUrls: string | null;
+		notes: string | null;
 		estimatedCost: number | null;
 		title: string;
+		area: string | null;
 		location: string;
 		priority: string;
 		assignedTo: string | null;
@@ -146,15 +123,48 @@ export declare function getHOA(id: string): Promise<({
 		completionNotes: string | null;
 		boardApproved: boolean;
 		boardApprovedAt: Date | null;
+		dueDate: Date | null;
 		completedAt: Date | null;
+	}[];
+	homeowners: {
+		id: string;
+		email: string;
+		phone: string | null;
+		createdAt: Date;
+		name: string;
+		hoaId: string;
+		address: string;
+		unit: string | null;
+		role: string;
+		stripeCustomerId: string | null;
+		moveInDate: Date | null;
+		active: boolean;
+	}[];
+	meetings: {
+		type: string;
+		id: string;
+		createdAt: Date;
+		hoaId: string;
+		aiAnalysis: string | null;
+		aiAnalyzedAt: Date | null;
+		updatedAt: Date;
+		status: string;
+		title: string;
+		location: string | null;
+		scheduledAt: Date;
+		virtualLink: string | null;
+		agenda: string | null;
+		minutes: string | null;
+		quorumRequired: number | null;
+		quorumMet: boolean | null;
 	}[];
 	amenities: {
 		id: string;
-		name: string;
 		createdAt: Date;
-		description: string | null;
+		name: string;
 		hoaId: string;
 		active: boolean;
+		description: string | null;
 		capacity: number | null;
 		rules: string | null;
 		depositCents: number | null;
@@ -164,48 +174,50 @@ export declare function getHOA(id: string): Promise<({
 	}[];
 	announcements: {
 		id: string;
+		category: string;
 		createdAt: Date;
 		hoaId: string;
-		category: string;
-		sentAt: Date | null;
-		body: string;
+		aiAnalysis: string | null;
+		aiAnalyzedAt: Date | null;
 		title: string;
+		body: string;
 		pinned: boolean;
 		sentEmail: boolean;
+		sentAt: Date | null;
 		authorName: string;
 		expiresAt: Date | null;
 	}[];
 	budgets: {
 		id: string;
-		name: string;
-		createdAt: Date;
-		hoaId: string;
-		year: number;
 		category: string;
+		createdAt: Date;
+		name: string;
+		hoaId: string;
+		notes: string | null;
 		month: number | null;
+		year: number;
 		budgetedCents: number;
 		actualCents: number;
-		notes: string | null;
 	}[];
 } & {
 	id: string;
-	name: string;
-	community: string;
+	contactName: string;
+	zip: string;
 	city: string;
 	state: string;
-	zip: string;
-	units: number;
-	contactName: string;
-	contactEmail: string;
-	contactPhone: string | null;
 	stripeSessionId: string | null;
 	paid: boolean;
 	paidAt: Date | null;
+	createdAt: Date;
+	name: string;
+	community: string;
+	units: number;
+	contactEmail: string;
+	contactPhone: string | null;
 	amountCents: number | null;
 	plan: string;
 	pricePerUnit: number;
 	onboardedAt: Date | null;
-	createdAt: Date;
 }) | null>;
 export declare function createContractorCheckout(input: {
 	company: string;
@@ -227,19 +239,21 @@ export declare function getContractorStats(): Promise<{
 }>;
 export declare function getWaitlistPosition(id: string): Promise<{
 	id: string;
+	company: string;
+	contactName: string;
+	email: string;
+	phone: string | null;
+	category: string;
+	zip: string;
 	city: string;
 	state: string;
-	zip: string;
-	contactName: string;
 	stripeSessionId: string | null;
 	paid: boolean;
 	paidAt: Date | null;
-	createdAt: Date;
-	email: string;
-	phone: string | null;
-	company: string;
-	category: string;
 	position: number | null;
+	aiScreeningResult: string | null;
+	aiScreenedAt: Date | null;
+	createdAt: Date;
 } | null>;
 export declare function getAustinPermits(zip?: string): Promise<{
 	id: string;
@@ -263,11 +277,11 @@ export declare function addHomeowner(input: {
 	monthlyDueCents?: number;
 }): Promise<{
 	id: string;
-	name: string;
-	createdAt: Date;
-	hoaId: string;
 	email: string;
 	phone: string | null;
+	createdAt: Date;
+	name: string;
+	hoaId: string;
 	address: string;
 	unit: string | null;
 	role: string;
@@ -276,29 +290,33 @@ export declare function addHomeowner(input: {
 	active: boolean;
 }>;
 export declare function getHomeowners(hoaId: string): Promise<({
-	_count: {
-		violations: number;
-		workOrders: number;
-	};
 	duesAccount: {
 		id: string;
 		createdAt: Date;
 		homeownerId: string;
 		balanceCents: number;
 		monthlyDueCents: number;
+		overdueMonths: number;
+		lastPaymentAt: Date | null;
 		autopayEnabled: boolean;
 		stripePaymentMethodId: string | null;
 		lastChargedAt: Date | null;
 		nextDueDate: Date | null;
+		aiAnalysis: string | null;
+		aiAnalyzedAt: Date | null;
 		updatedAt: Date;
 	} | null;
+	_count: {
+		violations: number;
+		workOrders: number;
+	};
 } & {
 	id: string;
-	name: string;
-	createdAt: Date;
-	hoaId: string;
 	email: string;
 	phone: string | null;
+	createdAt: Date;
+	name: string;
+	hoaId: string;
 	address: string;
 	unit: string | null;
 	role: string;
@@ -308,21 +326,21 @@ export declare function getHomeowners(hoaId: string): Promise<({
 })[]>;
 export declare function getDuesAccount(homeownerId: string): Promise<({
 	homeowner: {
-		name: string;
 		email: string;
+		name: string;
 		address: string;
 	};
 	transactions: {
 		type: string;
 		id: string;
 		paidAt: Date | null;
-		amountCents: number;
 		createdAt: Date;
+		amountCents: number;
 		description: string;
-		duesAccountId: string;
-		stripePaymentIntentId: string | null;
 		status: string;
 		dueDate: Date | null;
+		duesAccountId: string;
+		stripePaymentIntentId: string | null;
 	}[];
 } & {
 	id: string;
@@ -330,10 +348,14 @@ export declare function getDuesAccount(homeownerId: string): Promise<({
 	homeownerId: string;
 	balanceCents: number;
 	monthlyDueCents: number;
+	overdueMonths: number;
+	lastPaymentAt: Date | null;
 	autopayEnabled: boolean;
 	stripePaymentMethodId: string | null;
 	lastChargedAt: Date | null;
 	nextDueDate: Date | null;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
 }) | null>;
 export declare function chargeMonthlyDues(hoaId: string): Promise<{
@@ -353,13 +375,13 @@ export declare function recordPayment(input: {
 	type: string;
 	id: string;
 	paidAt: Date | null;
-	amountCents: number;
 	createdAt: Date;
+	amountCents: number;
 	description: string;
-	duesAccountId: string;
-	stripePaymentIntentId: string | null;
 	status: string;
 	dueDate: Date | null;
+	duesAccountId: string;
+	stripePaymentIntentId: string | null;
 }>;
 export declare function getFinancialSummary(hoaId: string): Promise<{
 	totalOutstanding: number;
@@ -380,15 +402,15 @@ export declare function addBudgetLine(input: {
 	notes?: string;
 }): Promise<{
 	id: string;
-	name: string;
-	createdAt: Date;
-	hoaId: string;
-	year: number;
 	category: string;
+	createdAt: Date;
+	name: string;
+	hoaId: string;
+	notes: string | null;
 	month: number | null;
+	year: number;
 	budgetedCents: number;
 	actualCents: number;
-	notes: string | null;
 }>;
 export declare function createViolation(input: {
 	hoaId: string;
@@ -401,16 +423,17 @@ export declare function createViolation(input: {
 	photoUrls?: string[];
 }): Promise<{
 	id: string;
+	category: string;
 	createdAt: Date;
-	description: string;
 	hoaId: string;
 	address: string;
-	category: string;
 	homeownerId: string | null;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
-	status: string;
-	notes: string | null;
+	description: string;
 	severity: string;
+	status: string;
 	photoUrls: string | null;
 	reportedBy: string | null;
 	noticeCount: number;
@@ -418,36 +441,38 @@ export declare function createViolation(input: {
 	nextNoticeAt: Date | null;
 	fineCents: number | null;
 	resolvedAt: Date | null;
+	notes: string | null;
 }>;
 export declare function getViolations(hoaId: string): Promise<({
 	homeowner: {
-		name: string;
 		email: string;
+		name: string;
 	} | null;
 	notices: {
 		id: string;
 		dueDate: Date;
+		body: string;
 		sentAt: Date;
 		violationId: string;
 		noticeNumber: number;
 		sentTo: string;
 		method: string;
-		body: string;
 		acknowledged: boolean;
 		acknowledgedAt: Date | null;
 	}[];
 } & {
 	id: string;
+	category: string;
 	createdAt: Date;
-	description: string;
 	hoaId: string;
 	address: string;
-	category: string;
 	homeownerId: string | null;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
-	status: string;
-	notes: string | null;
+	description: string;
 	severity: string;
+	status: string;
 	photoUrls: string | null;
 	reportedBy: string | null;
 	noticeCount: number;
@@ -455,17 +480,18 @@ export declare function getViolations(hoaId: string): Promise<({
 	nextNoticeAt: Date | null;
 	fineCents: number | null;
 	resolvedAt: Date | null;
+	notes: string | null;
 })[]>;
 export declare function sendViolationNotice(violationId: string): Promise<{
 	notice: {
 		id: string;
 		dueDate: Date;
+		body: string;
 		sentAt: Date;
 		violationId: string;
 		noticeNumber: number;
 		sentTo: string;
 		method: string;
-		body: string;
 		acknowledged: boolean;
 		acknowledgedAt: Date | null;
 	};
@@ -474,16 +500,17 @@ export declare function sendViolationNotice(violationId: string): Promise<{
 }>;
 export declare function resolveViolation(violationId: string, notes?: string): Promise<{
 	id: string;
+	category: string;
 	createdAt: Date;
-	description: string;
 	hoaId: string;
 	address: string;
-	category: string;
 	homeownerId: string | null;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
-	status: string;
-	notes: string | null;
+	description: string;
 	severity: string;
+	status: string;
 	photoUrls: string | null;
 	reportedBy: string | null;
 	noticeCount: number;
@@ -491,6 +518,7 @@ export declare function resolveViolation(violationId: string, notes?: string): P
 	nextNoticeAt: Date | null;
 	fineCents: number | null;
 	resolvedAt: Date | null;
+	notes: string | null;
 }>;
 export declare function submitARCRequest(input: {
 	hoaId: string;
@@ -503,12 +531,13 @@ export declare function submitARCRequest(input: {
 	documentUrls?: string[];
 }): Promise<{
 	id: string;
-	description: string;
 	hoaId: string;
 	address: string;
-	submittedAt: Date;
 	homeownerId: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
+	description: string;
 	status: string;
 	projectType: string;
 	estimatedCost: number | null;
@@ -518,22 +547,24 @@ export declare function submitARCRequest(input: {
 	reviewedBy: string | null;
 	reviewNotes: string | null;
 	conditions: string | null;
+	submittedAt: Date;
 	decidedAt: Date | null;
 }>;
 export declare function getARCRequests(hoaId: string): Promise<({
 	homeowner: {
-		name: string;
 		email: string;
+		name: string;
 		address: string;
 	};
 } & {
 	id: string;
-	description: string;
 	hoaId: string;
 	address: string;
-	submittedAt: Date;
 	homeownerId: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
+	description: string;
 	status: string;
 	projectType: string;
 	estimatedCost: number | null;
@@ -543,6 +574,7 @@ export declare function getARCRequests(hoaId: string): Promise<({
 	reviewedBy: string | null;
 	reviewNotes: string | null;
 	conditions: string | null;
+	submittedAt: Date;
 	decidedAt: Date | null;
 })[]>;
 export declare function reviewARCRequest(input: {
@@ -553,12 +585,13 @@ export declare function reviewARCRequest(input: {
 	conditions?: string;
 }): Promise<{
 	id: string;
-	description: string;
 	hoaId: string;
 	address: string;
-	submittedAt: Date;
 	homeownerId: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
+	description: string;
 	status: string;
 	projectType: string;
 	estimatedCost: number | null;
@@ -568,6 +601,7 @@ export declare function reviewARCRequest(input: {
 	reviewedBy: string | null;
 	reviewNotes: string | null;
 	conditions: string | null;
+	submittedAt: Date;
 	decidedAt: Date | null;
 }>;
 export declare function createMeeting(input: {
@@ -584,11 +618,13 @@ export declare function createMeeting(input: {
 	id: string;
 	createdAt: Date;
 	hoaId: string;
-	scheduledAt: Date;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
 	status: string;
 	title: string;
 	location: string | null;
+	scheduledAt: Date;
 	virtualLink: string | null;
 	agenda: string | null;
 	minutes: string | null;
@@ -608,9 +644,10 @@ export declare function getMeetings(hoaId: string): Promise<({
 		status: string;
 		notes: string | null;
 		title: string;
-		order: number;
 		meetingId: string;
+		order: number;
 		presenter: string | null;
+		actionRequired: boolean;
 		duration: number | null;
 	}[];
 } & {
@@ -618,11 +655,13 @@ export declare function getMeetings(hoaId: string): Promise<({
 	id: string;
 	createdAt: Date;
 	hoaId: string;
-	scheduledAt: Date;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
 	status: string;
 	title: string;
 	location: string | null;
+	scheduledAt: Date;
 	virtualLink: string | null;
 	agenda: string | null;
 	minutes: string | null;
@@ -639,11 +678,13 @@ export declare function updateMeetingMinutes(input: {
 	id: string;
 	createdAt: Date;
 	hoaId: string;
-	scheduledAt: Date;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
 	status: string;
 	title: string;
 	location: string | null;
+	scheduledAt: Date;
 	virtualLink: string | null;
 	agenda: string | null;
 	minutes: string | null;
@@ -664,9 +705,10 @@ export declare function addAgendaItem(input: {
 	status: string;
 	notes: string | null;
 	title: string;
-	order: number;
 	meetingId: string;
+	order: number;
 	presenter: string | null;
+	actionRequired: boolean;
 	duration: number | null;
 }>;
 export declare function createVote(input: {
@@ -684,8 +726,10 @@ export declare function createVote(input: {
 	type: string;
 	id: string;
 	createdAt: Date;
-	description: string | null;
 	hoaId: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
+	description: string | null;
 	status: string;
 	title: string;
 	meetingId: string | null;
@@ -700,8 +744,8 @@ export declare function createVote(input: {
 }>;
 export declare function getVotes(hoaId: string): Promise<({
 	meeting: {
-		scheduledAt: Date;
 		title: string;
+		scheduledAt: Date;
 	} | null;
 	casts: {
 		id: string;
@@ -714,8 +758,10 @@ export declare function getVotes(hoaId: string): Promise<({
 	type: string;
 	id: string;
 	createdAt: Date;
-	description: string | null;
 	hoaId: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
+	description: string | null;
 	status: string;
 	title: string;
 	meetingId: string | null;
@@ -752,8 +798,10 @@ export declare function closeVote(voteId: string): Promise<{
 	type: string;
 	id: string;
 	createdAt: Date;
-	description: string | null;
 	hoaId: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
+	description: string | null;
 	status: string;
 	title: string;
 	meetingId: string | null;
@@ -778,17 +826,20 @@ export declare function createWorkOrder(input: {
 	dueDate?: string;
 }): Promise<{
 	id: string;
-	createdAt: Date;
-	description: string;
-	hoaId: string;
 	category: string;
+	createdAt: Date;
+	hoaId: string;
 	homeownerId: string | null;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
+	description: string;
 	status: string;
-	dueDate: Date | null;
 	photoUrls: string | null;
+	notes: string | null;
 	estimatedCost: number | null;
 	title: string;
+	area: string | null;
 	location: string;
 	priority: string;
 	assignedTo: string | null;
@@ -797,6 +848,7 @@ export declare function createWorkOrder(input: {
 	completionNotes: string | null;
 	boardApproved: boolean;
 	boardApprovedAt: Date | null;
+	dueDate: Date | null;
 	completedAt: Date | null;
 }>;
 export declare function getWorkOrders(hoaId: string): Promise<({
@@ -806,17 +858,20 @@ export declare function getWorkOrders(hoaId: string): Promise<({
 	} | null;
 } & {
 	id: string;
-	createdAt: Date;
-	description: string;
-	hoaId: string;
 	category: string;
+	createdAt: Date;
+	hoaId: string;
 	homeownerId: string | null;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
+	description: string;
 	status: string;
-	dueDate: Date | null;
 	photoUrls: string | null;
+	notes: string | null;
 	estimatedCost: number | null;
 	title: string;
+	area: string | null;
 	location: string;
 	priority: string;
 	assignedTo: string | null;
@@ -825,6 +880,7 @@ export declare function getWorkOrders(hoaId: string): Promise<({
 	completionNotes: string | null;
 	boardApproved: boolean;
 	boardApprovedAt: Date | null;
+	dueDate: Date | null;
 	completedAt: Date | null;
 })[]>;
 export declare function updateWorkOrder(input: {
@@ -836,17 +892,20 @@ export declare function updateWorkOrder(input: {
 	boardApproved?: boolean;
 }): Promise<{
 	id: string;
-	createdAt: Date;
-	description: string;
-	hoaId: string;
 	category: string;
+	createdAt: Date;
+	hoaId: string;
 	homeownerId: string | null;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
+	description: string;
 	status: string;
-	dueDate: Date | null;
 	photoUrls: string | null;
+	notes: string | null;
 	estimatedCost: number | null;
 	title: string;
+	area: string | null;
 	location: string;
 	priority: string;
 	assignedTo: string | null;
@@ -855,6 +914,7 @@ export declare function updateWorkOrder(input: {
 	completionNotes: string | null;
 	boardApproved: boolean;
 	boardApprovedAt: Date | null;
+	dueDate: Date | null;
 	completedAt: Date | null;
 }>;
 export declare function createAmenity(input: {
@@ -869,11 +929,11 @@ export declare function createAmenity(input: {
 	advanceBookingDays?: number;
 }): Promise<{
 	id: string;
-	name: string;
 	createdAt: Date;
-	description: string | null;
+	name: string;
 	hoaId: string;
 	active: boolean;
+	description: string | null;
 	capacity: number | null;
 	rules: string | null;
 	depositCents: number | null;
@@ -890,24 +950,27 @@ export declare function getAmenities(hoaId: string): Promise<({
 		id: string;
 		createdAt: Date;
 		homeownerId: string;
+		aiAnalysis: string | null;
+		aiAnalyzedAt: Date | null;
 		updatedAt: Date;
 		status: string;
 		notes: string | null;
-		startTime: string;
-		date: string;
 		amenityId: string;
+		date: string;
+		startTime: string;
 		endTime: string;
+		partySize: number | null;
 		guestCount: number | null;
 		depositPaid: boolean;
 		depositRefunded: boolean;
 	})[];
 } & {
 	id: string;
-	name: string;
 	createdAt: Date;
-	description: string | null;
+	name: string;
 	hoaId: string;
 	active: boolean;
+	description: string | null;
 	capacity: number | null;
 	rules: string | null;
 	depositCents: number | null;
@@ -927,13 +990,16 @@ export declare function createReservation(input: {
 	id: string;
 	createdAt: Date;
 	homeownerId: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
 	status: string;
 	notes: string | null;
-	startTime: string;
-	date: string;
 	amenityId: string;
+	date: string;
+	startTime: string;
 	endTime: string;
+	partySize: number | null;
 	guestCount: number | null;
 	depositPaid: boolean;
 	depositRefunded: boolean;
@@ -942,13 +1008,16 @@ export declare function cancelReservation(id: string): Promise<{
 	id: string;
 	createdAt: Date;
 	homeownerId: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	updatedAt: Date;
 	status: string;
 	notes: string | null;
-	startTime: string;
-	date: string;
 	amenityId: string;
+	date: string;
+	startTime: string;
 	endTime: string;
+	partySize: number | null;
 	guestCount: number | null;
 	depositPaid: boolean;
 	depositRefunded: boolean;
@@ -963,27 +1032,31 @@ export declare function createAnnouncement(input: {
 	expiresAt?: string;
 }): Promise<{
 	id: string;
+	category: string;
 	createdAt: Date;
 	hoaId: string;
-	category: string;
-	sentAt: Date | null;
-	body: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	title: string;
+	body: string;
 	pinned: boolean;
 	sentEmail: boolean;
+	sentAt: Date | null;
 	authorName: string;
 	expiresAt: Date | null;
 }>;
 export declare function getAnnouncements(hoaId: string): Promise<{
 	id: string;
+	category: string;
 	createdAt: Date;
 	hoaId: string;
-	category: string;
-	sentAt: Date | null;
-	body: string;
+	aiAnalysis: string | null;
+	aiAnalyzedAt: Date | null;
 	title: string;
+	body: string;
 	pinned: boolean;
 	sentEmail: boolean;
+	sentAt: Date | null;
 	authorName: string;
 	expiresAt: Date | null;
 }[]>;
@@ -997,8 +1070,8 @@ export declare function sendMessage(input: {
 	referenceType?: string;
 }): Promise<{
 	id: string;
-	createdAt: Date;
 	category: string;
+	createdAt: Date;
 	homeownerId: string;
 	updatedAt: Date;
 	status: string;
@@ -1015,8 +1088,8 @@ export declare function getMessages(homeownerId: string): Promise<({
 	};
 } & {
 	id: string;
-	createdAt: Date;
 	category: string;
+	createdAt: Date;
 	homeownerId: string;
 	updatedAt: Date;
 	status: string;
@@ -1033,8 +1106,8 @@ export declare function getHOAMessages(hoaId: string): Promise<({
 	};
 } & {
 	id: string;
-	createdAt: Date;
 	category: string;
+	createdAt: Date;
 	homeownerId: string;
 	updatedAt: Date;
 	status: string;
@@ -1105,23 +1178,23 @@ export declare function getOSDashboard(hoaId: string): Promise<{
 		}[];
 	} & {
 		id: string;
-		name: string;
-		community: string;
+		contactName: string;
+		zip: string;
 		city: string;
 		state: string;
-		zip: string;
-		units: number;
-		contactName: string;
-		contactEmail: string;
-		contactPhone: string | null;
 		stripeSessionId: string | null;
 		paid: boolean;
 		paidAt: Date | null;
+		createdAt: Date;
+		name: string;
+		community: string;
+		units: number;
+		contactEmail: string;
+		contactPhone: string | null;
 		amountCents: number | null;
 		plan: string;
 		pricePerUnit: number;
 		onboardedAt: Date | null;
-		createdAt: Date;
 	}) | null;
 	stats: {
 		homeowners: number;
@@ -1135,11 +1208,13 @@ export declare function getOSDashboard(hoaId: string): Promise<{
 		id: string;
 		createdAt: Date;
 		hoaId: string;
-		scheduledAt: Date;
+		aiAnalysis: string | null;
+		aiAnalyzedAt: Date | null;
 		updatedAt: Date;
 		status: string;
 		title: string;
 		location: string | null;
+		scheduledAt: Date;
 		virtualLink: string | null;
 		agenda: string | null;
 		minutes: string | null;
@@ -1156,5 +1231,48 @@ export declare function getOSDashboard(hoaId: string): Promise<{
 		homeownerCount: number;
 	};
 }>;
+export declare function runContractorScreening(contractorId: string): Promise<{
+	jobId: number;
+}>;
+export declare function runDelinquencyAnalysis(input: {
+	hoaId: string;
+	homeownerId: string;
+}): Promise<{
+	jobId: number;
+}>;
+export declare function runViolationClassification(violationId: string): Promise<{
+	jobId: number;
+}>;
+export declare function runARCReview(arcId: string): Promise<{
+	jobId: number;
+}>;
+export declare function runWorkOrderRouting(workOrderId: string): Promise<{
+	jobId: number;
+}>;
+export declare function runAgendaGeneration(meetingId: string): Promise<{
+	jobId: number;
+}>;
+export declare function runVoteSummary(voteId: string): Promise<{
+	jobId: number;
+}>;
+export declare function runReservationAnalysis(reservationId: string): Promise<{
+	jobId: number;
+}>;
+export declare function runAnnouncementDraft(announcementId: string): Promise<{
+	jobId: number;
+}>;
+export declare function getAgentJobStatus(jobId: number): Promise<{
+	status: string;
+	jobId: number;
+	error?: undefined;
+} | {
+	status: string;
+	jobId: number;
+	error: string | undefined;
+}>;
+export declare function getAIAnalysis(input: {
+	type: "violation" | "arc" | "workorder" | "meeting" | "vote" | "reservation" | "announcement" | "dues" | "contractor";
+	id: string;
+}): Promise<any>;
 
 export {};

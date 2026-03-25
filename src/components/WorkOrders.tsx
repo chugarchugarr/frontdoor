@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { SectionHeader, Btn, Card, StatusTag, Tag, EmptyState, Modal, FDInput, FDSelect, FDTextarea, Icons, Label } from "./ui-kit";
+import { AIPanel, AIField, AIList, AIScore } from "./AIPanel";
 
 const WO_CATS = ["plumbing","electrical","landscaping","hvac","structural","pool","general"];
 const PRIORITIES = ["low","normal","high","urgent"];
@@ -105,6 +106,28 @@ export function WorkOrders({ hoaId }: { hoaId: string }) {
                 {o.dueDate && ` · Due ${new Date(o.dueDate).toLocaleDateString()}`}
               </div>
             </div>
+            <AIPanel
+              label="WorkOrder AI"
+              description="vendor routing, cost estimate, permit check"
+              runFn={() => rpc.runWorkOrderRouting(o.id)}
+              fetchFn={() => rpc.getAIAnalysis({ type: "workorder", id: o.id })}
+              queryKey={["workorders", hoaId]}
+              alreadyAnalyzed={!!(o as WO & { aiAnalysis?: string | null }).aiAnalysis}
+              renderResult={(data) => {
+                const d = data as { recommended_vendor_type?: string; suggested_vendors?: string[]; estimated_cost_range?: string; estimated_duration?: string; permits_required?: boolean; permit_notes?: string; urgency_score?: number; notes?: string[] };
+                return (
+                  <div>
+                    {d.recommended_vendor_type && <AIField label="Vendor Type" value={d.recommended_vendor_type} />}
+                    {d.estimated_cost_range && <AIField label="Estimated Cost" value={d.estimated_cost_range} color={T.gold} />}
+                    {d.estimated_duration && <AIField label="Est. Duration" value={d.estimated_duration} />}
+                    {d.urgency_score != null && <AIScore label="Urgency" score={d.urgency_score} />}
+                    {d.permits_required && <AIField label="Permits Required" value={d.permit_notes ?? "Yes — check local requirements"} color={T.warn} />}
+                    {d.suggested_vendors && <AIList label="Suggested Vendors" items={d.suggested_vendors} />}
+                    {d.notes && <AIList label="Notes" items={d.notes} />}
+                  </div>
+                );
+              }}
+            />
           </Card>
         ))}
       </div>

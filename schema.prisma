@@ -88,20 +88,22 @@ model HomeownerPermission {
 }
 
 model ContractorWaitlist {
-  id              String   @id @default(cuid())
-  company         String
-  contactName     String
-  email           String
-  phone           String?
-  category        String
-  zip             String
-  city            String   @default("Austin")
-  state           String   @default("TX")
-  stripeSessionId String?
-  paid            Boolean  @default(false)
-  paidAt          DateTime?
-  position        Int?
-  createdAt       DateTime @default(now())
+  id                  String   @id @default(cuid())
+  company             String
+  contactName         String
+  email               String
+  phone               String?
+  category            String
+  zip                 String
+  city                String   @default("Austin")
+  state               String   @default("TX")
+  stripeSessionId     String?
+  paid                Boolean  @default(false)
+  paidAt              DateTime?
+  position            Int?
+  aiScreeningResult   String?  // JSON
+  aiScreenedAt        DateTime?
+  createdAt           DateTime @default(now())
 }
 
 // ─── PayOS: Dues & Financials ─────────────────────────────────────────
@@ -112,10 +114,14 @@ model DuesAccount {
   homeowner       Homeowner @relation(fields: [homeownerId], references: [id])
   balanceCents    Int      @default(0)    // current balance owed (positive = owed, negative = credit)
   monthlyDueCents Int      @default(0)    // set by HOA
+  overdueMonths   Int      @default(0)
+  lastPaymentAt   DateTime?
   autopayEnabled  Boolean  @default(false)
   stripePaymentMethodId String?
   lastChargedAt   DateTime?
   nextDueDate     DateTime?
+  aiAnalysis      String?  // JSON
+  aiAnalyzedAt    DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -171,6 +177,8 @@ model Violation {
   fineCents       Int?
   resolvedAt      DateTime?
   notes           String?
+  aiAnalysis      String?  // JSON
+  aiAnalyzedAt    DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -213,6 +221,8 @@ model ARCRequest {
   submittedAt     DateTime @default(now())
   decidedAt       DateTime?
   updatedAt       DateTime @updatedAt
+  aiAnalysis      String?  // JSON
+  aiAnalyzedAt    DateTime?
 }
 
 // ─── BoardRoom: Governance & Meetings ────────────────────────────────
@@ -231,6 +241,8 @@ model Meeting {
   quorumRequired  Int?     // number of board members needed
   quorumMet       Boolean?
   status          String   @default("scheduled") // scheduled | in_progress | completed | cancelled
+  aiAnalysis      String?  // JSON
+  aiAnalyzedAt    DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -247,6 +259,7 @@ model AgendaItem {
   description     String?
   presenter       String?
   duration        Int?     // minutes
+  actionRequired  Boolean  @default(false)
   status          String   @default("pending") // pending | discussed | tabled | action_required
   notes           String?
   createdAt       DateTime @default(now())
@@ -272,6 +285,8 @@ model Vote {
   closesAt        DateTime
   resultSummary   String?
   certifiedAt     DateTime?
+  aiAnalysis      String?  // JSON
+  aiAnalyzedAt    DateTime?
   createdAt       DateTime @default(now())
 
   casts           VoteCast[]
@@ -299,6 +314,8 @@ model WorkOrder {
   homeowner       Homeowner? @relation(fields: [homeownerId], references: [id])
   title           String
   description     String
+  area            String?
+  notes           String?
   category        String   // plumbing | electrical | landscaping | hvac | structural | pool | general
   location        String   // common area name or address
   priority        String   @default("normal")  // low | normal | high | urgent
@@ -313,6 +330,8 @@ model WorkOrder {
   boardApprovedAt DateTime?
   dueDate         DateTime?
   completedAt     DateTime?
+  aiAnalysis      String?  // JSON
+  aiAnalyzedAt    DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -346,11 +365,14 @@ model Reservation {
   date            String   // YYYY-MM-DD
   startTime       String   // HH:MM
   endTime         String   // HH:MM
+  partySize       Int?
   guestCount      Int?
   notes           String?
-  status          String   @default("confirmed") // pending | confirmed | cancelled | no_show
+  status          String   @default("pending") // pending | confirmed | cancelled | no_show
   depositPaid     Boolean  @default(false)
   depositRefunded Boolean  @default(false)
+  aiAnalysis      String?  // JSON
+  aiAnalyzedAt    DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -371,6 +393,8 @@ model Announcement {
   sentAt          DateTime?
   authorName      String
   expiresAt       DateTime?
+  aiAnalysis      String?  // JSON
+  aiAnalyzedAt    DateTime?
   createdAt       DateTime @default(now())
 }
 

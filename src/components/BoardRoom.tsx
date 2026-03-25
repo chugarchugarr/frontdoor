@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { SectionHeader, Btn, Card, StatusTag, Tag, EmptyState, Modal, FDInput, FDSelect, FDTextarea, Icons, Label } from "./ui-kit";
+import { AIPanel, AIField, AIList } from "./AIPanel";
 
 const MEETING_TYPES = ["board","annual","special","committee","executive"];
 
@@ -103,6 +104,37 @@ export function BoardRoom({ hoaId }: { hoaId: string }) {
                     Record Minutes
                   </Btn>
                 </div>
+                <AIPanel
+                  label="BoardRoom AI"
+                  description="generates Robert's Rules agenda from open items"
+                  runFn={() => rpc.runAgendaGeneration(m.id)}
+                  fetchFn={() => rpc.getAIAnalysis({ type: "meeting", id: m.id })}
+                  queryKey={["meetings", hoaId]}
+                  alreadyAnalyzed={!!(m as MTG & { aiAnalysis?: string | null }).aiAnalysis}
+                  renderResult={(data) => {
+                    const d = data as { agenda_items?: Array<{ order: number; title: string; time_allotment?: string; action_required?: boolean }>; estimated_duration_minutes?: number; quorum_notes?: string; preparation_checklist?: string[] };
+                    return (
+                      <div>
+                        {d.estimated_duration_minutes && <AIField label="Est. Duration" value={`${d.estimated_duration_minutes} minutes`} />}
+                        {d.quorum_notes && <AIField label="Quorum Notes" value={d.quorum_notes} />}
+                        {d.agenda_items && d.agenda_items.length > 0 && (
+                          <div style={{ marginBottom: 8 }}>
+                            <div style={{ fontFamily: T.fontMono, fontSize: 9, color: T.inkLight, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>Generated Agenda</div>
+                            {d.agenda_items.map((item, i) => (
+                              <div key={i} style={{ display: "flex", gap: 8, padding: "5px 0", borderBottom: `1px solid ${T.stone}20` }}>
+                                <span style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight, minWidth: 20 }}>{item.order}.</span>
+                                <span style={{ fontFamily: T.fontSans, fontSize: 13, color: T.ink, flex: 1 }}>{item.title}</span>
+                                {item.time_allotment && <span style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>{item.time_allotment}</span>}
+                                {item.action_required && <span style={{ fontFamily: T.fontMono, fontSize: 9, color: T.warn, background: T.warnPale, padding: "1px 6px", borderRadius: 4 }}>ACTION</span>}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {d.preparation_checklist && <AIList label="Prep Checklist" items={d.preparation_checklist} />}
+                      </div>
+                    );
+                  }}
+                />
               </Card>
             ))}
           </div>

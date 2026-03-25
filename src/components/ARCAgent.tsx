@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { SectionHeader, Btn, Card, StatusTag, Tag, EmptyState, Modal, FDInput, FDSelect, FDTextarea, Icons, Label } from "./ui-kit";
+import { AIPanel, AIField, AIList, AIScore } from "./AIPanel";
 
 const PROJECT_TYPES = ["fence","paint","addition","shed","pool","landscaping","roof","solar","deck","driveway","other"];
 
@@ -104,6 +105,29 @@ export function ARCAgent({ hoaId }: { hoaId: string }) {
                   Submitted {new Date(r.submittedAt).toLocaleDateString()} · Deadline {new Date(r.reviewDeadline).toLocaleDateString()}
                 </div>
               </div>
+              <AIPanel
+                label="ARC Agent AI"
+                description="reviews against CC&Rs, recommends approval/denial"
+                runFn={() => rpc.runARCReview(r.id)}
+                fetchFn={() => rpc.getAIAnalysis({ type: "arc", id: r.id })}
+                queryKey={["arc", hoaId]}
+                alreadyAnalyzed={!!(r as ARC & { aiAnalysis?: string | null }).aiAnalysis}
+                renderResult={(data) => {
+                  const d = data as { recommendation?: string; confidence?: number; ccr_sections?: string[]; conditions?: string[]; concerns?: string[]; decision_letter?: string };
+                  return (
+                    <div>
+                      {d.recommendation && (
+                        <AIField label="Recommendation" value={d.recommendation.toUpperCase()} color={d.recommendation === "approve" ? T.success : d.recommendation === "deny" ? T.danger : T.warn} />
+                      )}
+                      {d.confidence != null && <AIScore label="Confidence" score={d.confidence} />}
+                      {d.ccr_sections && <AIList label="CC&R Sections" items={d.ccr_sections} />}
+                      {d.conditions && <AIList label="Conditions" items={d.conditions} color={T.gold} />}
+                      {d.concerns && <AIList label="Concerns" items={d.concerns} color={T.danger} />}
+                      {d.decision_letter && <AIField label="Draft Decision Letter" value={<span style={{ whiteSpace: "pre-wrap" }}>{d.decision_letter}</span>} />}
+                    </div>
+                  );
+                }}
+              />
             </Card>
           );
         })}

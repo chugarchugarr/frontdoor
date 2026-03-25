@@ -2,6 +2,7 @@ import { db } from "@/api/db";
 import { env } from "@/lib/env";
 import Stripe from "stripe";
 import { Resend } from "resend";
+import { queue } from "@/api/queue";
 
 function getStripe() {
   const key = env.STRIPE_SECRET_KEY;
@@ -1283,4 +1284,99 @@ export async function getOSDashboard(hoaId: string) {
     nextMeeting: meetings,
     financial,
   };
+}
+
+// ─── AI Agent Triggers ────────────────────────────────────────────────
+// Each function enqueues the AI job and returns the job ID for polling.
+
+export async function runContractorScreening(contractorId: string) {
+  const job = queue.screenContractor({ contractorId });
+  return { jobId: job.id };
+}
+
+export async function runDelinquencyAnalysis(input: { hoaId: string; homeownerId: string }) {
+  const job = queue.analyzeDelinquency({ hoaId: input.hoaId, homeownerId: input.homeownerId });
+  return { jobId: job.id };
+}
+
+export async function runViolationClassification(violationId: string) {
+  const job = queue.classifyViolation({ violationId });
+  return { jobId: job.id };
+}
+
+export async function runARCReview(arcId: string) {
+  const job = queue.reviewARCRequest({ arcId });
+  return { jobId: job.id };
+}
+
+export async function runWorkOrderRouting(workOrderId: string) {
+  const job = queue.routeWorkOrder({ workOrderId });
+  return { jobId: job.id };
+}
+
+export async function runAgendaGeneration(meetingId: string) {
+  const job = queue.generateAgenda({ meetingId });
+  return { jobId: job.id };
+}
+
+export async function runVoteSummary(voteId: string) {
+  const job = queue.summarizeVoteResults({ voteId });
+  return { jobId: job.id };
+}
+
+export async function runReservationAnalysis(reservationId: string) {
+  const job = queue.analyzeReservation({ reservationId });
+  return { jobId: job.id };
+}
+
+export async function runAnnouncementDraft(announcementId: string) {
+  const job = queue.draftAnnouncement({ announcementId });
+  return { jobId: job.id };
+}
+
+export async function getAgentJobStatus(jobId: number) {
+  const job = queue.getJob(jobId);
+  if (!job) return { status: "UNKNOWN", jobId };
+  const statusMap: Record<number, string> = { 0: "PENDING", 1: "PROCESSING", 2: "DONE", 3: "FAILED" };
+  return { status: statusMap[job.status] ?? "UNKNOWN", jobId, error: job.error };
+}
+
+// Fetch AI analysis result attached to a record
+export async function getAIAnalysis(input: {
+  type: "violation" | "arc" | "workorder" | "meeting" | "vote" | "reservation" | "announcement" | "dues" | "contractor";
+  id: string;
+}) {
+  let raw: string | null = null;
+
+  switch (input.type) {
+    case "violation":
+      raw = (await db.violation.findUnique({ where: { id: input.id }, select: { aiAnalysis: true } }))?.aiAnalysis ?? null;
+      break;
+    case "arc":
+      raw = (await db.aRCRequest.findUnique({ where: { id: input.id }, select: { aiAnalysis: true } }))?.aiAnalysis ?? null;
+      break;
+    case "workorder":
+      raw = (await db.workOrder.findUnique({ where: { id: input.id }, select: { aiAnalysis: true } }))?.aiAnalysis ?? null;
+      break;
+    case "meeting":
+      raw = (await db.meeting.findUnique({ where: { id: input.id }, select: { aiAnalysis: true } }))?.aiAnalysis ?? null;
+      break;
+    case "vote":
+      raw = (await db.vote.findUnique({ where: { id: input.id }, select: { aiAnalysis: true } }))?.aiAnalysis ?? null;
+      break;
+    case "reservation":
+      raw = (await db.reservation.findUnique({ where: { id: input.id }, select: { aiAnalysis: true } }))?.aiAnalysis ?? null;
+      break;
+    case "announcement":
+      raw = (await db.announcement.findUnique({ where: { id: input.id }, select: { aiAnalysis: true } }))?.aiAnalysis ?? null;
+      break;
+    case "dues":
+      raw = (await db.duesAccount.findUnique({ where: { id: input.id }, select: { aiAnalysis: true } }))?.aiAnalysis ?? null;
+      break;
+    case "contractor":
+      raw = (await db.contractorWaitlist.findUnique({ where: { id: input.id }, select: { aiScreeningResult: true } }))?.aiScreeningResult ?? null;
+      break;
+  }
+
+  return raw ? JSON.parse(raw) : null;
 }

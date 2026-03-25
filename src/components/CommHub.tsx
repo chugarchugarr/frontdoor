@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { SectionHeader, Btn, Card, Tag, EmptyState, Modal, FDInput, FDSelect, FDTextarea, Icons } from "./ui-kit";
+import { AIPanel, AIField, AIList, AIScore } from "./AIPanel";
 
 const ANN_CATS = ["general","urgent","maintenance","events","financial","governance"];
 
@@ -79,6 +80,27 @@ export function CommHub({ hoaId }: { hoaId: string }) {
                   </div>
                 )}
               </div>
+              <AIPanel
+                label="CommHub AI"
+                description="rewrites for clarity, scores tone, suggests channels"
+                runFn={() => rpc.runAnnouncementDraft(a.id)}
+                fetchFn={() => rpc.getAIAnalysis({ type: "announcement", id: a.id })}
+                queryKey={["announcements", hoaId]}
+                alreadyAnalyzed={!!(a as ANN & { aiAnalysis?: string | null }).aiAnalysis}
+                renderResult={(data) => {
+                  const d = data as { rewritten_draft?: string; tone_score?: number; clarity_score?: number; suggested_channels?: string[]; subject_line?: string; improvements?: string[] };
+                  return (
+                    <div>
+                      {d.tone_score != null && <AIScore label="Tone" score={d.tone_score} />}
+                      {d.clarity_score != null && <AIScore label="Clarity" score={d.clarity_score} />}
+                      {d.subject_line && <AIField label="Email Subject Line" value={d.subject_line} />}
+                      {d.suggested_channels && <AIList label="Suggested Channels" items={d.suggested_channels} />}
+                      {d.improvements && <AIList label="Improvements" items={d.improvements} color={T.gold} />}
+                      {d.rewritten_draft && <AIField label="Rewritten Draft" value={<span style={{ whiteSpace: "pre-wrap" }}>{d.rewritten_draft}</span>} />}
+                    </div>
+                  );
+                }}
+              />
             </Card>
           );
         })}

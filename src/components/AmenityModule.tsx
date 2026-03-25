@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { SectionHeader, Btn, Card, StatusTag, EmptyState, Modal, FDInput, FDTextarea, Icons, Label } from "./ui-kit";
+import { AIPanel, AIField, AIList } from "./AIPanel";
 
 export function AmenityModule({ hoaId }: { hoaId: string }) {
   const qc = useQueryClient();
@@ -104,6 +105,26 @@ export function AmenityModule({ hoaId }: { hoaId: string }) {
                         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                           <StatusTag status={r.status} />
                           <button onClick={() => cancelMut.mutate(r.id)} style={{ background: "none", border: "none", color: T.danger, cursor: "pointer", fontSize: 12, fontFamily: T.fontSans }}>Cancel</button>
+                          <AIPanel
+                            label="Amenity AI"
+                            description="conflict check, auto-confirm or suggest alternatives"
+                            runFn={() => rpc.runReservationAnalysis(r.id)}
+                            fetchFn={() => rpc.getAIAnalysis({ type: "reservation", id: r.id })}
+                            queryKey={["amenities", hoaId]}
+                            renderResult={(data) => {
+                              const d = data as { status?: string; conflict?: boolean; conflict_details?: string; suggested_alternatives?: string[]; auto_confirmed?: boolean; deposit_required?: boolean; notes?: string[] };
+                              return (
+                                <div>
+                                  {d.status && <AIField label="AI Status" value={d.status.toUpperCase()} color={d.status === "confirmed" ? T.success : d.status === "conflict" ? T.danger : T.warn} />}
+                                  {d.conflict && d.conflict_details && <AIField label="Conflict" value={d.conflict_details} color={T.danger} />}
+                                  {d.auto_confirmed && <AIField label="Auto-Confirmed" value="✓ No conflicts detected" color={T.success} />}
+                                  {d.deposit_required && <AIField label="Deposit" value="Required for this booking" color={T.gold} />}
+                                  {d.suggested_alternatives && <AIList label="Alternatives" items={d.suggested_alternatives} />}
+                                  {d.notes && <AIList label="Notes" items={d.notes} />}
+                                </div>
+                              );
+                            }}
+                          />
                         </div>
                       </div>
                     ))}
