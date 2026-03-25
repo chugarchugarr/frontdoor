@@ -88,7 +88,7 @@ export function AIPanel({
   return (
     <div style={{
       border: `1px solid ${T.forest}30`,
-      borderRadius: T.radiusMd,
+      borderRadius: "16px",
       background: `${T.forest}08`,
       overflow: "hidden",
       marginTop: 16,
@@ -176,7 +176,7 @@ export function AIScore({ label, score }: { label: string; score: number }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
       <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight, width: 80 }}>{label}</div>
-      <div style={{ flex: 1, height: 4, background: T.stone, borderRadius: 2 }}>
+      <div style={{ flex: 1, height: 4, background: "var(--border)", borderRadius: 2 }}>
         <div style={{ width: `${score}%`, height: "100%", background: color, borderRadius: 2, transition: "width 0.5s" }} />
       </div>
       <div style={{ fontFamily: T.fontMono, fontSize: 11, color, width: 30, textAlign: "right" }}>{score}</div>
@@ -190,7 +190,7 @@ export function AIList({ label, items, color }: { label: string; items: string[]
     <div style={{ marginBottom: 8 }}>
       <div style={{ fontFamily: T.fontMono, fontSize: 9, color: T.inkLight, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>{label}</div>
       {items.map((item, i) => (
-        <div key={i} style={{ fontFamily: T.fontSans, fontSize: 12, color: color ?? T.inkMid, padding: "2px 0 2px 12px", borderLeft: `2px solid ${T.stone}`, marginBottom: 2, lineHeight: 1.5 }}>
+        <div key={i} style={{ fontFamily: T.fontSans, fontSize: 12, color: color ?? "var(--text-mid)", padding: "2px 0 2px 12px", borderLeft: "2px solid var(--border)", marginBottom: 2, lineHeight: 1.5 }}>
           {item}
         </div>
       ))}
@@ -199,6 +199,6 @@ export function AIList({ label, items, color }: { label: string; items: string[]
 }
 
 export function AIBadge({ value, map }: { value: string; map: Record<string, { color: string; bg: string }> }) {
-  const style = map[value] ?? { color: T.inkMid, bg: T.stone };
+  const style = map[value] ?? { color: "var(--text-mid)", bg: "var(--bg-subtle)" };
   return <Tag color={style.color} bg={style.bg}>{value}</Tag>;
 }

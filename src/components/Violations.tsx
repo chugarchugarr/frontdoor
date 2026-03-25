@@ -73,7 +73,7 @@ export function Violations({ hoaId }: { hoaId: string }) {
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
                   <span style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: T.ink }}>{v.address}</span>
                   <Tag color={v.severity === "major" ? T.danger : v.severity === "moderate" ? T.warn : T.inkMid}
-                       bg={v.severity === "major" ? T.dangerPale : v.severity === "moderate" ? T.warnPale : T.creamDark}>
+                       bg={v.severity === "major" ? T.dangerPale : v.severity === "moderate" ? T.warnPale : "var(--bg-subtle)"}>
                     {v.severity}
                   </Tag>
                   <Tag>{v.category}</Tag>
