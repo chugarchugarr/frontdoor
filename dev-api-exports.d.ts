@@ -1044,6 +1044,60 @@ export declare function getHOAMessages(hoaId: string): Promise<({
 	referenceId: string | null;
 	referenceType: string | null;
 })[]>;
+export declare function sendHOAWelcomeEmail(hoaId: string): Promise<{
+	sent: boolean;
+}>;
+export declare function sendViolationNoticeEmail(violationId: string): Promise<{
+	sent: boolean;
+}>;
+export declare function sendARCDecisionEmail(arcId: string): Promise<{
+	sent: boolean;
+}>;
+export declare function sendContractorWelcomeEmail(contractorId: string): Promise<{
+	sent: boolean;
+}>;
+export declare function stripeWebhook(input: {
+	body: string;
+	headers: Record<string, string | string[]>;
+}): Promise<{
+	received: boolean;
+}>;
+export declare function bulkImportHomeowners(input: {
+	hoaId: string;
+	csv: string;
+}): Promise<{
+	total: number;
+	created: number;
+	skipped: number;
+	results: {
+		name: string;
+		status: "created" | "skipped";
+		reason?: string;
+	}[];
+}>;
+export declare function getGatePassMetrics(): Promise<{
+	hoas: {
+		total: number;
+		paid: number;
+	};
+	homeowners: number;
+	units: number;
+	arr: number;
+	violations: {
+		open: number;
+	};
+	workOrders: {
+		open: number;
+	};
+	arc: {
+		pending: number;
+	};
+	contractors: {
+		total: number;
+		paid: number;
+		spotsLeft: number;
+	};
+}>;
 export declare function getOSDashboard(hoaId: string): Promise<{
 	hoa: ({
 		homeowners: {

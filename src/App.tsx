@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { client as rpc } from "@/lib/client";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useAuth } from "@adaptive-ai/sdk/client";
 import { T, GLOBAL_CSS } from "./components/tokens";
 import { Btn, FDInput, FDSelect, Tag, Icons, Card, Label, EmptyState } from "./components/ui-kit";
 import { Sidebar, type OSView } from "./components/Sidebar";
@@ -37,8 +38,9 @@ function SuccessScreen({ type, position }: { type: "hoa" | "contractor"; positio
 }
 
 // ─── Landing page ─────────────────────────────────────────────────────
-function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo") => void }) {
+function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") => void }) {
   const params = new URLSearchParams(window.location.search);
+  const auth = useAuth({ required: false });
   const { data: contractorStats } = useQuery({ queryKey: ["contractorStats"], queryFn: () => rpc.getContractorStats(), refetchInterval: 30000 });
   const { data: hoaStats } = useQuery({ queryKey: ["hoaStats"], queryFn: () => rpc.getHOAStats() });
 
@@ -55,9 +57,13 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo") => void 
           <span style={{ fontFamily: T.fontSerif, fontSize: 20, fontWeight: 600, color: T.charcoal }}>GatePass</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button onClick={() => onNav("demo")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", opacity: 0.7 }}>Demo</button>
-          <button onClick={() => onNav("hoa")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", opacity: 0.7 }}>For HOAs</button>
+          <button onClick={() => onNav("demo")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", opacity: 0.7, cursor: "pointer" }}>Demo</button>
+          <button onClick={() => onNav("hoa")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500, color: T.inkMid, background: "none", border: "none", opacity: 0.7, cursor: "pointer" }}>For HOAs</button>
           <Btn variant="outline" onClick={() => onNav("contractor")} style={{ padding: "7px 16px", fontSize: 12 }}>Contractor Waitlist</Btn>
+          {auth.status === "authenticated"
+            ? <Btn onClick={() => onNav("os")} style={{ padding: "7px 16px", fontSize: 12 }}>Open OS</Btn>
+            : <Btn onClick={() => auth.signIn()} style={{ padding: "7px 16px", fontSize: 12 }}>HOA Login</Btn>
+          }
         </div>
       </nav>
 
@@ -405,15 +411,48 @@ type RootView = "landing" | "hoa" | "contractor" | "demo" | "os-select" | "os";
 export default function App() {
   const [view, setView] = useState<RootView>("landing");
   const [activeHoaId, setActiveHoaId] = useState<string | null>(null);
+  const auth = useAuth({ required: false });
+
+  function handleNav(v: "hoa" | "contractor" | "demo" | "os") {
+    if (v === "os") {
+      if (auth.status === "authenticated") {
+        setView("os-select");
+      } else {
+        auth.signIn();
+      }
+    } else if (v === "demo") setView("demo");
+    else if (v === "hoa") setView("hoa");
+    else setView("contractor");
+  }
+
+  // If user just authenticated and wanted OS, redirect them
+  if (auth.status === "authenticated" && view === "landing") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("hoa_success")) {
+      // handled inside Landing
+    }
+  }
 
   return (
     <>
-      {view === "landing"    && <Landing onNav={(v) => { if (v === "demo") setView("demo"); else if (v === "hoa") setView("hoa"); else setView("contractor"); }} />}
+      {view === "landing"    && <Landing onNav={handleNav} />}
       {view === "hoa"        && <HOAOnboarding onBack={() => setView("landing")} />}
       {view === "contractor" && <ContractorWaitlist onBack={() => setView("landing")} />}
       {view === "demo"       && <DemoView onBack={() => setView("landing")} />}
-      {view === "os-select"  && <HOASelector onSelect={(id) => { setActiveHoaId(id); setView("os"); }} onPublic={() => setView("landing")} />}
-      {view === "os" && activeHoaId && <HOAOSShell hoaId={activeHoaId} onExit={() => setView("os-select")} />}
+      {view === "os-select"  && (
+        auth.status === "authenticated"
+          ? <HOASelector onSelect={(id) => { setActiveHoaId(id); setView("os"); }} onPublic={() => setView("landing")} />
+          : <div style={{ minHeight: "100vh", background: T.cream, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <style>{GLOBAL_CSS}</style>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontFamily: T.fontSerif, fontSize: 20, color: T.charcoal, marginBottom: 16 }}>Sign in to access GatePass OS</div>
+                <Btn onClick={() => auth.signIn()}>Sign In</Btn>
+              </div>
+            </div>
+      )}
+      {view === "os" && activeHoaId && auth.status === "authenticated" && (
+        <HOAOSShell hoaId={activeHoaId} onExit={() => setView("os-select")} />
+      )}
     </>
   );
 }

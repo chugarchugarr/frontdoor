@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "@adaptive-ai/sdk/client";
 import { T, GLOBAL_CSS } from "./tokens";
 import { Icons } from "./ui-kit";
 
@@ -23,6 +24,7 @@ const NAV_ITEMS: { id: OSView; label: string; icon: React.ReactNode; section?: s
 ];
 
 export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (v: OSView) => void; hoaName?: string }) {
+  const auth = useAuth({ required: false });
   return (
     <aside className="sidebar" style={{ width: 220, flexShrink: 0, background: T.charcoal, display: "flex", flexDirection: "column", height: "100vh", position: "sticky", top: 0, overflow: "auto" }}>
       <style>{GLOBAL_CSS}</style>
@@ -72,13 +74,20 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
       </nav>
 
       {/* Footer */}
-      <div style={{ padding: "14px 20px", borderTop: `1px solid rgba(255,255,255,0.07)` }}>
-        <button
-          onClick={() => onNav("landing")}
-          style={{ fontFamily: T.fontSans, fontSize: 12, color: "rgba(255,255,255,0.3)", background: "none", border: "none", cursor: "pointer" }}
-        >
-          ← Public site
-        </button>
+      <div style={{ padding: "14px 20px", borderTop: `1px solid rgba(255,255,255,0.07)`, display: "flex", flexDirection: "column", gap: 8 }}>
+        {auth.status === "authenticated" && (
+          <div style={{ fontFamily: T.fontMono, fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.04em" }}>
+            Signed in
+          </div>
+        )}
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <button
+            onClick={() => onNav("landing")}
+            style={{ fontFamily: T.fontSans, fontSize: 12, color: "rgba(255,255,255,0.3)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+          >
+            ← Public site
+          </button>
+        </div>
       </div>
     </aside>
   );

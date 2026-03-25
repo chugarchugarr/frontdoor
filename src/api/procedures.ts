@@ -1,6 +1,7 @@
 import { db } from "@/api/db";
 import { env } from "@/lib/env";
 import Stripe from "stripe";
+import { Resend } from "resend";
 
 function getStripe() {
   const key = env.STRIPE_SECRET_KEY;
@@ -495,6 +496,11 @@ This is an automated notice from GatePass HOA OS.
     },
   });
 
+  // Send email notice via Resend (non-blocking)
+  sendViolationNoticeEmail(violationId).catch((e) =>
+    console.error("[sendViolationNotice] email failed:", e)
+  );
+
   return { notice, noticeNumber, fineCents };
 }
 
@@ -551,7 +557,7 @@ export async function reviewARCRequest(input: {
   reviewNotes?: string;
   conditions?: string;
 }) {
-  return db.aRCRequest.update({
+  const result = await db.aRCRequest.update({
     where: { id: input.id },
     data: {
       status: input.status,
@@ -561,6 +567,13 @@ export async function reviewARCRequest(input: {
       decidedAt: new Date(),
     },
   });
+
+  // Send decision email via Resend (non-blocking)
+  sendARCDecisionEmail(input.id).catch((e) =>
+    console.error("[reviewARCRequest] email failed:", e)
+  );
+
+  return result;
 }
 
 // ─── BoardRoom ────────────────────────────────────────────────────────
@@ -923,6 +936,329 @@ export async function getHOAMessages(hoaId: string) {
 }
 
 // ─── OS Dashboard ─────────────────────────────────────────────────────
+
+// ─── Resend Email Helpers ─────────────────────────────────────────────
+
+function getResend() {
+  const key = env.RESEND_API_KEY;
+  if (!key) throw new Error("Resend not configured");
+  return new Resend(key);
+}
+
+export async function sendHOAWelcomeEmail(hoaId: string) {
+  const hoa = await db.hOA.findUnique({ where: { id: hoaId } });
+  if (!hoa) throw new Error("HOA not found");
+
+  const resend = getResend();
+  await resend.emails.send({
+    from: "GatePass <onboarding@gatepass.io>",
+    to: hoa.contactEmail,
+    subject: `Welcome to GatePass OS — ${hoa.community}`,
+    html: `
+      <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1C1C1A;">
+        <div style="background: #2A5240; padding: 32px 40px; border-radius: 12px 12px 0 0;">
+          <h1 style="color: #F4F1EC; font-size: 24px; margin: 0; font-weight: 700;">GatePass OS</h1>
+          <p style="color: #B8883A; margin: 6px 0 0; font-size: 14px;">The HOA that runs itself.</p>
+        </div>
+        <div style="background: #F4F1EC; padding: 40px; border-radius: 0 0 12px 12px; border: 1px solid #e0ddd8; border-top: none;">
+          <p style="font-size: 18px; font-weight: 600; margin: 0 0 16px;">You're in, ${hoa.contactName}.</p>
+          <p style="color: #555; line-height: 1.7; margin: 0 0 24px;">
+            <strong>${hoa.community}</strong> is now live on GatePass OS. Your community's ${hoa.units} units are enrolled on the ${hoa.plan === "full" ? "Full OS" : "Starter"} plan.
+          </p>
+          <div style="background: white; border: 1px solid #e0ddd8; border-radius: 8px; padding: 20px 24px; margin-bottom: 24px;">
+            <p style="font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 12px;">What happens next</p>
+            <ul style="margin: 0; padding: 0 0 0 20px; color: #333; line-height: 2;">
+              <li>We'll reach out within 24 hours to complete onboarding</li>
+              <li>Add your homeowner roster (CSV upload available)</li>
+              <li>Configure your first dues cycle</li>
+              <li>Activate your 9 OS modules</li>
+            </ul>
+          </div>
+          <p style="color: #888; font-size: 13px; line-height: 1.6;">Questions? Reply to this email or reach us at <a href="mailto:hello@gatepass.io" style="color: #2A5240;">hello@gatepass.io</a></p>
+        </div>
+      </div>
+    `,
+  });
+  return { sent: true };
+}
+
+export async function sendViolationNoticeEmail(violationId: string) {
+  const violation = await db.violation.findUnique({
+    where: { id: violationId },
+    include: { homeowner: true, hoa: true },
+  });
+  if (!violation || !violation.homeowner) throw new Error("Violation or homeowner not found");
+
+  const resend = getResend();
+  const severityLabel = violation.severity === "high" ? "⚠️ High Priority" : violation.severity === "medium" ? "⚡ Medium Priority" : "ℹ️ Notice";
+  const dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+  await resend.emails.send({
+    from: "GatePass OS <violations@gatepass.io>",
+    to: violation.homeowner.email,
+    subject: `Violation Notice — ${violation.category} · ${violation.hoa.community}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1C1C1A;">
+        <div style="background: #2A5240; padding: 24px 32px; border-radius: 12px 12px 0 0;">
+          <p style="color: #B8883A; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 4px;">GatePass OS · ${violation.hoa.community}</p>
+          <h1 style="color: #F4F1EC; font-size: 20px; margin: 0;">Violation Notice</h1>
+        </div>
+        <div style="background: #FFF9F0; border: 2px solid #B8883A; border-top: none; padding: 20px 32px; border-radius: 0 0 12px 12px;">
+          <p style="font-size: 13px; color: #888; margin: 0 0 4px;">${severityLabel}</p>
+          <p style="font-size: 16px; font-weight: 600; margin: 0 0 16px;">Dear ${violation.homeowner.name},</p>
+          <p style="color: #444; line-height: 1.7; margin: 0 0 20px;">
+            A violation has been recorded on your property at <strong>${violation.homeowner.address}</strong>:
+          </p>
+          <div style="background: white; border: 1px solid #e0ddd8; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">
+            <p style="margin: 0 0 6px;"><strong>Type:</strong> ${violation.category}</p>
+            ${violation.description ? `<p style="margin: 0 0 6px;"><strong>Description:</strong> ${violation.description}</p>` : ""}
+            <p style="margin: 0;"><strong>Correction required by:</strong> ${dueDate}</p>
+          </div>
+          <p style="color: #555; font-size: 13px; line-height: 1.7;">
+            Please address this issue and contact your HOA board to confirm resolution. Unresolved violations may result in fines or escalation per your community's CC&Rs.
+          </p>
+          <p style="color: #888; font-size: 12px; margin-top: 20px;">This notice was sent by GatePass OS on behalf of ${violation.hoa.community} HOA.</p>
+        </div>
+      </div>
+    `,
+  });
+
+  await db.violation.update({
+    where: { id: violationId },
+    data: { latestNoticeAt: new Date(), noticeCount: { increment: 1 } },
+  });
+
+  return { sent: true };
+}
+
+export async function sendARCDecisionEmail(arcId: string) {
+  const arc = await db.aRCRequest.findUnique({
+    where: { id: arcId },
+    include: { homeowner: true, hoa: true },
+  });
+  if (!arc || !arc.homeowner) throw new Error("ARC request or homeowner not found");
+
+  const resend = getResend();
+  const approved = arc.status === "approved";
+  const statusLabel = approved ? "✅ Approved" : arc.status === "denied" ? "❌ Denied" : "🔄 Revision Required";
+  const statusColor = approved ? "#2A5240" : arc.status === "denied" ? "#B91C1C" : "#B8883A";
+
+  await resend.emails.send({
+    from: "GatePass OS <arc@gatepass.io>",
+    to: arc.homeowner.email,
+    subject: `ARC Decision: ${arc.projectType} — ${arc.status === "approved" ? "Approved" : "Not Approved"}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1C1C1A;">
+        <div style="background: ${statusColor}; padding: 24px 32px; border-radius: 12px 12px 0 0;">
+          <p style="color: rgba(255,255,255,0.7); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 4px;">GatePass OS · ${arc.hoa.community}</p>
+          <h1 style="color: white; font-size: 20px; margin: 0;">Architectural Review Decision</h1>
+        </div>
+        <div style="background: #F4F1EC; border: 1px solid #e0ddd8; border-top: none; padding: 28px 32px; border-radius: 0 0 12px 12px;">
+          <p style="font-size: 16px; margin: 0 0 6px;">Dear ${arc.homeowner.name},</p>
+          <p style="color: #666; line-height: 1.7; margin: 0 0 20px;">The Architectural Review Committee has reviewed your request:</p>
+          <div style="background: white; border: 1px solid #e0ddd8; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">
+            <p style="margin: 0 0 6px;"><strong>Project:</strong> ${arc.projectType}</p>
+            <p style="margin: 0 0 6px;"><strong>Description:</strong> ${arc.description}</p>
+            <p style="margin: 0 0 6px;"><strong>Decision:</strong> <span style="color: ${statusColor}; font-weight: 600;">${statusLabel}</span></p>
+            ${arc.reviewNotes ? `<p style="margin: 8px 0 0; padding-top: 8px; border-top: 1px solid #f0ede8; color: #555; font-size: 13px;"><strong>Committee Notes:</strong> ${arc.reviewNotes}</p>` : ""}
+          </div>
+          ${approved
+            ? `<p style="color: #2A5240; font-size: 14px;">You may proceed with your project. Please ensure all work complies with the approved scope and your community's design standards.</p>`
+            : `<p style="color: #555; font-size: 14px;">If you have questions about this decision or would like to appeal, please contact your HOA board.</p>`
+          }
+          <p style="color: #888; font-size: 12px; margin-top: 20px;">GatePass OS · ${arc.hoa.community} HOA</p>
+        </div>
+      </div>
+    `,
+  });
+
+  return { sent: true };
+}
+
+export async function sendContractorWelcomeEmail(contractorId: string) {
+  const contractor = await db.contractorWaitlist.findUnique({ where: { id: contractorId } });
+  if (!contractor) throw new Error("Contractor not found");
+
+  const resend = getResend();
+  await resend.emails.send({
+    from: "GatePass <contractors@gatepass.io>",
+    to: contractor.email,
+    subject: `You're #${contractor.position} on the GatePass Founding Contractor list`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1C1C1A;">
+        <div style="background: #1C1C1A; padding: 24px 32px; border-radius: 12px 12px 0 0;">
+          <h1 style="color: #B8883A; font-size: 22px; margin: 0;">GatePass</h1>
+          <p style="color: #888; margin: 4px 0 0; font-size: 13px;">Austin Metro Contractor Network</p>
+        </div>
+        <div style="background: #F4F1EC; border: 1px solid #e0ddd8; border-top: none; padding: 32px; border-radius: 0 0 12px 12px;">
+          <p style="font-size: 18px; font-weight: 600; margin: 0 0 8px;">Seat locked, ${contractor.contactName}.</p>
+          <p style="color: #666; font-size: 28px; font-weight: 700; margin: 0 0 20px; color: #2A5240;">#${contractor.position} of 25</p>
+          <p style="color: #555; line-height: 1.7; margin: 0 0 20px;">
+            <strong>${contractor.company}</strong> has secured a founding contractor seat for <strong>${contractor.category}</strong> services in the Austin metro. You'll be in the first batch of contractors able to send Digital Knocks to opted-in homeowners.
+          </p>
+          <div style="background: white; border: 1px solid #e0ddd8; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">
+            <p style="font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 10px;">Founding benefits</p>
+            <ul style="margin: 0; padding: 0 0 0 20px; color: #333; line-height: 2; font-size: 14px;">
+              <li>Priority access when Austin launches</li>
+              <li>Founding rate locked in for life</li>
+              <li>Direct line to GatePass team</li>
+              <li>Input on contractor features</li>
+            </ul>
+          </div>
+          <p style="color: #888; font-size: 13px;">We'll be in touch as soon as the platform launches in your zip code (${contractor.zip}). Questions? Reply to this email.</p>
+        </div>
+      </div>
+    `,
+  });
+  return { sent: true };
+}
+
+// ─── Stripe Webhook Handler ───────────────────────────────────────────
+
+export async function stripeWebhook(input: { body: string; headers: Record<string, string | string[]> }) {
+  const stripe = getStripe();
+  const sig = input.headers["stripe-signature"];
+  const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
+
+  let event: Stripe.Event;
+
+  if (webhookSecret && sig) {
+    try {
+      event = stripe.webhooks.constructEvent(input.body, Array.isArray(sig) ? sig[0] : sig, webhookSecret);
+    } catch (err) {
+      console.error("[stripe-webhook] Signature verification failed:", err);
+      throw new Error("Invalid webhook signature");
+    }
+  } else {
+    // Dev mode: no webhook secret configured, parse raw body
+    event = JSON.parse(input.body) as Stripe.Event;
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const meta = session.metadata ?? {};
+
+    if (meta.hoaId) {
+      await db.hOA.update({
+        where: { id: meta.hoaId },
+        data: {
+          paid: true,
+          paidAt: new Date(),
+          amountCents: session.amount_total ?? 0,
+        },
+      });
+      // Send welcome email (non-blocking)
+      sendHOAWelcomeEmail(meta.hoaId).catch((e) =>
+        console.error("[stripe-webhook] HOA welcome email failed:", e)
+      );
+    }
+
+    if (meta.contractorId) {
+      await db.contractorWaitlist.update({
+        where: { id: meta.contractorId },
+        data: { paid: true },
+      });
+      // Send contractor welcome email (non-blocking)
+      sendContractorWelcomeEmail(meta.contractorId).catch((e) =>
+        console.error("[stripe-webhook] Contractor welcome email failed:", e)
+      );
+    }
+  }
+
+  return { received: true };
+}
+
+// ─── Homeowner CSV Bulk Import ────────────────────────────────────────
+
+export async function bulkImportHomeowners(input: {
+  hoaId: string;
+  csv: string; // raw CSV text: name,email,address,unit,phone,monthlyDueCents
+}) {
+  const lines = input.csv.trim().split("\n");
+  const header = lines[0].toLowerCase().split(",").map((h) => h.trim());
+
+  const col = (row: string[], field: string) => {
+    const i = header.indexOf(field);
+    return i >= 0 ? row[i]?.trim() : undefined;
+  };
+
+  const results: { name: string; status: "created" | "skipped"; reason?: string }[] = [];
+
+  for (const line of lines.slice(1)) {
+    if (!line.trim()) continue;
+    const row = line.split(",");
+    const name = col(row, "name");
+    const email = col(row, "email");
+    const address = col(row, "address");
+
+    if (!name || !email || !address) {
+      results.push({ name: name ?? "unknown", status: "skipped", reason: "Missing name, email, or address" });
+      continue;
+    }
+
+    const existing = await db.homeowner.findFirst({ where: { hoaId: input.hoaId, email } });
+    if (existing) {
+      results.push({ name, status: "skipped", reason: "Email already exists" });
+      continue;
+    }
+
+    const homeowner = await db.homeowner.create({
+      data: {
+        hoaId: input.hoaId,
+        name,
+        email,
+        address,
+        unit: col(row, "unit"),
+        phone: col(row, "phone"),
+        role: "resident",
+      },
+    });
+
+    const monthlyDueCents = Number(col(row, "monthlyduetickets") ?? col(row, "monthly_due_cents") ?? 0);
+    await db.duesAccount.create({
+      data: { homeownerId: homeowner.id, monthlyDueCents },
+    });
+
+    results.push({ name, status: "created" });
+  }
+
+  return {
+    total: results.length,
+    created: results.filter((r) => r.status === "created").length,
+    skipped: results.filter((r) => r.status === "skipped").length,
+    results,
+  };
+}
+
+// ─── GatePass Metrics (for BD Agent briefing) ─────────────────────────
+
+export async function getGatePassMetrics() {
+  const [totalHOAs, paidHOAs, totalHomeowners, openViolations, openWorkOrders, pendingARC, totalContractors, paidContractors] = await Promise.all([
+    db.hOA.count(),
+    db.hOA.count({ where: { paid: true } }),
+    db.homeowner.count({ where: { active: true } }),
+    db.violation.count({ where: { status: { in: ["open", "noticed", "escalated"] } } }),
+    db.workOrder.count({ where: { status: { in: ["open", "assigned", "in_progress"] } } }),
+    db.aRCRequest.count({ where: { status: { in: ["submitted", "under_review"] } } }),
+    db.contractorWaitlist.count(),
+    db.contractorWaitlist.count({ where: { paid: true } }),
+  ]);
+
+  const totalUnitsResult = await db.hOA.aggregate({ _sum: { units: true }, where: { paid: true } });
+  const totalUnits = totalUnitsResult._sum.units ?? 0;
+  const arr = totalUnits * 20; // $20/unit/year avg
+
+  return {
+    hoas: { total: totalHOAs, paid: paidHOAs },
+    homeowners: totalHomeowners,
+    units: totalUnits,
+    arr,
+    violations: { open: openViolations },
+    workOrders: { open: openWorkOrders },
+    arc: { pending: pendingARC },
+    contractors: { total: totalContractors, paid: paidContractors, spotsLeft: Math.max(0, 25 - paidContractors) },
+  };
+}
 
 export async function getOSDashboard(hoaId: string) {
   const [hoa, violations, workOrders, arcRequests, meetings, votes, financial] = await Promise.all([

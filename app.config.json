@@ -1,5 +1,9 @@
 {
   "crons": [],
   "events": [],
-  "webhooks": []
+  "webhooks": [
+    {
+      "handler": "stripeWebhook"
+    }
+  ]
 }
