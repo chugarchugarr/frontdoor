@@ -16,6 +16,8 @@ import { WorkOrders } from "./components/WorkOrders";
 import { AmenityModule } from "./components/AmenityModule";
 import { CommHub } from "./components/CommHub";
 import { ContractorWaitlist as ContractorWaitlistPanel } from "./components/ContractorWaitlist";
+import { HomeownerPortal } from "./components/HomeownerPortal";
+import { ContractorPortal } from "./components/ContractorPortal";
 
 // ─── Success screens ──────────────────────────────────────────────────
 function SuccessScreen({ type, position }: { type: "hoa" | "contractor"; position?: number }) {
@@ -443,10 +445,155 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
 // ContractorWaitlist is now in ./components/ContractorWaitlist.tsx
 const ContractorWaitlist = ContractorWaitlistPanel;
 
-// ─── Live Demo — full OS shell, no auth required ─────────────────────
+// ─── Live Demo — 3-persona selector + OS shell ───────────────────────
 const DEMO_HOA_ID = "cmn5kapjd0000jitlk3ehms51";
 
-function GatePassDemo({ onBack }: { onBack: () => void }) {
+type DemoPersona = "select" | "board" | "homeowner" | "contractor";
+
+function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona, "select">) => void; onBack: () => void }) {
+  const PERSONAS = [
+    {
+      id: "board" as const,
+      label: "Board Member",
+      sub: "Full OS access — manage violations, payments, votes, work orders, and more.",
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      ),
+      accent: T.forest,
+      accentPale: T.forestPale,
+      tag: "Board OS",
+    },
+    {
+      id: "homeowner" as const,
+      label: "Homeowner",
+      sub: "Submit ARC requests, book amenities, cast votes, and view your property status.",
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      ),
+      accent: T.blue,
+      accentPale: T.bluePale,
+      tag: "Resident Portal",
+    },
+    {
+      id: "contractor" as const,
+      label: "Contractor",
+      sub: "Browse open work orders, track Austin permits, and manage your GatePass profile.",
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+        </svg>
+      ),
+      accent: T.gold,
+      accentPale: T.goldLight,
+      tag: "Contractor Portal",
+    },
+  ];
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#FFFFFF" }}>
+      <style>{GLOBAL_CSS}</style>
+
+      {/* Top bar */}
+      <div style={{
+        background: "#FFFFFF", borderBottom: "1px solid #E5E5E5",
+        padding: "0 24px", height: 56,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        position: "sticky", top: 0, zIndex: 100,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ width: 26, height: 26, borderRadius: 8, background: T.forest, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <span style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.02em" }}>GatePass</span>
+          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", marginLeft: 4 }}>Live Demo</span>
+        </div>
+        <button
+          onClick={onBack}
+          style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", background: "none", border: "1px solid #E5E5E5", borderRadius: 999, padding: "5px 14px", cursor: "pointer" }}
+        >
+          ← Back to site
+        </button>
+      </div>
+
+      {/* Content */}
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: "72px 24px 80px" }}>
+        <div className="anim-up" style={{ textAlign: "center", marginBottom: 56 }}>
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            padding: "4px 12px",
+            background: T.forestPale, border: `1px solid rgba(42,82,64,0.15)`, borderRadius: 999,
+            marginBottom: 24,
+          }}>
+            <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.forest }} />
+            <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 500, color: T.forest }}>Steiner Ranch HOA · Live Data</span>
+          </div>
+          <h1 style={{ fontFamily: T.fontSans, fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 800, color: "#0A0A0A", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: 14 }}>
+            Choose your perspective
+          </h1>
+          <p style={{ fontFamily: T.fontSans, fontSize: 15, color: "#737373", maxWidth: 460, margin: "0 auto", lineHeight: 1.7 }}>
+            Every role in GatePass sees a tailored view. Pick one to explore the live demo.
+          </p>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+          {PERSONAS.map((p, i) => (
+            <button
+              key={p.id}
+              className={`anim-up-${i + 2}`}
+              onClick={() => onSelect(p.id)}
+              style={{
+                background: "#FFFFFF", border: "1px solid #E5E5E5", borderRadius: 20,
+                padding: "32px 28px", textAlign: "left", cursor: "pointer",
+                transition: "border-color 0.15s, transform 0.15s, box-shadow 0.15s",
+                display: "flex", flexDirection: "column", gap: 0,
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = p.accent;
+                (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-3px)";
+                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 32px rgba(0,0,0,0.08)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#E5E5E5";
+                (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
+                (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
+              }}
+            >
+              {/* Icon */}
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: p.accent, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+                {p.icon}
+              </div>
+              {/* Tag */}
+              <div style={{ fontFamily: T.fontMono, fontSize: 10, color: p.accent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, fontWeight: 500 }}>
+                {p.tag}
+              </div>
+              {/* Label */}
+              <div style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.025em", marginBottom: 10 }}>
+                {p.label}
+              </div>
+              {/* Sub */}
+              <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#737373", lineHeight: 1.65, flex: 1 }}>
+                {p.sub}
+              </div>
+              {/* CTA */}
+              <div style={{ marginTop: 24, display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: p.accent }}>Enter demo</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BoardDemo({ onBack }: { onBack: () => void }) {
   const [view, setView] = useState<OSView>("dashboard");
 
   return (
@@ -470,7 +617,7 @@ function GatePassDemo({ onBack }: { onBack: () => void }) {
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
           <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", letterSpacing: "-0.01em" }}>
-            Demo · Steiner Ranch HOA · All 9 agents active
+            Board Demo · Steiner Ranch HOA · All 9 agents active
           </span>
         </div>
         <button
@@ -511,6 +658,16 @@ function GatePassDemo({ onBack }: { onBack: () => void }) {
       </div>
     </div>
   );
+}
+
+function GatePassDemo({ onBack }: { onBack: () => void }) {
+  const [persona, setPersona] = useState<DemoPersona>("select");
+
+  if (persona === "board")      return <BoardDemo onBack={() => setPersona("select")} />;
+  if (persona === "homeowner")  return <HomeownerPortal onBack={() => setPersona("select")} />;
+  if (persona === "contractor") return <ContractorPortal onBack={() => setPersona("select")} />;
+
+  return <DemoSelector onSelect={setPersona} onBack={onBack} />;
 }
 
 function PermitFeedView() {
