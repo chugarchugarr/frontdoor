@@ -117,8 +117,8 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
             <button onClick={() => onNav("hoa")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 400, color: "#525252", background: "none", border: "none", cursor: "pointer", padding: "6px 12px", borderRadius: 999 }}>For HOAs</button>
             <button onClick={() => onNav("contractor")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 400, color: "#525252", background: "none", border: "none", cursor: "pointer", padding: "6px 12px", borderRadius: 999 }}>Contractors</button>
             {auth.status === "authenticated"
-              ? <Btn onClick={() => onNav("os")} style={{ padding: "8px 18px", fontSize: 13 }}>Open OS</Btn>
-              : <Btn onClick={() => auth.signIn()} style={{ padding: "8px 18px", fontSize: 13 }}>Sign in</Btn>
+              ? <Btn onClick={() => onNav("os")} style={{ padding: "8px 18px", fontSize: 13, background: T.forest }}>Open OS</Btn>
+              : <Btn onClick={() => auth.signIn()} style={{ padding: "8px 18px", fontSize: 13, background: T.forest }}>Sign in</Btn>
             }
           </div>
         </nav>
@@ -181,10 +181,10 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
         </p>
 
         <div className="anim-up-4" style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 80 }}>
-          <Btn onClick={() => onNav("hoa")} style={{ padding: "14px 28px", fontSize: 14, fontWeight: 500 }}>
+          <Btn onClick={() => onNav("hoa")} style={{ padding: "14px 28px", fontSize: 14, fontWeight: 500, background: T.forest }}>
             Enroll your HOA
           </Btn>
-          <Btn variant="ghost" onClick={() => onNav("demo")} style={{ padding: "14px 28px", fontSize: 14, fontWeight: 500 }}>
+          <Btn variant="ghost" onClick={() => onNav("demo")} style={{ padding: "14px 28px", fontSize: 14, fontWeight: 500, borderColor: "#E5E5E5", color: "#525252" }}>
             View live demo
           </Btn>
         </div>
@@ -206,7 +206,7 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
       </section>
 
       {/* ── 9 modules ── */}
-      <section style={{ background: "#FAFAFA", padding: "96px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
+      <section style={{ background: "#FFFFFF", padding: "96px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 56, flexWrap: "wrap", gap: 20 }}>
             <div>
@@ -242,10 +242,10 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
             {MODULES.map((m) => (
               <div key={m.name} className="card-hover" style={{
-                background: "#FFFFFF",
+                background: "#FAFAFA",
                 padding: "24px 22px",
                 borderRadius: 16,
-                border: "1px solid #F0F0F0",
+                border: "1px solid #E5E5E5",
                 cursor: "default",
                 transition: "border-color 0.15s, transform 0.15s, box-shadow 0.15s",
               }}>
@@ -268,7 +268,7 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
       </section>
 
       {/* ── Why ── */}
-      <section style={{ background: "#FFFFFF", padding: "96px clamp(20px, 4vw, 48px)" }}>
+      <section style={{ background: "#FAFAFA", padding: "96px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
             {[
@@ -289,8 +289,8 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
               },
             ].map(f => (
               <div key={f.title} style={{
-                background: "#FAFAFA",
-                border: "1px solid #F0F0F0",
+                background: "#FFFFFF",
+                border: "1px solid #E5E5E5",
                 borderRadius: 16,
                 padding: "28px 26px",
               }}>
@@ -306,7 +306,7 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
       {/* ── CTA ── */}
       <section style={{
         padding: "96px clamp(20px, 4vw, 48px)",
-        background: "#111111",
+        background: T.forest,
       }}>
         <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{
@@ -320,20 +320,20 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
           }}>
             Stop paying for a manager. Residents own the OS.
           </h2>
-          <p style={{ fontFamily: T.fontSans, fontSize: 16, color: "rgba(255,255,255,0.5)", lineHeight: 1.75, marginBottom: 40, fontWeight: 400 }}>
+          <p style={{ fontFamily: T.fontSans, fontSize: 16, color: "rgba(255,255,255,0.65)", lineHeight: 1.75, marginBottom: 40, fontWeight: 400 }}>
             GatePass puts every function of HOA management into software your community controls. No middleman. No markup. No 3am calls to a property manager.
           </p>
           <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <Btn
               onClick={() => onNav("hoa")}
-              style={{ padding: "14px 28px", fontSize: 14, background: "#FFFFFF", color: "#0A0A0A" }}
+              style={{ padding: "14px 28px", fontSize: 14, background: "#FFFFFF", color: T.forest, fontWeight: 600 }}
             >
               Enroll your HOA
             </Btn>
             <Btn
               variant="ghost"
               onClick={() => onNav("contractor")}
-              style={{ padding: "14px 28px", fontSize: 14, borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.7)" }}
+              style={{ padding: "14px 28px", fontSize: 14, borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.85)" }}
             >
               Contractor Waitlist
             </Btn>
@@ -342,7 +342,7 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
       </section>
 
       {/* ── Footer ── */}
-      <footer style={{ background: "#0A0A0A", padding: "24px clamp(20px, 4vw, 48px)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <footer style={{ background: "#FFFFFF", padding: "24px clamp(20px, 4vw, 48px)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, borderTop: "1px solid #E5E5E5" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{
             width: 22, height: 22, borderRadius: 7,
@@ -354,9 +354,9 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
           </div>
-          <span style={{ fontFamily: T.fontSans, fontSize: 14, color: "#FAFAFA", fontWeight: 600, letterSpacing: "-0.02em" }}>GatePass</span>
+          <span style={{ fontFamily: T.fontSans, fontSize: 14, color: "#0A0A0A", fontWeight: 600, letterSpacing: "-0.02em" }}>GatePass</span>
         </div>
-        <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "rgba(255,255,255,0.25)", letterSpacing: "-0.01em" }}>© 2026 GatePass · Austin, TX</div>
+        <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", letterSpacing: "-0.01em" }}>© 2026 GatePass · Austin, TX</div>
       </footer>
     </div>
   );
