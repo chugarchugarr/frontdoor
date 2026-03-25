@@ -406,7 +406,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
               </div>
               {totalCost > 0 && (
                 <div style={{ padding: "14px 18px", background: T.forestPale, borderRadius: T.radius, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div><Label>Annual Total</Label><div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: T.charcoal }}>${totalCost.toLocaleString()}</div></div>
+                  <div><Label>Annual Total</Label><div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: "var(--text)" }}>${totalCost.toLocaleString()}</div></div>
                   <div style={{ textAlign: "right", fontFamily: T.fontSans, fontSize: 12, color: T.inkLight }}>
                     <div>{form.units} units × ${form.plan === "full" ? 22 : 20}/yr</div>
                     <div style={{ color: T.success, marginTop: 4 }}>vs. ~${(Number(form.units) * 85).toLocaleString()}/yr management co.</div>
@@ -421,7 +421,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
               <FDInput label="Your Name" placeholder="Sarah Mitchell" value={form.contactName} onChange={e => set("contactName", e.target.value)} />
               <FDInput label="Email" type="email" placeholder="sarah@hoa.org" value={form.contactEmail} onChange={e => set("contactEmail", e.target.value)} />
               <FDInput label="Phone (optional)" type="tel" value={form.contactPhone} onChange={e => set("contactPhone", e.target.value)} />
-              <div style={{ padding: "12px 16px", background: T.creamDark, borderRadius: T.radius, marginBottom: 24, display: "flex", justifyContent: "space-between" }}>
+              <div style={{ padding: "12px 16px", background: "var(--bg-subtle)", borderRadius: T.radius, marginBottom: 24, display: "flex", justifyContent: "space-between" }}>
                 <div><Label>Total Due Today</Label><div style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700 }}>${totalCost.toLocaleString()}</div></div>
                 <div style={{ textAlign: "right", fontSize: 12, color: T.inkMid, fontFamily: T.fontSans }}><div>{form.community}</div><div>{form.units} units · {form.plan} plan</div></div>
               </div>
@@ -656,10 +656,10 @@ export default function App() {
       {view === "os-select"  && (
         auth.status === "authenticated"
           ? <HOASelector onSelect={(id) => { setActiveHoaId(id); setView("os"); }} onPublic={() => setView("landing")} />
-          : <div style={{ minHeight: "100vh", background: T.cream, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          : <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <style>{GLOBAL_CSS}</style>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: T.fontSans, fontSize: 20, color: T.charcoal, marginBottom: 16 }}>Sign in to access GatePass OS</div>
+                <div style={{ fontFamily: T.fontSans, fontSize: 20, color: "var(--text)", marginBottom: 16 }}>Sign in to access GatePass OS</div>
                 <Btn onClick={() => auth.signIn()}>Sign In</Btn>
               </div>
             </div>
