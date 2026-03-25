@@ -1381,6 +1381,31 @@ export async function getAIAnalysis(input: {
   return raw ? JSON.parse(raw) : null;
 }
 
+// ─── Admin: Delete HOA ────────────────────────────────────────────────
+// Hard-deletes an HOA and all its data. Used for cleanup of test/garbage HOAs.
+export async function deleteHOA(hoaId: string) {
+  const hoa = await db.hOA.findUnique({ where: { id: hoaId } });
+  if (!hoa) return { deleted: false };
+  const hwIds = (await db.homeowner.findMany({ where: { hoaId }, select: { id: true } })).map(h => h.id);
+  await db.duesAccount.deleteMany({ where: { homeownerId: { in: hwIds } } });
+  await db.voteCast.deleteMany({ where: { homeownerId: { in: hwIds } } });
+  await db.violation.deleteMany({ where: { hoaId } });
+  await db.aRCRequest.deleteMany({ where: { hoaId } });
+  await db.workOrder.deleteMany({ where: { hoaId } });
+  const mtgIds = (await db.meeting.findMany({ where: { hoaId }, select: { id: true } })).map(m => m.id);
+  await db.agendaItem.deleteMany({ where: { meetingId: { in: mtgIds } } });
+  await db.meeting.deleteMany({ where: { hoaId } });
+  await db.vote.deleteMany({ where: { hoaId } });
+  const amenIds = (await db.amenity.findMany({ where: { hoaId }, select: { id: true } })).map(a => a.id);
+  await db.reservation.deleteMany({ where: { amenityId: { in: amenIds } } });
+  await db.amenity.deleteMany({ where: { hoaId } });
+  await db.announcement.deleteMany({ where: { hoaId } });
+  await db.budget.deleteMany({ where: { hoaId } });
+  await db.homeowner.deleteMany({ where: { hoaId } });
+  await db.hOA.delete({ where: { id: hoaId } });
+  return { deleted: true, community: hoa.community };
+}
+
 // ─── Demo Seed ────────────────────────────────────────────────────────
 // Creates (or resets) a fully-populated demo HOA for live presentations.
 // Idempotent: if "Steiner Ranch HOA (Demo)" already exists, wipes and rebuilds it.

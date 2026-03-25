@@ -1274,6 +1274,13 @@ export declare function getAIAnalysis(input: {
 	type: "violation" | "arc" | "workorder" | "meeting" | "vote" | "reservation" | "announcement" | "dues" | "contractor";
 	id: string;
 }): Promise<Record<string, unknown> | null>;
+export declare function deleteHOA(hoaId: string): Promise<{
+	deleted: boolean;
+	community?: undefined;
+} | {
+	deleted: boolean;
+	community: string;
+}>;
 export declare function seedDemoData(): Promise<{
 	hoaId: string;
 	community: string;
