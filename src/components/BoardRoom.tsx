@@ -65,7 +65,7 @@ export function BoardRoom({ hoaId }: { hoaId: string }) {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                      <span style={{ fontFamily: T.fontSerif, fontSize: 16, fontWeight: 600, color: T.charcoal }}>{m.title}</span>
+                      <span style={{ fontFamily: T.fontSans, fontSize: 16, fontWeight: 600, color: "var(--text)" }}>{m.title}</span>
                       <Tag>{m.type}</Tag>
                       <StatusTag status={m.status} />
                     </div>
@@ -83,7 +83,7 @@ export function BoardRoom({ hoaId }: { hoaId: string }) {
                   )}
                 </div>
                 {m.agenda && (
-                  <div style={{ background: T.creamDark, borderRadius: T.radius, padding: "12px 16px", marginBottom: 14, fontFamily: T.fontSans, fontSize: 13, color: T.inkMid, whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
+                  <div style={{ background: "var(--bg-subtle)", borderRadius: T.radius, padding: "12px 16px", marginBottom: 14, fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
                     {m.agenda}
                   </div>
                 )}
@@ -91,7 +91,7 @@ export function BoardRoom({ hoaId }: { hoaId: string }) {
                   <div style={{ marginBottom: 12 }}>
                     <Label>Agenda Items</Label>
                     {m.agendaItems.map(item => (
-                      <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: `1px solid ${T.stone}20` }}>
+                      <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", borderBottom: "1px solid var(--border-subtle)" }}>
                         <span style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight, width: 20 }}>{item.order}.</span>
                         <span style={{ fontFamily: T.fontSans, fontSize: 13, color: T.ink }}>{item.title}</span>
                         <StatusTag status={item.status} />
@@ -99,7 +99,7 @@ export function BoardRoom({ hoaId }: { hoaId: string }) {
                     ))}
                   </div>
                 )}
-                <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: `1px solid ${T.stone}30` }}>
+                <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
                   <Btn variant="ghost" style={{ padding: "7px 14px", fontSize: 12 }} onClick={() => { setMinutesText(""); setMinutesModal(m.id); }}>
                     Record Minutes
                   </Btn>
@@ -121,7 +121,7 @@ export function BoardRoom({ hoaId }: { hoaId: string }) {
                           <div style={{ marginBottom: 8 }}>
                             <div style={{ fontFamily: T.fontMono, fontSize: 9, color: T.inkLight, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>Generated Agenda</div>
                             {d.agenda_items.map((item, i) => (
-                              <div key={i} style={{ display: "flex", gap: 8, padding: "5px 0", borderBottom: `1px solid ${T.stone}20` }}>
+                              <div key={i} style={{ display: "flex", gap: 8, padding: "5px 0", borderBottom: "1px solid var(--border-subtle)" }}>
                                 <span style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight, minWidth: 20 }}>{item.order}.</span>
                                 <span style={{ fontFamily: T.fontSans, fontSize: 13, color: T.ink, flex: 1 }}>{item.title}</span>
                                 {item.time_allotment && <span style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>{item.time_allotment}</span>}

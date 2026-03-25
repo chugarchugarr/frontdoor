@@ -28,9 +28,9 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
 
   return (
     <aside className="sidebar" style={{
-      width: 228,
+      width: 220,
       flexShrink: 0,
-      background: "#141412",
+      background: "#111111",
       display: "flex",
       flexDirection: "column",
       height: "100vh",
@@ -42,47 +42,40 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
       <style>{GLOBAL_CSS}</style>
 
       {/* Logo */}
-      <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-          {/* Custom door icon with accent color */}
+      <div style={{ padding: "20px 16px 14px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{
-            width: 28, height: 28, borderRadius: 7,
-            background: "linear-gradient(135deg, #2A5240, #3A6E54)",
+            width: 26, height: 26, borderRadius: 8,
+            background: T.forest,
             display: "flex", alignItems: "center", justifyContent: "center",
             flexShrink: 0,
-            boxShadow: "0 2px 8px rgba(42,82,64,0.4)",
           }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
           </div>
-          <div>
-            <div style={{ fontFamily: T.fontSerif, fontSize: 16, fontWeight: 700, color: "#F0EDE8", letterSpacing: "-0.01em", lineHeight: 1 }}>
-              GatePass
-            </div>
-            <div style={{ fontFamily: T.fontMono, fontSize: 9, color: "rgba(255,255,255,0.28)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 2 }}>
-              HOA OS
-            </div>
-          </div>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.03em" }}>
+            GatePass
+          </span>
         </div>
 
         {hoaName && (
           <div style={{
-            marginTop: 14,
-            padding: "8px 11px",
-            background: "rgba(42,82,64,0.18)",
-            borderRadius: 7,
-            border: "1px solid rgba(42,82,64,0.22)",
+            marginTop: 12,
+            padding: "7px 10px",
+            background: "rgba(255,255,255,0.05)",
+            borderRadius: 10,
+            border: "1px solid rgba(255,255,255,0.08)",
           }}>
             <div style={{ fontFamily: T.fontMono, fontSize: 9, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Community</div>
-            <div style={{ fontFamily: T.fontSans, fontSize: 12, fontWeight: 600, color: "#7EC99A", lineHeight: 1.3 }}>{hoaName}</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 12, fontWeight: 500, color: "rgba(255,255,255,0.72)", lineHeight: 1.3 }}>{hoaName}</div>
           </div>
         )}
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: "10px 10px", display: "flex", flexDirection: "column", gap: 1, overflowY: "auto" }}>
+      <nav style={{ flex: 1, padding: "4px 8px", display: "flex", flexDirection: "column", gap: 1, overflowY: "auto" }}>
         {NAV_ITEMS.map((item) => {
           const isCurrent = current === item.id;
           return (
@@ -91,11 +84,10 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
                 <div style={{
                   fontFamily: T.fontMono,
                   fontSize: 9,
-                  color: "rgba(255,255,255,0.22)",
+                  color: "rgba(255,255,255,0.2)",
                   textTransform: "uppercase",
                   letterSpacing: "0.12em",
-                  padding: "12px 10px 5px",
-                  marginTop: 4,
+                  padding: "14px 8px 4px",
                 }}>
                   {item.section}
                 </div>
@@ -106,33 +98,21 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 9,
-                  padding: "8px 11px",
-                  borderRadius: 7,
+                  gap: 8,
+                  padding: "7px 10px",
+                  borderRadius: 8,
                   border: "none",
-                  background: isCurrent ? "rgba(42,82,64,0.22)" : "transparent",
-                  color: isCurrent ? "#7EC99A" : "rgba(255,255,255,0.48)",
+                  background: isCurrent ? "rgba(255,255,255,0.1)" : "transparent",
+                  color: isCurrent ? "#FFFFFF" : "rgba(255,255,255,0.42)",
                   fontSize: 13,
-                  fontWeight: isCurrent ? 600 : 400,
+                  fontWeight: isCurrent ? 500 : 400,
                   textAlign: "left",
                   width: "100%",
                   cursor: "pointer",
-                  position: "relative",
+                  letterSpacing: "-0.01em",
                 }}
               >
-                {isCurrent && (
-                  <div style={{
-                    position: "absolute",
-                    left: 0,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: 2.5,
-                    height: 18,
-                    background: "#5A9E7A",
-                    borderRadius: "0 2px 2px 0",
-                  }} />
-                )}
-                <span style={{ opacity: isCurrent ? 1 : 0.65, flexShrink: 0 }}>{item.icon}</span>
+                <span style={{ opacity: isCurrent ? 1 : 0.55, flexShrink: 0 }}>{item.icon}</span>
                 {item.label}
               </button>
             </React.Fragment>
@@ -141,17 +121,12 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
       </nav>
 
       {/* Footer */}
-      <div style={{ padding: "14px 16px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         {auth.status === "authenticated" && (
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 7,
-            marginBottom: 10,
-          }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#5A9E7A", flexShrink: 0 }} />
-            <span style={{ fontFamily: T.fontMono, fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.04em" }}>
-              Authenticated
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+            <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
+            <span style={{ fontFamily: T.fontMono, fontSize: 10, color: "rgba(255,255,255,0.22)", letterSpacing: "0.04em" }}>
+              Active
             </span>
           </div>
         )}
@@ -160,15 +135,16 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
           style={{
             fontFamily: T.fontSans,
             fontSize: 12,
-            color: "rgba(255,255,255,0.25)",
+            color: "rgba(255,255,255,0.22)",
             background: "none",
             border: "none",
             cursor: "pointer",
             padding: 0,
             display: "flex",
             alignItems: "center",
-            gap: 5,
+            gap: 4,
             transition: "color 0.12s",
+            letterSpacing: "-0.01em",
           }}
         >
           ← Public site

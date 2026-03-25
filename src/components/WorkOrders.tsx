@@ -69,7 +69,7 @@ export function WorkOrders({ hoaId }: { hoaId: string }) {
         ].map(s => (
           <Card key={s.label} style={{ padding: "16px 20px" }}>
             <Label>{s.label}</Label>
-            <div style={{ fontFamily: T.fontSerif, fontSize: 28, fontWeight: 700, color: s.color || T.charcoal }}>{s.value}</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 28, fontWeight: 700, color: s.color || "var(--text)" }}>{s.value}</div>
           </Card>
         ))}
       </div>
@@ -84,7 +84,7 @@ export function WorkOrders({ hoaId }: { hoaId: string }) {
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
                   <span style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: T.ink }}>{o.title}</span>
-                  <Tag color={priorityColor(o.priority)} bg={o.priority === "urgent" ? T.dangerPale : o.priority === "high" ? T.warnPale : T.creamDark}>{o.priority}</Tag>
+                   <Tag color={priorityColor(o.priority)} bg={o.priority === "urgent" ? T.dangerPale : o.priority === "high" ? T.warnPale : "var(--bg-subtle)"}>{o.priority}</Tag>
                   <Tag>{o.category}</Tag>
                   <StatusTag status={o.status} />
                 </div>
@@ -97,7 +97,7 @@ export function WorkOrders({ hoaId }: { hoaId: string }) {
                 {o.actualCost && <div style={{ marginTop: 4 }}><Label>Actual</Label><div style={{ fontFamily: T.fontMono, fontSize: 13, fontWeight: 600 }}>${(o.actualCost/100).toLocaleString()}</div></div>}
               </div>
             </div>
-            <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: `1px solid ${T.stone}30` }}>
+            <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
               <Btn variant="outline" style={{ padding: "7px 14px", fontSize: 12 }} onClick={() => { setUpdateForm({ assignedTo: o.assignedTo||"", actualCost: "", completionNotes: "", status: "" }); setUpdateModal(o.id); }}>
                 Update
               </Btn>

@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
-import { Card, Tag, StatusTag, Icons, Label } from "./ui-kit";
+import { Card, Tag, StatusTag, Icons } from "./ui-kit";
 import type { OSView } from "./Sidebar";
 
 function MetricTile({ label, value, color, icon, onClick, badge }: {
@@ -17,58 +17,59 @@ function MetricTile({ label, value, color, icon, onClick, badge }: {
       style={{
         background: "var(--bg-card)",
         border: "1px solid var(--border)",
-        borderRadius: T.radiusMd,
-        padding: "18px 20px",
+        borderRadius: "16px",
+        padding: "24px 24px",
         cursor: onClick ? "pointer" : "default",
-        boxShadow: "var(--shadow-sm)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
         position: "relative",
         overflow: "hidden",
       }}
     >
-      {/* subtle color accent top edge */}
-      {color && (
-        <div style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: 2,
-          background: color, opacity: 0.7, borderRadius: `${T.radiusMd} ${T.radiusMd} 0 0`,
-        }} />
-      )}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10 }}>
-        <span style={{ color: color || "var(--text-light)", opacity: 0.8 }}>{icon}</span>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}>
+        <span style={{ color: color || "var(--text-light)", opacity: 0.7 }}>{icon}</span>
         {badge !== undefined && badge > 0 && (
           <div style={{
             background: color || T.forest,
-            color: T.white,
-            borderRadius: 10,
+            color: "#fff",
+            borderRadius: "999px",
             fontSize: 10,
             fontWeight: 700,
-            padding: "1px 7px",
-            fontFamily: T.fontMono,
+            padding: "2px 8px",
+            fontFamily: T.fontSans,
             lineHeight: 1.6,
+            letterSpacing: "0.01em",
           }}>
             {badge}
           </div>
         )}
       </div>
       <div style={{
-        fontFamily: T.fontSerif,
-        fontSize: 28,
+        fontFamily: T.fontSans,
+        fontSize: 32,
         fontWeight: 700,
         color: color || "var(--text)",
-        letterSpacing: "-0.02em",
+        letterSpacing: "-0.03em",
         lineHeight: 1,
-        marginBottom: 5,
+        marginBottom: 6,
       }}>
         {value}
       </div>
-      <div style={{ fontFamily: T.fontMono, fontSize: 9.5, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.09em" }}>
+      <div style={{
+        fontFamily: T.fontSans,
+        fontSize: 10,
+        fontWeight: 500,
+        color: "var(--text-light)",
+        textTransform: "uppercase",
+        letterSpacing: "0.08em",
+      }}>
         {label}
       </div>
     </div>
   );
 }
 
-function ModuleCard({ label, icon, color, desc, badge, onClick }: {
-  label: string; icon: React.ReactNode;
+function ModuleCard({ label, icon: _icon, color, desc, badge, onClick }: {
+  label: string; icon?: React.ReactNode;
   color: string; desc: string; badge?: number; onClick: () => void;
 }) {
   return (
@@ -78,37 +79,38 @@ function ModuleCard({ label, icon, color, desc, badge, onClick }: {
       style={{
         background: "var(--bg-card)",
         border: "1px solid var(--border)",
-        borderRadius: T.radiusMd,
-        padding: "18px 20px",
+        borderRadius: "16px",
+        padding: "22px 22px",
         cursor: "pointer",
-        boxShadow: "var(--shadow-sm)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
         display: "flex",
         flexDirection: "column",
-        gap: 10,
+        gap: 12,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{
-          width: 34, height: 34, borderRadius: 9,
-          background: `${color}18`,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: color,
-        }}>
-          {icon}
-        </div>
+          width: 8, height: 8, borderRadius: "50%",
+          background: color,
+          flexShrink: 0,
+        }} />
         {badge !== undefined && badge > 0 && (
           <div style={{
-            background: `${color}20`, color,
-            borderRadius: 10, fontSize: 10, fontWeight: 700,
-            padding: "1px 8px", fontFamily: T.fontMono,
+            background: `${color}15`,
+            color,
+            borderRadius: "999px",
+            fontSize: 10,
+            fontWeight: 700,
+            padding: "2px 8px",
+            fontFamily: T.fontSans,
           }}>
             {badge}
           </div>
         )}
       </div>
       <div>
-        <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 2 }}>{label}</div>
-        <div style={{ fontFamily: T.fontSans, fontSize: 11.5, color: "var(--text-light)", lineHeight: 1.4 }}>{desc}</div>
+        <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 3, letterSpacing: "-0.01em" }}>{label}</div>
+        <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", lineHeight: 1.5 }}>{desc}</div>
       </div>
     </div>
   );
@@ -125,7 +127,7 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
     <div style={{ padding: "48px 40px" }} className="main-pad">
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="ai-skeleton" style={{ height: 100, borderRadius: T.radiusMd }} />
+          <div key={i} className="ai-skeleton" style={{ height: 110, borderRadius: "16px" }} />
         ))}
       </div>
     </div>
@@ -147,22 +149,22 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
   ];
 
   return (
-    <div style={{ padding: "36px 40px", maxWidth: 1100 }} className="main-pad">
+    <div style={{ padding: "40px 44px", maxWidth: 1100 }} className="main-pad">
 
       {/* Header */}
-      <div className="anim-up" style={{ marginBottom: 32 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+      <div className="anim-up" style={{ marginBottom: 36 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
           <Tag style={{ fontSize: 9 }}>{hoa?.plan || "starter"} plan</Tag>
           {hoa?.paid && <Tag color={T.success} bg={T.successPale} style={{ fontSize: 9 }}>Active</Tag>}
         </div>
         <h1 style={{
-          fontFamily: T.fontSerif,
+          fontFamily: T.fontSans,
           fontSize: 30,
           fontWeight: 700,
           color: "var(--text)",
-          letterSpacing: "-0.025em",
+          letterSpacing: "-0.03em",
           lineHeight: 1.1,
-          marginBottom: 6,
+          marginBottom: 8,
         }}>
           {hoa?.community || "Your HOA"}
         </h1>
@@ -176,7 +178,7 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
       </div>
 
       {/* Key metrics */}
-      <div className="anim-up-2" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 28 }}>
+      <div className="anim-up-2" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 32 }}>
         <MetricTile label="Homeowners"    value={stats.homeowners}      icon={<Icons.Users />}    color={T.forest}  onClick={() => onNav("homeowners")} />
         <MetricTile label="Open Violations" value={stats.openViolations} icon={<Icons.Alert />}   color={stats.openViolations > 0 ? T.danger : T.success} badge={stats.openViolations} onClick={() => onNav("violations")} />
         <MetricTile label="Work Orders"   value={stats.openWorkOrders}  icon={<Icons.Wrench />}   color={stats.openWorkOrders > 0 ? T.purple : T.success} badge={stats.openWorkOrders} onClick={() => onNav("workorders")} />
@@ -185,19 +187,19 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
       </div>
 
       {/* Financial + Next meeting row */}
-      <div className="anim-up-3" style={{ display: "grid", gridTemplateColumns: financial ? "1fr auto" : "1fr", gap: 12, marginBottom: 28, alignItems: "start" }}>
+      <div className="anim-up-3" style={{ display: "grid", gridTemplateColumns: financial ? "1fr auto" : "1fr", gap: 12, marginBottom: 32, alignItems: "start" }}>
         {financial && (
-          <Card style={{ padding: "20px 24px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-              <Label>Financial Snapshot</Label>
+          <Card style={{ padding: "24px 28px", borderRadius: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Financial Snapshot</span>
               <button
                 onClick={() => onNav("payos")}
-                style={{ fontFamily: T.fontSans, fontSize: 12, color: T.forest, background: "none", border: "none", cursor: "pointer", opacity: 0.8, transition: "opacity 0.12s" }}
+                style={{ fontFamily: T.fontSans, fontSize: 12, fontWeight: 500, color: T.forest, background: "none", border: "none", cursor: "pointer", opacity: 0.9 }}
               >
                 PayOS →
               </button>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 20 }}>
               {[
                 { label: "Outstanding", value: `$${(financial.totalOutstanding / 100).toLocaleString()}`, color: financial.totalOutstanding > 0 ? T.danger : T.success },
                 { label: "Delinquent",  value: String(financial.delinquentCount), color: financial.delinquentCount > 0 ? T.danger : T.success },
@@ -206,8 +208,8 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
                 { label: "Variance",    value: `${financial.variance >= 0 ? "+" : "−"}$${(Math.abs(financial.variance) / 100).toLocaleString()}`, color: financial.variance >= 0 ? T.success : T.danger },
               ].map(s => (
                 <div key={s.label}>
-                  <div style={{ fontFamily: T.fontMono, fontSize: 9, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.09em", marginBottom: 4 }}>{s.label}</div>
-                  <div style={{ fontFamily: T.fontSerif, fontSize: 20, fontWeight: 700, color: s.color || "var(--text)", letterSpacing: "-0.01em" }}>{s.value}</div>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 10, fontWeight: 500, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>{s.label}</div>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: s.color || "var(--text)", letterSpacing: "-0.02em" }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -217,27 +219,27 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
         {nextMeeting && (
           <Card
             className="card-hover"
-            style={{ padding: "18px 20px", cursor: "pointer", minWidth: 240 }}
+            style={{ padding: "22px 24px", cursor: "pointer", minWidth: 240, borderRadius: "16px" }}
             onClick={() => onNav("boardroom")}
           >
-            <Label>Next Meeting</Label>
+            <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 14 }}>Next Meeting</span>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 2 }}>
               <div style={{
-                width: 36, height: 36, borderRadius: 9,
-                background: `${T.forest}18`,
+                width: 36, height: 36, borderRadius: "12px",
+                background: `${T.forest}12`,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: T.forest, flexShrink: 0,
               }}>
                 <Icons.Calendar />
               </div>
               <div>
-                <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 3 }}>
+                <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 4, letterSpacing: "-0.01em" }}>
                   {(nextMeeting as {title: string}).title}
                 </div>
-                <div style={{ fontFamily: T.fontMono, fontSize: 10.5, color: "var(--text-light)", lineHeight: 1.5 }}>
+                <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", lineHeight: 1.5 }}>
                   {new Date((nextMeeting as {scheduledAt: Date | string}).scheduledAt).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
                   {(nextMeeting as {location?: string}).location && (
-                    <><br />📍 {(nextMeeting as {location: string}).location}</>
+                    <><br />{(nextMeeting as {location: string}).location}</>
                   )}
                 </div>
                 <div style={{ marginTop: 8 }}>
@@ -252,15 +254,15 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
       {/* Module grid */}
       <div className="anim-up-4">
         <div style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
+          display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16,
         }}>
-          <Label>All Modules</Label>
+          <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em" }}>All Modules</span>
           <div style={{
-            display: "flex", alignItems: "center", gap: 5,
-            fontFamily: T.fontMono, fontSize: 9, color: "var(--text-light)",
-            textTransform: "uppercase", letterSpacing: "0.08em",
+            display: "flex", alignItems: "center", gap: 6,
+            fontFamily: T.fontSans, fontSize: 10, color: "var(--text-light)",
+            letterSpacing: "0.04em",
           }}>
-            <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.forest }} className="ai-ring" />
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest }} className="ai-ring" />
             9 AI agents active
           </div>
         </div>

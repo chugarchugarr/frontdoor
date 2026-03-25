@@ -102,7 +102,7 @@ export function PayOS({ hoaId }: { hoaId: string }) {
                         </div>
                         <div style={{ textAlign: "right" }}>
                           <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>Balance Owed</div>
-                          <div style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 700, color: bal > 0 ? T.danger : T.success }}>
+                          <div style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 700, color: bal > 0 ? T.danger : T.success }}>
                             {bal > 0 ? `$${(bal/100).toLocaleString()}` : "Current"}
                           </div>
                         </div>

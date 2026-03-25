@@ -35,7 +35,7 @@ function Avatar({ name, role, size = 40 }: { name: string; role: string; size?: 
       background: meta.bg,
       border: `2px solid ${meta.color}30`,
       display: "flex", alignItems: "center", justifyContent: "center",
-      fontFamily: T.fontSerif, fontSize: size * 0.35, fontWeight: 700,
+      fontFamily: T.fontSans, fontSize: size * 0.35, fontWeight: 700,
       color: meta.color, flexShrink: 0, letterSpacing: "-0.01em",
     }}>
       {initials}
@@ -56,7 +56,7 @@ function HomeownerRow({ h, expanded, onToggle }: { h: HW; expanded: boolean; onT
       style={{
         background: "var(--bg-card)",
         border: `1px solid ${expanded ? "rgba(42,82,64,0.3)" : "var(--border)"}`,
-        borderRadius: T.radiusMd,
+        borderRadius: "16px",
         overflow: "hidden",
         transition: "all 0.2s cubic-bezier(0.16,1,0.3,1)",
         boxShadow: expanded ? "var(--shadow-md)" : "var(--shadow-sm)",
@@ -240,7 +240,7 @@ export function Homeowners({ hoaId }: { hoaId: string }) {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28, gap: 16 }}>
         <div>
-          <h2 style={{ fontFamily: T.fontSerif, fontSize: 24, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 4 }}>
+          <h2 style={{ fontFamily: T.fontSans, fontSize: 24, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 4 }}>
             Homeowners
           </h2>
           <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>
@@ -260,7 +260,7 @@ export function Homeowners({ hoaId }: { hoaId: string }) {
         ].map(s => (
           <Card key={s.label} style={{ padding: "16px 18px" }}>
             <Label>{s.label}</Label>
-            <div style={{ fontFamily: T.fontSerif, fontSize: 26, fontWeight: 700, color: s.color, letterSpacing: "-0.02em", lineHeight: 1 }}>{s.value}</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: s.color, letterSpacing: "-0.02em", lineHeight: 1 }}>{s.value}</div>
           </Card>
         ))}
       </div>
@@ -308,7 +308,7 @@ export function Homeowners({ hoaId }: { hoaId: string }) {
       {isLoading && (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {[1,2,3].map(i => (
-            <div key={i} className="ai-skeleton" style={{ height: 66, borderRadius: T.radiusMd }} />
+            <div key={i} className="ai-skeleton" style={{ height: 66, borderRadius: "16px" }} />
           ))}
         </div>
       )}

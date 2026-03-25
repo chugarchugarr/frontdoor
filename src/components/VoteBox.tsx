@@ -77,7 +77,7 @@ export function VoteBox({ hoaId }: { hoaId: string }) {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                        <span style={{ fontFamily: T.fontSerif, fontSize: 16, fontWeight: 600, color: T.charcoal }}>{v.title}</span>
+                        <span style={{ fontFamily: T.fontSans, fontSize: 16, fontWeight: 600, color: "var(--text)" }}>{v.title}</span>
                         <Tag>{v.type}</Tag>
                         <StatusTag status={v.status} />
                       </div>
@@ -93,13 +93,13 @@ export function VoteBox({ hoaId }: { hoaId: string }) {
                     </div>
                     <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 16 }}>
                       <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>Votes cast</div>
-                      <div style={{ fontFamily: T.fontSerif, fontSize: 22, fontWeight: 700, color: T.charcoal }}>{v.casts.length}</div>
+                      <div style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700, color: "var(--text)" }}>{v.casts.length}</div>
                       <div style={{ fontFamily: T.fontMono, fontSize: 10, color: daysLeft < 3 ? T.danger : T.inkLight, marginTop: 4 }}>
                         {daysLeft === 0 ? "Closes today" : `${daysLeft}d left`}
                       </div>
                     </div>
                   </div>
-                  <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: `1px solid ${T.stone}30` }}>
+                  <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
                     <Btn variant="ghost" style={{ padding: "7px 14px", fontSize: 12 }} onClick={() => setResultsModal(v.id)}>
                       Live Results
                     </Btn>
@@ -187,7 +187,7 @@ export function VoteBox({ hoaId }: { hoaId: string }) {
         {results && (
           <div>
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 700, color: T.charcoal, marginBottom: 4 }}>{results.title}</div>
+              <div style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{results.title}</div>
               <div style={{ fontFamily: T.fontSans, fontSize: 13, color: T.inkLight }}>{results.totalCasts} votes cast · {results.quorumMet ? "Quorum met ✓" : "Quorum not met"}</div>
             </div>
             {Object.entries(results.tallies).map(([opt, count]) => {
@@ -198,7 +198,7 @@ export function VoteBox({ hoaId }: { hoaId: string }) {
                     <span style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: T.ink }}>{opt}</span>
                     <span style={{ fontFamily: T.fontMono, fontSize: 12, color: T.inkMid }}>{count as number} ({pct}%)</span>
                   </div>
-                  <div style={{ height: 8, background: T.stone, borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{ height: 8, background: "var(--border)", borderRadius: 4, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${pct}%`, background: T.forest, borderRadius: 4, transition: "width 0.6s" }} />
                   </div>
                 </div>

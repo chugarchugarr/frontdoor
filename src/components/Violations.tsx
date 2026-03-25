@@ -56,7 +56,7 @@ export function Violations({ hoaId }: { hoaId: string }) {
         ].map(s => (
           <Card key={s.label} style={{ padding: "16px 20px" }}>
             <Label>{s.label}</Label>
-            <div style={{ fontFamily: T.fontSerif, fontSize: 28, fontWeight: 700, color: s.color }}>{s.value}</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 28, fontWeight: 700, color: s.color }}>{s.value}</div>
           </Card>
         ))}
       </div>
@@ -84,11 +84,11 @@ export function Violations({ hoaId }: { hoaId: string }) {
               </div>
               <div style={{ textAlign: "right", flexShrink: 0 }}>
                 <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>Notices sent</div>
-                <div style={{ fontFamily: T.fontSerif, fontSize: 22, fontWeight: 700, color: v.noticeCount > 1 ? T.danger : T.charcoal }}>{v.noticeCount}</div>
+                <div style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700, color: v.noticeCount > 1 ? T.danger : "var(--text)" }}>{v.noticeCount}</div>
                 {v.fineCents && <div style={{ fontFamily: T.fontMono, fontSize: 11, color: T.danger, marginTop: 2 }}>${v.fineCents/100} fine</div>}
               </div>
             </div>
-            <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: `1px solid ${T.stone}30` }}>
+            <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
               <Btn variant="outline" style={{ padding: "7px 14px", fontSize: 12 }} onClick={() => noticeMut.mutate(v.id)} disabled={noticeMut.isPending}>
                 Send Notice #{v.noticeCount + 1}
               </Btn>
@@ -111,8 +111,8 @@ export function Violations({ hoaId }: { hoaId: string }) {
                 return (
                   <div>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-                      {d.category && <AIBadge value={d.category} map={{ landscaping: { color: T.forest, bg: T.forestPale }, parking: { color: T.blue, bg: T.bluePale }, architectural: { color: T.gold, bg: T.goldLight }, noise: { color: T.purple, bg: T.purplePale }, trash: { color: T.inkMid, bg: T.creamDark } }} />}
-                      {d.severity && <AIBadge value={d.severity} map={{ minor: { color: T.inkMid, bg: T.creamDark }, moderate: { color: T.warn, bg: T.warnPale }, major: { color: T.danger, bg: T.dangerPale } }} />}
+                      {d.category && <AIBadge value={d.category} map={{ landscaping: { color: T.forest, bg: T.forestPale }, parking: { color: T.blue, bg: T.bluePale }, architectural: { color: T.gold, bg: T.goldLight }, noise: { color: T.purple, bg: T.purplePale }, trash: { color: T.inkMid, bg: "var(--bg-subtle)" } }} />}
+                      {d.severity && <AIBadge value={d.severity} map={{ minor: { color: T.inkMid, bg: "var(--bg-subtle)" }, moderate: { color: T.warn, bg: T.warnPale }, major: { color: T.danger, bg: T.dangerPale } }} />}
                     </div>
                     {d.ccr_section && <AIField label="CC&R Section" value={d.ccr_section} />}
                     {d.fine_recommended_cents != null && <AIField label="Recommended Fine" value={`$${(d.fine_recommended_cents/100).toFixed(0)}`} color={T.danger} />}

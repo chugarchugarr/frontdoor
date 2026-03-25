@@ -60,15 +60,15 @@ export function ARCAgent({ hoaId }: { hoaId: string }) {
         action={<Btn onClick={() => setModal(true)}><Icons.Plus /> New Request</Btn>}
       />
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 32 }}>
         {[
-          { label: "Pending Review", value: pending.length, color: pending.length > 0 ? T.blue : T.charcoal },
+          { label: "Pending Review", value: pending.length, color: pending.length > 0 ? T.blue : "var(--text)" },
           { label: "Approved",       value: (requests as ARC[]).filter(r => r.status === "approved").length,  color: T.success },
           { label: "Denied",         value: (requests as ARC[]).filter(r => r.status === "denied").length,   color: T.danger },
         ].map(s => (
-          <Card key={s.label} style={{ padding: "16px 20px" }}>
+          <Card key={s.label} style={{ padding: "20px 24px", borderRadius: 16 }}>
             <Label>{s.label}</Label>
-            <div style={{ fontFamily: T.fontSerif, fontSize: 28, fontWeight: 700, color: s.color }}>{s.value}</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 32, fontWeight: 700, color: s.color, letterSpacing: "-0.03em", lineHeight: 1 }}>{s.value}</div>
           </Card>
         ))}
       </div>
@@ -93,11 +93,11 @@ export function ARCAgent({ hoaId }: { hoaId: string }) {
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight }}>Days remaining</div>
-                  <div style={{ fontFamily: T.fontSerif, fontSize: 22, fontWeight: 700, color: days < 7 ? T.danger : days < 14 ? T.warn : T.forest }}>{days}</div>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700, color: days < 7 ? T.danger : days < 14 ? T.warn : T.forest }}>{days}</div>
                   {r.estimatedCost && <div style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight, marginTop: 2 }}>${(r.estimatedCost/100).toLocaleString()}</div>}
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: `1px solid ${T.stone}30` }}>
+              <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: "1px solid var(--border-subtle)" }}>
                 <Btn style={{ padding: "7px 14px", fontSize: 12 }} onClick={() => { setReviewForm({ status: "approved", reviewedBy: "", reviewNotes: "", conditions: "" }); setReviewModal(r.id); }}>
                   Review
                 </Btn>

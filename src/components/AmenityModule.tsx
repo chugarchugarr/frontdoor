@@ -76,7 +76,7 @@ export function AmenityModule({ hoaId }: { hoaId: string }) {
             <Card key={a.id} style={{ padding: "22px 26px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
                 <div>
-                  <div style={{ fontFamily: T.fontSerif, fontSize: 16, fontWeight: 600, color: T.charcoal, marginBottom: 4 }}>{a.name}</div>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>{a.name}</div>
                   {a.description && <div style={{ fontFamily: T.fontSans, fontSize: 13, color: T.inkMid, marginBottom: 4 }}>{a.description}</div>}
                   <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                     {a.capacity && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight }}>Cap: {a.capacity}</span>}
@@ -94,7 +94,7 @@ export function AmenityModule({ hoaId }: { hoaId: string }) {
                   <Label>Upcoming Reservations</Label>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     {upcoming.slice(0,5).map(r => (
-                      <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", background: T.creamDark, borderRadius: T.radius }}>
+                      <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", background: "var(--bg-subtle)", borderRadius: T.radius }}>
                         <div>
                           <span style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 500 }}>{r.homeowner.name}</span>
                           <span style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight, marginLeft: 8 }}>
@@ -159,7 +159,7 @@ export function AmenityModule({ hoaId }: { hoaId: string }) {
       {/* Reserve */}
       <Modal open={!!reserveModal} onClose={() => setReserveModal(null)} title="Book Reservation">
         {(homeowners as {id:string;name:string}[]).length > 0 && (
-          <select value={rForm.homeownerId} onChange={e => setRF("homeownerId", e.target.value)} style={{ width:"100%", padding:"10px 14px", border:`1px solid ${T.stone}`, borderRadius:T.radius, background:T.white, fontSize:14, marginBottom:18 }}>
+          <select value={rForm.homeownerId} onChange={e => setRF("homeownerId", e.target.value)} style={{ width:"100%", padding:"10px 14px", border:"1px solid var(--border)", borderRadius:T.radius, background:"var(--bg-input)", fontSize:14, marginBottom:18, color:"var(--text)", fontFamily:"inherit" }}>
             <option value="">Select homeowner</option>
             {(homeowners as {id:string;name:string;address:string}[]).map(h => <option key={h.id} value={h.id}>{h.name} — {h.address}</option>)}
           </select>

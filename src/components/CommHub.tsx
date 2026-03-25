@@ -37,7 +37,7 @@ export function CommHub({ hoaId }: { hoaId: string }) {
     governance: { color: T.blue,    bg: T.bluePale },
     maintenance:{ color: T.purple,  bg: T.purplePale },
     events:     { color: T.forest,  bg: T.forestPale },
-    general:    { color: T.inkMid,  bg: T.creamDark },
+    general:    { color: T.inkMid,  bg: "var(--bg-subtle)" },
   };
 
   type ANN = { id: string; title: string; body: string; category: string; pinned: boolean; authorName: string; createdAt: Date | string; expiresAt?: Date | string | null };
@@ -66,11 +66,11 @@ export function CommHub({ hoaId }: { hoaId: string }) {
                     {a.pinned && <Tag color={T.gold} bg={T.goldLight}>📌 Pinned</Tag>}
                     <Tag color={c.color} bg={c.bg}>{a.category}</Tag>
                   </div>
-                  <h3 style={{ fontFamily: T.fontSerif, fontSize: 17, fontWeight: 600, color: T.charcoal, marginBottom: 8 }}>{a.title}</h3>
+                  <h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>{a.title}</h3>
                   <div style={{ fontFamily: T.fontSans, fontSize: 13, color: T.inkMid, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{a.body}</div>
                 </div>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 10, borderTop: `1px solid ${T.stone}30`, marginTop: 10 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 10, borderTop: "1px solid var(--border-subtle)", marginTop: 10 }}>
                 <div style={{ fontFamily: T.fontMono, fontSize: 11, color: T.inkLight }}>
                   Posted by {a.authorName} · {new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </div>

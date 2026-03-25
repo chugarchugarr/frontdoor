@@ -75,7 +75,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
           <div style={{ width: 22, height: 22, borderRadius: 5, background: `linear-gradient(135deg, ${T.forest}, ${T.forestLight})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
-          <span style={{ fontFamily: T.fontSerif, fontSize: 15, fontWeight: 700, color: "var(--text)" }}>GatePass</span>
+          <span style={{ fontFamily: T.fontSans, fontSize: 15, fontWeight: 700, color: "var(--text)" }}>GatePass</span>
         </div>
         <Tag bg={T.goldLight} color={T.gold}>Contractor Waitlist</Tag>
       </header>
@@ -102,7 +102,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
           )}
 
           <h1 style={{
-            fontFamily: T.fontSerif,
+            fontFamily: T.fontSans,
             fontSize: "clamp(28px, 3.5vw, 40px)",
             fontWeight: 700, color: "var(--text)",
             letterSpacing: "-0.025em", lineHeight: 1.1,
@@ -166,12 +166,12 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
               <div>
                 <Label style={{ margin: 0 }}>Founding Contractor Seats</Label>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-                  <span style={{ fontFamily: T.fontSerif, fontSize: 28, fontWeight: 700, color: isUrgent ? T.danger : "var(--text)", letterSpacing: "-0.02em" }}>{spotsLeft}</span>
+                  <span style={{ fontFamily: T.fontSans, fontSize: 28, fontWeight: 700, color: isUrgent ? T.danger : "var(--text)", letterSpacing: "-0.02em" }}>{spotsLeft}</span>
                   <span style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>of 25 remaining</span>
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontFamily: T.fontSerif, fontSize: 26, fontWeight: 700, color: T.gold }}>$99</div>
+                <div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: T.gold }}>$99</div>
                 <div style={{ fontFamily: T.fontMono, fontSize: 9, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>one-time</div>
               </div>
             </div>
@@ -195,7 +195,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
 
           {/* Form card */}
           <Card style={{ padding: "26px 28px" }}>
-            <h3 style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 20, letterSpacing: "-0.01em" }}>
+            <h3 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 20, letterSpacing: "-0.01em" }}>
               Reserve your seat
             </h3>
 

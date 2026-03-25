@@ -4,7 +4,7 @@ import { T } from "./tokens";
 // ─── Label ────────────────────────────────────────────────────────────
 export function Label({ children, style: s }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ fontFamily: T.fontMono, fontSize: 10, fontWeight: 500, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6, ...s }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, fontWeight: 500, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, ...s }}>
       {children}
     </div>
   );
@@ -19,9 +19,9 @@ export function FDInput({ label, ...props }: React.InputHTMLAttributes<HTMLInput
         {...props}
         style={{
           width: "100%",
-          padding: "11px 14px",
+          padding: "12px 16px",
           border: `1px solid var(--border)`,
-          borderRadius: T.radius,
+          borderRadius: "10px",
           background: "var(--bg-input)",
           fontSize: 14,
           color: "var(--text)",
@@ -41,9 +41,9 @@ export function FDTextarea({ label, ...props }: React.TextareaHTMLAttributes<HTM
         {...props}
         style={{
           width: "100%",
-          padding: "11px 14px",
+          padding: "12px 16px",
           border: `1px solid var(--border)`,
-          borderRadius: T.radius,
+          borderRadius: "10px",
           background: "var(--bg-input)",
           fontSize: 14,
           color: "var(--text)",
@@ -66,9 +66,9 @@ export function FDSelect({ label, children, ...props }: React.SelectHTMLAttribut
         {...props}
         style={{
           width: "100%",
-          padding: "11px 36px 11px 14px",
+          padding: "12px 36px 12px 16px",
           border: `1px solid var(--border)`,
-          borderRadius: T.radius,
+          borderRadius: "10px",
           background: "var(--bg-input)",
           fontSize: 14,
           color: "var(--text)",
@@ -93,8 +93,8 @@ export function Btn({ children, variant = "primary", onClick, disabled, type = "
 }) {
   const base: React.CSSProperties = {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
-    gap: 7, padding: "10px 20px", borderRadius: T.radius,
-    fontSize: 13, fontWeight: 600, letterSpacing: "0.01em",
+    gap: 7, padding: "11px 24px", borderRadius: "999px",
+    fontSize: 13, fontWeight: 500, letterSpacing: "-0.01em",
     opacity: disabled ? 0.42 : 1,
     transition: "all 0.15s cubic-bezier(0.16,1,0.3,1)",
     cursor: disabled ? "not-allowed" : "pointer",
@@ -102,7 +102,7 @@ export function Btn({ children, variant = "primary", onClick, disabled, type = "
     whiteSpace: "nowrap" as const,
   };
   const variants: Record<BtnVariant, React.CSSProperties> = {
-    primary: { background: T.forest, color: T.white, border: "none", boxShadow: "0 1px 3px rgba(42,82,64,0.20)" },
+    primary: { background: T.ink, color: T.white, border: "none", boxShadow: "0 1px 3px rgba(0,0,0,0.15)" },
     ghost:   { background: "transparent", color: "var(--text-mid)", border: `1px solid var(--border)` },
     outline: { background: "transparent", color: T.forest, border: `1px solid ${T.forest}` },
     gold:    { background: T.gold, color: T.white, border: "none", boxShadow: "0 1px 3px rgba(184,136,58,0.20)" },
@@ -121,7 +121,7 @@ export function Tag({ children, color = T.forest, bg = T.forestPale, style: s }:
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 4,
-      padding: "2px 8px", borderRadius: 20,
+      padding: "3px 10px", borderRadius: 999,
       fontSize: 10, fontWeight: 600, fontFamily: T.fontMono,
       color, background: bg, letterSpacing: "0.05em",
       textTransform: "uppercase", whiteSpace: "nowrap",
@@ -141,7 +141,7 @@ export function Card({ children, style: s, className, onClick }: { children: Rea
       style={{
         background: "var(--bg-card)",
         border: `1px solid var(--border)`,
-        borderRadius: T.radiusMd,
+        borderRadius: "16px",
         boxShadow: "var(--shadow-sm)",
         ...s,
       }}
@@ -159,7 +159,7 @@ export function StatCard({ label, value, sub, color, icon }: { label: string; va
         <Label style={{ margin: 0 }}>{label}</Label>
         {icon && <span style={{ color: color || "var(--text-light)", opacity: 0.7 }}>{icon}</span>}
       </div>
-      <div className="stat-value" style={{ fontFamily: T.fontSerif, fontSize: 30, fontWeight: 700, color: color || "var(--text)", letterSpacing: "-0.02em", lineHeight: 1 }}>
+      <div className="stat-value" style={{ fontFamily: T.fontSans, fontSize: 32, fontWeight: 700, color: color || "var(--text)", letterSpacing: "-0.03em", lineHeight: 1 }}>
         {value}
       </div>
       {sub && <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", marginTop: 6, lineHeight: 1.4 }}>{sub}</div>}
@@ -172,7 +172,7 @@ export function SectionHeader({ title, sub, action }: { title: string; sub?: str
   return (
     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28, gap: 16 }}>
       <div>
-        <h2 style={{ fontFamily: T.fontSerif, fontSize: 22, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.015em", lineHeight: 1.2 }}>{title}</h2>
+        <h2 style={{ fontFamily: T.fontSans, fontSize: 24, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.025em", lineHeight: 1.2 }}>{title}</h2>
         {sub && <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)", marginTop: 5, lineHeight: 1.5 }}>{sub}</p>}
       </div>
       {action && <div style={{ flexShrink: 0 }}>{action}</div>}
@@ -220,7 +220,7 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
         className="modal-in"
         style={{
           background: "var(--bg-card)",
-          borderRadius: T.radiusLg,
+          borderRadius: "20px",
           width: "100%",
           maxWidth: 560,
           maxHeight: "88vh",
@@ -235,9 +235,9 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
           borderBottom: `1px solid var(--border)`,
           display: "flex", alignItems: "center", justifyContent: "space-between",
           position: "sticky", top: 0, background: "var(--bg-card)", zIndex: 1,
-          borderRadius: `${T.radiusLg} ${T.radiusLg} 0 0`,
+          borderRadius: "20px 20px 0 0",
         }}>
-          <h3 style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 600, color: "var(--text)" }}>{title}</h3>
+          <h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.02em" }}>{title}</h3>
           <button
             onClick={onClose}
             className="btn-icon"
@@ -264,7 +264,7 @@ export function EmptyState({ icon, title, sub }: { icon: string; title: string; 
   return (
     <div style={{ textAlign: "center", padding: "64px 24px" }}>
       <div style={{ fontSize: 42, marginBottom: 16, opacity: 0.7 }}>{icon}</div>
-      <div style={{ fontFamily: T.fontSerif, fontSize: 18, color: "var(--text)", marginBottom: 7, fontWeight: 600 }}>{title}</div>
+      <div style={{ fontFamily: T.fontSans, fontSize: 16, color: "var(--text)", marginBottom: 7, fontWeight: 600, letterSpacing: "-0.02em" }}>{title}</div>
       {sub && <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)", lineHeight: 1.6, maxWidth: 320, margin: "0 auto" }}>{sub}</div>}
     </div>
   );
