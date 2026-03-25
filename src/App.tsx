@@ -455,8 +455,8 @@ function GatePassDemo({ onBack }: { onBack: () => void }) {
 
       {/* Demo banner */}
       <div style={{
-        background: "#111111",
-        borderBottom: "1px solid rgba(255,255,255,0.08)",
+        background: "#FFFFFF",
+        borderBottom: "1px solid #E5E5E5",
         padding: "10px 20px",
         display: "flex",
         alignItems: "center",
@@ -469,15 +469,15 @@ function GatePassDemo({ onBack }: { onBack: () => void }) {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
-          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "rgba(255,255,255,0.5)", letterSpacing: "-0.01em" }}>
+          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", letterSpacing: "-0.01em" }}>
             Demo · Steiner Ranch HOA · All 9 agents active
           </span>
         </div>
         <button
           onClick={onBack}
           style={{
-            fontFamily: T.fontSans, fontSize: 12, color: "rgba(255,255,255,0.4)",
-            background: "none", border: "1px solid rgba(255,255,255,0.1)",
+            fontFamily: T.fontSans, fontSize: 12, color: "#525252",
+            background: "none", border: "1px solid #E5E5E5",
             borderRadius: 999, padding: "4px 14px", cursor: "pointer",
             transition: "all 0.15s",
             flexShrink: 0,
