@@ -59,7 +59,7 @@ export function AmenityModule({ hoaId }: { hoaId: string }) {
   type AMN = { id: string; name: string; description?: string|null; capacity?: number|null; depositCents?: number|null; openTime?: string|null; closeTime?: string|null; rules?: string|null; reservations: {id:string;date:string;startTime:string;endTime:string;status:string;guestCount?:number|null;homeowner:{name:string}}[] };
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="Amenity — Reservations"
         sub="Pool, clubhouse, courts, and common area bookings"

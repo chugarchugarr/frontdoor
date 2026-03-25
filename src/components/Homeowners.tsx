@@ -45,7 +45,7 @@ export function Homeowners({ hoaId }: { hoaId: string }) {
   const residents = (homeowners as HW[]).filter(h => h.role === "resident");
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="Homeowners"
         sub="Resident roster, dues accounts, and role management"

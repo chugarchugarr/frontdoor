@@ -1345,7 +1345,7 @@ export async function getAgentJobStatus(jobId: number) {
 export async function getAIAnalysis(input: {
   type: "violation" | "arc" | "workorder" | "meeting" | "vote" | "reservation" | "announcement" | "dues" | "contractor";
   id: string;
-}) {
+}): Promise<Record<string, unknown> | null> {
   let raw: string | null = null;
 
   switch (input.type) {
@@ -1379,4 +1379,316 @@ export async function getAIAnalysis(input: {
   }
 
   return raw ? JSON.parse(raw) : null;
+}
+
+// ─── Demo Seed ────────────────────────────────────────────────────────
+// Creates (or resets) a fully-populated demo HOA for live presentations.
+// Idempotent: if "Steiner Ranch HOA (Demo)" already exists, wipes and rebuilds it.
+
+export async function seedDemoData() {
+  const DEMO_COMMUNITY = "Steiner Ranch HOA (Demo)";
+
+  // Wipe any prior demo HOA
+  const prior = await db.hOA.findFirst({ where: { community: DEMO_COMMUNITY } });
+  if (prior) {
+    // Must delete leaf nodes first (FK constraints)
+    const priorHomeowners = await db.homeowner.findMany({ where: { hoaId: prior.id }, select: { id: true } });
+    const hwIds = priorHomeowners.map(h => h.id);
+    // Leaf tables that reference homeowner
+    await db.duesAccount.deleteMany({ where: { homeownerId: { in: hwIds } } });
+    await db.voteCast.deleteMany({ where: { homeownerId: { in: hwIds } } });
+    await db.violation.deleteMany({ where: { hoaId: prior.id } });
+    await db.aRCRequest.deleteMany({ where: { hoaId: prior.id } });
+    await db.workOrder.deleteMany({ where: { hoaId: prior.id } });
+    // agendaItems reference meetings
+    const priorMeetings = await db.meeting.findMany({ where: { hoaId: prior.id }, select: { id: true } });
+    await db.agendaItem.deleteMany({ where: { meetingId: { in: priorMeetings.map(m => m.id) } } });
+    await db.meeting.deleteMany({ where: { hoaId: prior.id } });
+    // voteCasts already deleted above; now delete votes
+    await db.vote.deleteMany({ where: { hoaId: prior.id } });
+    // amenityReservations reference amenities
+    const priorAmenities = await db.amenity.findMany({ where: { hoaId: prior.id }, select: { id: true } });
+    await db.reservation.deleteMany({ where: { amenityId: { in: priorAmenities.map(a => a.id) } } });
+    await db.amenity.deleteMany({ where: { hoaId: prior.id } });
+    await db.announcement.deleteMany({ where: { hoaId: prior.id } });
+    await db.budget.deleteMany({ where: { hoaId: prior.id } });
+    // aiAnalysis records reference the HOA indirectly — delete by refId patterns if needed
+    await db.homeowner.deleteMany({ where: { hoaId: prior.id } });
+    await db.hOA.delete({ where: { id: prior.id } });
+  }
+
+  // ── Create HOA ──
+  const hoa = await db.hOA.create({
+    data: {
+      name: "Steiner Ranch HOA",
+      community: DEMO_COMMUNITY,
+      city: "Austin", state: "TX", zip: "78732",
+      units: 847,
+      contactName: "Sarah Mitchell",
+      contactEmail: "sarah@steinerhoa.org",
+      plan: "full",
+      pricePerUnit: 2200,
+      paid: true,
+      paidAt: new Date("2026-01-15"),
+      amountCents: 847 * 2200,
+    },
+  });
+
+  // ── Homeowners ──
+  const homeonerData = [
+    { name: "Sarah Mitchell",   email: "sarah@steinerhoa.org",  address: "1847 Stonelake Blvd",    role: "president",  monthly: 18500 },
+    { name: "Marcus Torres",    email: "mtorres@email.com",     address: "1203 Ranch Rd 620 N",    role: "treasurer",  monthly: 18500 },
+    { name: "Jennifer Park",    email: "jpark@gmail.com",       address: "4521 Comanche Trail",    role: "resident",   monthly: 18500 },
+    { name: "David Nguyen",     email: "dnguyen@outlook.com",   address: "902 Canyon Edge Dr",     role: "resident",   monthly: 18500 },
+    { name: "Lisa Hartman",     email: "lhartman@yahoo.com",    address: "3317 Steiner Ranch Blvd",role: "resident",   monthly: 18500 },
+    { name: "Robert Kim",       email: "rkim@gmail.com",        address: "6782 Lariat Loop",       role: "resident",   monthly: 18500 },
+    { name: "Angela Davis",     email: "adavis@email.com",      address: "2241 Flat Creek Cove",   role: "resident",   monthly: 18500 },
+    { name: "Tyler Brooks",     email: "tbrooks@gmail.com",     address: "5508 Cerro Vista Dr",    role: "resident",   monthly: 18500 },
+    { name: "Maria Gonzalez",   email: "mgonzalez@email.com",   address: "1129 Crosswind Dr",      role: "resident",   monthly: 18500 },
+    { name: "James Wilson",     email: "jwilson@outlook.com",   address: "3807 River Place Blvd",  role: "resident",   monthly: 18500 },
+  ];
+
+  const homeowners: { id: string; name: string; email: string; address: string; duesAccountId?: string }[] = [];
+  for (const h of homeonerData) {
+    const hw = await db.homeowner.create({
+      data: { hoaId: hoa.id, name: h.name, email: h.email, address: h.address, role: h.role, phone: "512-555-" + String(Math.floor(1000 + Math.random() * 9000)) },
+    });
+    const dues = await db.duesAccount.create({
+      data: { homeownerId: hw.id, monthlyDueCents: h.monthly },
+    });
+    // Give some homeowners a balance
+    const balances: Record<string, number> = {
+      "David Nguyen": 37000,   // 2 months behind
+      "Tyler Brooks": 18500,   // 1 month behind
+      "Angela Davis": 55500,   // 3 months behind
+    };
+    if (balances[h.name]) {
+      await db.duesAccount.update({ where: { id: dues.id }, data: { balanceCents: balances[h.name] } });
+    }
+    homeowners.push({ id: hw.id, name: h.name, email: h.email, address: h.address, duesAccountId: dues.id });
+  }
+
+  // ── Budget ──
+  const budgetItems = [
+    { category: "maintenance", name: "Pool maintenance contract", budgetedCents: 1200000, actualCents: 1050000 },
+    { category: "utilities",   name: "Common area utilities",     budgetedCents: 840000,  actualCents: 790000  },
+    { category: "insurance",   name: "HOA liability insurance",   budgetedCents: 620000,  actualCents: 620000  },
+    { category: "reserves",    name: "Capital reserve fund",      budgetedCents: 2400000, actualCents: 2400000 },
+    { category: "landscaping", name: "Common area landscaping",   budgetedCents: 960000,  actualCents: 880000  },
+    { category: "admin",       name: "Administrative & legal",    budgetedCents: 480000,  actualCents: 310000  },
+  ];
+  for (const b of budgetItems) {
+    await db.budget.create({ data: { hoaId: hoa.id, year: 2026, ...b, notes: null } });
+  }
+
+  // ── Violations ──
+  const violationData = [
+    { hw: 2, category: "landscaping",   description: "Grass exceeding 6 inches, dead shrubs visible from street",           severity: "minor",    status: "open" },
+    { hw: 3, category: "parking",       description: "Commercial vehicle parked in driveway — exceeds 24hr limit per CC&Rs", severity: "moderate", status: "noticed", noticeCount: 1, fineCents: 5000 },
+    { hw: 5, category: "architectural", description: "Unpermitted fence extension — 6ft on property line, requires ARC approval", severity: "major", status: "escalated", noticeCount: 3, fineCents: 15000 },
+    { hw: 6, category: "trash",         description: "Refuse bins left at curb beyond 24 hours on multiple occasions",      severity: "minor",    status: "open" },
+    { hw: 8, category: "noise",         description: "Multiple neighbor complaints regarding construction noise before 7am", severity: "moderate", status: "open" },
+  ];
+  const violations = [];
+  for (const v of violationData) {
+    const hw = homeowners[v.hw];
+    const viol = await db.violation.create({
+      data: {
+        hoaId: hoa.id, homeownerId: hw.id, address: hw.address,
+        category: v.category, description: v.description,
+        severity: v.severity, status: v.status,
+        noticeCount: v.noticeCount ?? 0,
+        fineCents: v.fineCents ?? null,
+        reportedBy: "Board Inspection",
+        nextNoticeAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      },
+    });
+    violations.push(viol);
+  }
+
+  // ── ARC Requests ──
+  const arcData = [
+    { hw: 3, projectType: "pool",      description: "In-ground pool installation, 400 sq ft, includes spa and waterfall feature",    estimatedCost: 8500000, daysAgo: 10 },
+    { hw: 4, projectType: "fence",     description: "Replace existing 4ft wood fence with 6ft cedar privacy fence along back property line", estimatedCost: 320000, daysAgo: 22 },
+    { hw: 7, projectType: "solar",     description: "18-panel rooftop solar array, 9.6kW system, panel color matches roof (charcoal)",    estimatedCost: 2800000, daysAgo: 5  },
+    { hw: 0, projectType: "deck",      description: "Composite deck addition, 300 sq ft, attached to rear of home",                       estimatedCost: 1850000, daysAgo: 35, status: "approved" },
+    { hw: 1, projectType: "addition",  description: "540 sq ft home office addition — matches existing brick and roofline",               estimatedCost: 9200000, daysAgo: 40, status: "denied" },
+  ];
+  for (const a of arcData) {
+    const hw = homeowners[a.hw];
+    const submittedAt = new Date(Date.now() - a.daysAgo * 24 * 60 * 60 * 1000);
+    const reviewDeadline = new Date(submittedAt.getTime() + 45 * 24 * 60 * 60 * 1000);
+    await db.aRCRequest.create({
+      data: {
+        hoaId: hoa.id, homeownerId: hw.id, address: hw.address,
+        projectType: a.projectType, description: a.description,
+        estimatedCost: a.estimatedCost, reviewDeadline, submittedAt,
+        status: a.status ?? "submitted",
+      },
+    });
+  }
+
+  // ── Work Orders ──
+  const woData = [
+    { title: "Pool pump replacement",         category: "pool",        priority: "urgent",  location: "Main pool equipment room", description: "Main circulation pump seized — pool closed until repaired. Needs 2HP Hayward replacement.", estimatedCost: 285000 },
+    { title: "Clubhouse A/C not cooling",     category: "hvac",        priority: "high",    location: "Clubhouse — main hall",    description: "HVAC unit not reaching setpoint. Suspected refrigerant leak. Unit is 8 years old.", estimatedCost: 180000, assignedTo: "CoolAir Systems" },
+    { title: "Parking lot pothole repair",    category: "structural",  priority: "normal",  location: "North parking lot, rows 3-5", description: "Multiple potholes 4–10 inches diameter. Trip hazard. Needs patching and seal coat.", estimatedCost: 420000 },
+    { title: "Irrigation controller failure", category: "landscaping", priority: "normal",  location: "Common area Zone 4",       description: "Zone 4 irrigation controller not responding. Manual override shows heads working.", estimatedCost: 45000, status: "assigned" },
+    { title: "Tennis court net replacement",  category: "general",     priority: "low",     location: "Court 1 & 2",              description: "Both nets are frayed and sagging. Replace with regulation nets.", estimatedCost: 32000 },
+    { title: "Gate keypad battery failure",   category: "electrical",  priority: "urgent",  location: "Main entrance gate",       description: "Entry gate keypad dead. Backup battery drained. Residents unable to use keycode entry.", estimatedCost: 18000, status: "in_progress", assignedTo: "SecureGate Austin" },
+  ];
+  for (const wo of woData) {
+    await db.workOrder.create({
+      data: {
+        hoaId: hoa.id, title: wo.title, description: wo.description,
+        category: wo.category, priority: wo.priority,
+        location: wo.location, status: wo.status ?? "open",
+        assignedTo: wo.assignedTo ?? null,
+        estimatedCost: wo.estimatedCost,
+      },
+    });
+  }
+
+  // ── Meetings ──
+  const meeting1 = await db.meeting.create({
+    data: {
+      hoaId: hoa.id, title: "April Board Meeting", type: "board",
+      scheduledAt: new Date("2026-04-07T19:00:00-05:00"),
+      location: "Clubhouse Room B", quorumRequired: 3, status: "scheduled",
+      agenda: "1. Call to order\n2. Financial report — Q1 2026\n3. Pool repair emergency update\n4. Violation enforcement review\n5. Pool reopening vote\n6. ARC committee update\n7. New business\n8. Adjournment",
+    },
+  });
+  await db.agendaItem.createMany({
+    data: [
+      { meetingId: meeting1.id, order: 1, title: "Call to order", status: "pending" },
+      { meetingId: meeting1.id, order: 2, title: "Financial report — Q1 2026", status: "pending", actionRequired: true },
+      { meetingId: meeting1.id, order: 3, title: "Pool pump repair — emergency budget approval", status: "pending", actionRequired: true },
+      { meetingId: meeting1.id, order: 4, title: "Violation enforcement update", status: "pending" },
+      { meetingId: meeting1.id, order: 5, title: "Pool reopening timeline vote", status: "pending", actionRequired: true },
+    ],
+  });
+
+  // Past meeting with minutes
+  await db.meeting.create({
+    data: {
+      hoaId: hoa.id, title: "March Board Meeting", type: "board",
+      scheduledAt: new Date("2026-03-03T19:00:00-05:00"),
+      location: "Clubhouse Room B", status: "completed", quorumRequired: 3,
+      minutes: "Meeting called to order at 7:05pm. Quorum of 4 board members confirmed.\n\nFinancial report: YTD budget variance is +$82,000. Reserve fund at target.\n\nPool maintenance contract renewed with AquaClear for $12,000/year.\n\nViolation enforcement: 3 open violations, 1 escalated to HOA attorney.\n\nMotion to approve 2026 community improvement schedule passed 4-0.\n\nMeeting adjourned at 8:45pm.",
+    },
+  });
+
+  // ── Votes ──
+  const vote1 = await db.vote.create({
+    data: {
+      hoaId: hoa.id, title: "Pool Reopening Date",
+      description: "Vote to select the community pool reopening date for the 2026 season. Pump repair must complete first.",
+      type: "motion", status: "open",
+      options: JSON.stringify(["April 15", "April 22", "May 1"]),
+      closesAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      requiresQuorum: true, quorumCount: 50,
+    },
+  });
+  // Seed some votes cast (cycle through homeowners for FK requirement)
+  const vote1Homeowners = homeowners.slice(0, 7); // use first 7 homeowners
+  for (let i = 0; i < vote1Homeowners.length; i++) {
+    const opts = ["April 15", "April 22", "May 1"];
+    await db.voteCast.create({ data: { voteId: vote1.id, homeownerId: vote1Homeowners[i].id, selection: opts[i % opts.length] } });
+  }
+
+  const vote2 = await db.vote.create({
+    data: {
+      hoaId: hoa.id, title: "2026 Special Assessment — Gate System Upgrade",
+      description: "One-time special assessment of $350/unit to fund modernization of all 4 community gate systems with license plate recognition.",
+      type: "special_assessment", status: "closed",
+      options: JSON.stringify(["Approve", "Deny"]),
+      closesAt: new Date("2026-03-01"),
+      requiresQuorum: true, quorumCount: 100,
+      resultSummary: "Approved 214-48 (82% approval, quorum met)",
+    },
+  });
+  // vote2 — use all 10 homeowners cycling through (no @@unique violation since different voteId)
+  for (let i = 0; i < homeowners.length; i++) {
+    await db.voteCast.create({ data: { voteId: vote2.id, homeownerId: homeowners[i].id, selection: i < Math.floor(homeowners.length * 0.82) ? "Approve" : "Deny" } });
+  }
+
+  // ── Amenities ──
+  const pool = await db.amenity.create({
+    data: {
+      hoaId: hoa.id, name: "Main Community Pool", capacity: 75,
+      description: "Olympic-size heated pool with lap lanes and children's area. Heated to 82°F year-round.",
+      depositCents: 0, openTime: "06:00", closeTime: "22:00",
+      rules: "No glass. Shower before entering. Children under 12 must be accompanied by adult. No diving in shallow end.",
+    },
+  });
+  const clubhouse = await db.amenity.create({
+    data: {
+      hoaId: hoa.id, name: "Clubhouse & Event Hall", capacity: 120,
+      description: "Full kitchen, AV system, tables & chairs included. Perfect for community events.",
+      depositCents: 50000, openTime: "08:00", closeTime: "23:00",
+      rules: "Deposit required. Clean-up by midnight. No amplified music after 10pm.",
+    },
+  });
+  const courts = await db.amenity.create({
+    data: {
+      hoaId: hoa.id, name: "Tennis Courts (2)", capacity: 8,
+      description: "Two hardcourt tennis courts with lighting for evening play.",
+      depositCents: 0, openTime: "07:00", closeTime: "21:00",
+      rules: "2-hour booking limit when courts are in demand. Court shoes required.",
+    },
+  });
+
+  // Reservations
+  const today = new Date();
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  const days = (n: number) => new Date(today.getTime() + n * 86400000);
+
+  const resData = [
+    { amenityId: pool.id,      hw: 0, date: fmt(days(1)),  start: "09:00", end: "10:00", guestCount: 4,  notes: "Lap swim" },
+    { amenityId: pool.id,      hw: 2, date: fmt(days(2)),  start: "14:00", end: "17:00", guestCount: 12, notes: "Birthday party — reserved pool area" },
+    { amenityId: clubhouse.id, hw: 1, date: fmt(days(3)),  start: "18:00", end: "22:00", guestCount: 45, notes: "Annual block party planning meeting" },
+    { amenityId: courts.id,    hw: 4, date: fmt(days(1)),  start: "07:00", end: "08:30", guestCount: 2,  notes: "" },
+    { amenityId: clubhouse.id, hw: 6, date: fmt(days(7)),  start: "11:00", end: "16:00", guestCount: 80, notes: "Quinceañera reception" },
+    { amenityId: pool.id,      hw: 8, date: fmt(days(4)),  start: "16:00", end: "18:00", guestCount: 6,  notes: "Kids swim" },
+  ];
+  for (const r of resData) {
+    const hw = homeowners[r.hw];
+    await db.reservation.create({
+      data: {
+        amenityId: r.amenityId, homeownerId: hw.id,
+        date: r.date, startTime: r.start, endTime: r.end,
+        guestCount: r.guestCount, notes: r.notes || null,
+        status: "confirmed",
+      },
+    });
+  }
+
+  // ── Announcements ──
+  const annData = [
+    { title: "⚠️ Pool Temporarily Closed — Pump Repair",         category: "urgent",      pinned: true,  body: "The main community pool is temporarily closed for emergency pump replacement. Estimated reopening: April 15. We apologize for the inconvenience. Updates will be posted as work progresses." },
+    { title: "April Board Meeting — April 7 at 7:00 PM",         category: "governance",  pinned: false, body: "The next board meeting is April 7 at 7:00 PM in Clubhouse Room B. Key items: Q1 financial review, pool repair update, and the pool reopening vote. All residents welcome to attend." },
+    { title: "2026 Gate System Upgrade — Assessment Approved",    category: "financial",   pinned: false, body: "The community voted 82% in favor of the $350/unit special assessment for gate system modernization. Billing will appear on your April dues statement. The new LPR gate system will be installed Q3 2026." },
+    { title: "Spring Landscaping Schedule",                       category: "maintenance", pinned: false, body: "Austin Greenworks will perform common area spring maintenance March 28–April 2. Please keep vehicles clear of landscaped areas. Mulching, trimming, and irrigation system startup included." },
+    { title: "Welcome to GatePass — Your HOA is Now Digital",    category: "general",     pinned: false, body: "Steiner Ranch HOA is now operating on GatePass, the AI-powered HOA operating system. You can now submit ARC requests, view violations, book amenities, and vote on community matters — all online. Questions? Contact board@steinerhoa.org." },
+  ];
+  for (const a of annData) {
+    await db.announcement.create({
+      data: { hoaId: hoa.id, title: a.title, body: a.body, category: a.category, pinned: a.pinned, authorName: "HOA Board" },
+    });
+  }
+
+  return {
+    hoaId: hoa.id,
+    community: DEMO_COMMUNITY,
+    stats: {
+      homeowners: homeowners.length,
+      violations: violationData.length,
+      arcRequests: arcData.length,
+      workOrders: woData.length,
+      votes: 2,
+      amenities: 3,
+      reservations: resData.length,
+      announcements: annData.length,
+    },
+  };
 }

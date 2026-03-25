@@ -54,7 +54,7 @@ export function VoteBox({ hoaId }: { hoaId: string }) {
   const closed = (votes as VT[]).filter(v => v.status !== "open");
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="VoteBox — Elections & Surveys"
         sub="Secure online voting, motions, elections, and surveys"

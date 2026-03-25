@@ -53,7 +53,7 @@ export function ARCAgent({ hoaId }: { hoaId: string }) {
   };
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="ARC Agent — Architectural Review"
         sub="45-day review window, automated deadline tracking, board routing"

@@ -53,7 +53,7 @@ export function WorkOrders({ hoaId }: { hoaId: string }) {
   const done = (orders as WO[]).filter(o => ["completed","cancelled"].includes(o.status));
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="WorkOrder — Maintenance Ops"
         sub="Track repairs, assign contractors, manage community maintenance"

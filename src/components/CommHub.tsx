@@ -43,7 +43,7 @@ export function CommHub({ hoaId }: { hoaId: string }) {
   type ANN = { id: string; title: string; body: string; category: string; pinned: boolean; authorName: string; createdAt: Date | string; expiresAt?: Date | string | null };
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="CommHub — Communications"
         sub="Announcements, newsletters, and resident messaging"

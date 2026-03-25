@@ -45,7 +45,7 @@ export function BoardRoom({ hoaId }: { hoaId: string }) {
   const past = (meetings as MTG[]).filter(m => m.status !== "scheduled");
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="BoardRoom — Governance"
         sub="Meeting scheduling, agenda management, and minutes recording"

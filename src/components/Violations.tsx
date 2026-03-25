@@ -40,7 +40,7 @@ export function Violations({ hoaId }: { hoaId: string }) {
   const resolved = allViolations.filter(v => v.status === "resolved");
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="FineBot — Violations"
         sub="Automated violation tracking, notice generation, and escalation"

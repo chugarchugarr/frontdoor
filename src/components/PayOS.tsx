@@ -43,7 +43,7 @@ export function PayOS({ hoaId }: { hoaId: string }) {
   type HW = { id: string; name: string; address: string; duesAccount: { balanceCents: number; monthlyDueCents: number; autopayEnabled: boolean } | null };
 
   return (
-    <div style={{ padding: "32px 40px" }} className="main-pad">
+    <div style={{ padding: "32px 40px", minHeight: "100vh" }} className="main-pad">
       <SectionHeader
         title="PayOS — Dues & Finances"
         sub="Automated dues collection, budgeting, and financial reporting"

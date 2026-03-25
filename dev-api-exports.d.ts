@@ -1273,6 +1273,20 @@ export declare function getAgentJobStatus(jobId: number): Promise<{
 export declare function getAIAnalysis(input: {
 	type: "violation" | "arc" | "workorder" | "meeting" | "vote" | "reservation" | "announcement" | "dues" | "contractor";
 	id: string;
-}): Promise<any>;
+}): Promise<Record<string, unknown> | null>;
+export declare function seedDemoData(): Promise<{
+	hoaId: string;
+	community: string;
+	stats: {
+		homeowners: number;
+		violations: number;
+		arcRequests: number;
+		workOrders: number;
+		votes: number;
+		amenities: number;
+		reservations: number;
+		announcements: number;
+	};
+}>;
 
 export {};
