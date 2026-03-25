@@ -15,6 +15,7 @@ import { VoteBox } from "./components/VoteBox";
 import { WorkOrders } from "./components/WorkOrders";
 import { AmenityModule } from "./components/AmenityModule";
 import { CommHub } from "./components/CommHub";
+import { ContractorWaitlist as ContractorWaitlistPanel } from "./components/ContractorWaitlist";
 
 // ─── Success screens ──────────────────────────────────────────────────
 function SuccessScreen({ type, position }: { type: "hoa" | "contractor"; position?: number }) {
@@ -408,70 +409,8 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
   );
 }
 
-// ─── Contractor Waitlist ──────────────────────────────────────────────
-const CATEGORIES = [
-  { id: "roofing", label: "Roofing" }, { id: "plumbing", label: "Plumbing" },
-  { id: "foundation", label: "Foundation" }, { id: "hvac", label: "HVAC" },
-  { id: "electrical", label: "Electrical" }, { id: "solar", label: "Solar" },
-  { id: "landscaping", label: "Landscaping" }, { id: "painting", label: "Painting" },
-];
-
-function ContractorWaitlist({ onBack }: { onBack: () => void }) {
-  const [form, setForm] = useState({ company: "", contactName: "", email: "", phone: "", category: "", zip: "" });
-  const { data: stats } = useQuery({ queryKey: ["contractorStats"], queryFn: () => rpc.getContractorStats(), refetchInterval: 15000 });
-  const mutation = useMutation({
-    mutationFn: () => rpc.createContractorCheckout({ company: form.company, contactName: form.contactName, email: form.email, phone: form.phone, category: form.category, zip: form.zip }),
-    onSuccess: (data: { url: string | null }) => { if (data.url) window.location.href = data.url; },
-  });
-  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
-  const spotsLeft = stats?.spotsLeft ?? 25;
-
-  return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }} className="gp-grid-bg">
-      <style>{GLOBAL_CSS}</style>
-      <header style={{ padding: "0 40px", height: 62, borderBottom: `1px solid var(--border)`, display: "flex", alignItems: "center", gap: 14, background: "var(--bg)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 100 }}>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: "var(--text-light)", display: "flex", alignItems: "center", gap: 6, fontFamily: T.fontSans, fontSize: 13, cursor: "pointer" }}><Icons.Back /> Back</button>
-        <div style={{ width: 1, height: 20, background: "var(--border)" }} />
-        <span style={{ fontFamily: T.fontSerif, fontSize: 17, fontWeight: 600, color: "var(--text)" }}>GatePass</span>
-        <Tag bg={T.goldLight} color={T.gold}>Contractor Waitlist</Tag>
-      </header>
-      <div style={{ maxWidth: 580, margin: "0 auto", padding: "56px 40px" }}>
-        <div className="anim-up" style={{ marginBottom: 32 }}>
-          <h1 style={{ fontFamily: T.fontSerif, fontSize: 34, fontWeight: 700, color: T.charcoal, letterSpacing: "-0.02em", marginBottom: 10 }}>Reserve Your Seat</h1>
-          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: T.inkMid, lineHeight: 1.7 }}>$99 secures your founding contractor seat. First access to verified leads on launch day.</p>
-        </div>
-        <Card style={{ padding: "16px 20px", marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontFamily: T.fontMono, fontSize: 10, color: T.inkLight, textTransform: "uppercase", letterSpacing: "0.08em" }}>Seats Remaining</span>
-            <span style={{ fontFamily: T.fontSerif, fontSize: 18, fontWeight: 700, color: spotsLeft <= 10 ? T.danger : T.charcoal }}>{spotsLeft} of 25</span>
-          </div>
-          <div style={{ height: 5, background: T.stone, borderRadius: 3, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${((25 - spotsLeft) / 25) * 100}%`, background: T.gold, borderRadius: 3 }} />
-          </div>
-        </Card>
-        <Card style={{ padding: 32 }}>
-          <FDInput label="Company" placeholder="Summit Roofing Co." value={form.company} onChange={e => set("company", e.target.value)} />
-          <FDInput label="Your Name" placeholder="Mike Torres" value={form.contactName} onChange={e => set("contactName", e.target.value)} />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <FDInput label="Email" type="email" placeholder="mike@summit.com" value={form.email} onChange={e => set("email", e.target.value)} />
-            <FDInput label="Phone" type="tel" placeholder="512-555-0100" value={form.phone} onChange={e => set("phone", e.target.value)} />
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <FDSelect label="Category" value={form.category} onChange={e => set("category", e.target.value)}>
-              <option value="">Select category</option>
-              {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-            </FDSelect>
-            <FDInput label="Primary ZIP" placeholder="78732" value={form.zip} onChange={e => set("zip", e.target.value)} />
-          </div>
-          <Btn variant="gold" full onClick={() => mutation.mutate()} disabled={!form.company || !form.contactName || !form.email || !form.category || !form.zip || mutation.isPending} style={{ marginTop: 8 }}>
-            {mutation.isPending ? "Redirecting…" : "Reserve Seat — $99"}
-          </Btn>
-          <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.inkLight, textAlign: "center", marginTop: 10 }}>Refundable if Austin doesn't launch within 6 months.</div>
-        </Card>
-      </div>
-    </div>
-  );
-}
+// ContractorWaitlist is now in ./components/ContractorWaitlist.tsx
+const ContractorWaitlist = ContractorWaitlistPanel;
 
 // ─── Live Demo — full OS shell, no auth required ─────────────────────
 const DEMO_HOA_ID = "cmn5kapjd0000jitlk3ehms51";
