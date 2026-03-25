@@ -30,14 +30,14 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
     <aside className="sidebar" style={{
       width: 220,
       flexShrink: 0,
-      background: "#111111",
+      background: "#FFFFFF",
       display: "flex",
       flexDirection: "column",
       height: "100vh",
       position: "sticky",
       top: 0,
       overflow: "hidden",
-      borderRight: "1px solid rgba(255,255,255,0.06)",
+      borderRight: "1px solid #E5E5E5",
     }}>
       <style>{GLOBAL_CSS}</style>
 
@@ -55,7 +55,7 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
           </div>
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.03em" }}>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 800, color: "#0A0A0A", letterSpacing: "-0.03em" }}>
             GatePass
           </span>
         </div>
@@ -64,12 +64,12 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
           <div style={{
             marginTop: 12,
             padding: "7px 10px",
-            background: "rgba(255,255,255,0.05)",
+            background: "#F7F7F7",
             borderRadius: 10,
-            border: "1px solid rgba(255,255,255,0.08)",
+            border: "1px solid #E5E5E5",
           }}>
-            <div style={{ fontFamily: T.fontMono, fontSize: 9, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Community</div>
-            <div style={{ fontFamily: T.fontSans, fontSize: 12, fontWeight: 500, color: "rgba(255,255,255,0.72)", lineHeight: 1.3 }}>{hoaName}</div>
+            <div style={{ fontFamily: T.fontMono, fontSize: 9, color: "#A3A3A3", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>Community</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 12, fontWeight: 500, color: "#0A0A0A", lineHeight: 1.3 }}>{hoaName}</div>
           </div>
         )}
       </div>
@@ -84,7 +84,7 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
                 <div style={{
                   fontFamily: T.fontMono,
                   fontSize: 9,
-                  color: "rgba(255,255,255,0.2)",
+                  color: "#A3A3A3",
                   textTransform: "uppercase",
                   letterSpacing: "0.12em",
                   padding: "14px 8px 4px",
@@ -93,7 +93,6 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
                 </div>
               )}
               <button
-                className={`nav-item${isCurrent ? " active" : ""}`}
                 onClick={() => onNav(item.id)}
                 style={{
                   display: "flex",
@@ -102,17 +101,18 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
                   padding: "7px 10px",
                   borderRadius: 8,
                   border: "none",
-                  background: isCurrent ? "rgba(255,255,255,0.1)" : "transparent",
-                  color: isCurrent ? "#FFFFFF" : "rgba(255,255,255,0.42)",
+                  background: isCurrent ? "#F0F5F2" : "transparent",
+                  color: isCurrent ? T.forest : "#525252",
                   fontSize: 13,
-                  fontWeight: isCurrent ? 500 : 400,
+                  fontWeight: isCurrent ? 600 : 400,
                   textAlign: "left",
                   width: "100%",
                   cursor: "pointer",
                   letterSpacing: "-0.01em",
+                  transition: "background 0.12s, color 0.12s",
                 }}
               >
-                <span style={{ opacity: isCurrent ? 1 : 0.55, flexShrink: 0 }}>{item.icon}</span>
+                <span style={{ color: isCurrent ? T.forest : "#A3A3A3", flexShrink: 0 }}>{item.icon}</span>
                 {item.label}
               </button>
             </React.Fragment>
@@ -121,11 +121,11 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
       </nav>
 
       {/* Footer */}
-      <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div style={{ padding: "12px 16px", borderTop: "1px solid #E5E5E5" }}>
         {auth.status === "authenticated" && (
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
             <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
-            <span style={{ fontFamily: T.fontMono, fontSize: 10, color: "rgba(255,255,255,0.22)", letterSpacing: "0.04em" }}>
+            <span style={{ fontFamily: T.fontMono, fontSize: 10, color: "#A3A3A3", letterSpacing: "0.04em" }}>
               Active
             </span>
           </div>
@@ -135,7 +135,7 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
           style={{
             fontFamily: T.fontSans,
             fontSize: 12,
-            color: "rgba(255,255,255,0.22)",
+            color: "#A3A3A3",
             background: "none",
             border: "none",
             cursor: "pointer",

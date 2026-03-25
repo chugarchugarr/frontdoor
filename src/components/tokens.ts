@@ -177,8 +177,7 @@ export const GLOBAL_CSS = `
 
   /* Sidebar nav */
   .nav-item { transition: background 0.12s, color 0.12s; }
-  .nav-item:hover:not(.active) { background: rgba(255,255,255,0.06) !important; color: rgba(255,255,255,0.85) !important; }
-  .nav-item.active { background: rgba(255,255,255,0.1) !important; color: #FFFFFF !important; }
+  .nav-item:hover { background: #F7F7F7 !important; color: #0A0A0A !important; }
 
   /* Tab */
   .tab-btn.active { border-bottom: 2px solid #0A0A0A; color: #0A0A0A; }
