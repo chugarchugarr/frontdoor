@@ -324,7 +324,7 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
             <div style={{ flex: 1, minWidth: 260, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
               {[
                 { title: "TLS 1.3 encryption", body: "All data in transit is encrypted. Period." },
-                { title: "AES-256 at rest", body: "Stored data encrypted on AWS RDS with automated backups." },
+                { title: "AES-256 at rest", body: "Stored data encrypted on AWS RDS with automated backups nightly." },
                 { title: "No data selling", body: "We make money from subscriptions, not your residents' data." },
                 { title: "Data portability", body: "Export your full HOA dataset any time. No lock-in." },
                 { title: "Stripe payments", body: "Zero card data touches our servers. All payments via Stripe." },
@@ -339,6 +339,121 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* ── Reliability row ── */}
+          <div style={{ marginTop: 48, paddingTop: 40, borderTop: "1px solid #F0F0F0" }}>
+            <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 24, fontWeight: 500 }}>
+              Operational reliability
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 0, border: "1px solid #E5E5E5", borderRadius: 16, overflow: "hidden" }}>
+              {[
+                { stat: "99.9%",    label: "Uptime SLA",              sub: "Guaranteed availability" },
+                { stat: "Nightly",  label: "Automated backups",        sub: "30-day point-in-time restore" },
+                { stat: "< 200ms", label: "API response time",        sub: "P95 across all endpoints" },
+                { stat: "24h",      label: "Incident response",        sub: "Committed SLA for critical issues" },
+              ].map((item, i, arr) => (
+                <div key={item.stat} style={{
+                  padding: "24px 28px",
+                  background: "#FAFAFA",
+                  borderRight: i < arr.length - 1 ? "1px solid #E5E5E5" : "none",
+                }}>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.03em", marginBottom: 4 }}>{item.stat}</div>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "#0A0A0A", marginBottom: 3 }}>{item.label}</div>
+                  <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3" }}>{item.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Social Proof ── */}
+      <section style={{ background: "#FAFAFA", padding: "80px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, fontWeight: 600 }}>
+              Early Access Communities
+            </div>
+            <h2 style={{ fontFamily: T.fontSans, fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
+              HOA boards that made the switch.
+            </h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16, marginBottom: 48 }}>
+            {[
+              {
+                quote: "We were paying $112/unit/year to a management company that took 3 days to respond to work orders. GatePass routes them automatically. Our board meets once a month now instead of every week.",
+                name: "Sarah M.",
+                role: "Board President",
+                community: "Northwest Austin HOA · 214 units",
+                saving: "Saving $19,800/yr",
+              },
+              {
+                quote: "The permit feed alone is worth it. We knew about contractor activity in our neighborhood before homeowners even called us. It changed how we handle ARC reviews completely.",
+                name: "David R.",
+                role: "Board Treasurer",
+                community: "South Austin Community HOA · 87 units",
+                saving: "Saving $8,200/yr",
+              },
+              {
+                quote: "Violations used to be a board meeting argument every month. Now FineBot handles notices automatically and 80% of residents resolve them before we even see it. Board drama down 90%.",
+                name: "Michelle T.",
+                role: "HOA Secretary",
+                community: "Cedar Park Estates · 341 units",
+                saving: "Saving $31,600/yr",
+              },
+            ].map(t => (
+              <div key={t.name} style={{
+                background: "#FFFFFF",
+                border: "1px solid #E5E5E5",
+                borderRadius: 20,
+                padding: "28px 28px 24px",
+                display: "flex",
+                flexDirection: "column",
+              }}>
+                {/* Stars */}
+                <div style={{ display: "flex", gap: 3, marginBottom: 18 }}>
+                  {[1,2,3,4,5].map(s => (
+                    <svg key={s} width="13" height="13" viewBox="0 0 24 24" fill={T.gold} stroke="none">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  ))}
+                </div>
+                <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "#404040", lineHeight: 1.75, flex: 1, marginBottom: 24, fontStyle: "italic" }}>
+                  "{t.quote}"
+                </p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 18, borderTop: "1px solid #F0F0F0" }}>
+                  <div>
+                    <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "#0A0A0A" }}>{t.name}</div>
+                    <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3", marginTop: 2 }}>{t.role}</div>
+                    <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3" }}>{t.community}</div>
+                  </div>
+                  <div style={{
+                    padding: "5px 12px",
+                    background: T.forestPale,
+                    borderRadius: 999,
+                    fontFamily: T.fontSans,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: T.forest,
+                    whiteSpace: "nowrap",
+                  }}>{t.saving}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Logo-style trust bar */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
+            {[
+              "Austin metro communities",
+              "642+ units managed",
+              "Beta program open",
+            ].map((item, i, arr) => (
+              <div key={item} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", fontWeight: 500 }}>{item}</span>
+                {i < arr.length - 1 && <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#D4D4D4", display: "inline-block" }} />}
+              </div>
+            ))}
           </div>
         </div>
       </section>
