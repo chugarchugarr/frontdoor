@@ -10,6 +10,34 @@ type RootErrorBoundaryState = {
   error: Error | null;
 };
 
+// Lightweight inline error boundary for wrapping individual views
+type ErrorBoundaryState = { hasError: boolean; error: Error | null };
+export class ErrorBoundary extends React.Component<{ children: React.ReactNode }, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { hasError: false, error: null };
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState { return { hasError: true, error }; }
+  componentDidCatch(error: Error, info: React.ErrorInfo) { console.error("[ErrorBoundary]", error, info); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#FFFFFF", fontFamily: "Inter, sans-serif" }}>
+          <div style={{ maxWidth: 400, padding: "40px 32px", border: "1px solid #E5E5E5", borderRadius: 16, textAlign: "center" }}>
+            <div style={{ fontSize: 32, marginBottom: 16 }}>⚠️</div>
+            <h2 style={{ fontSize: 18, fontWeight: 600, color: "#0A0A0A", marginBottom: 8 }}>Something went wrong</h2>
+            <p style={{ fontSize: 13, color: "#737373", marginBottom: 24 }}>{this.state.error?.message || "An unexpected error occurred."}</p>
+            <button
+              onClick={() => this.setState({ hasError: false, error: null })}
+              style={{ padding: "10px 24px", background: "#2A5240", color: "#FFFFFF", border: "none", borderRadius: 999, fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export class RootErrorBoundary extends React.Component<
   RootErrorBoundaryProps,
   RootErrorBoundaryState

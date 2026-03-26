@@ -178,6 +178,27 @@ export const GLOBAL_CSS = `
     .sidebar { display: none !important; }
     .main-pad { padding: 20px 16px !important; }
     .mobile-hide { display: none !important; }
+    .gp-grid-3 { grid-template-columns: 1fr !important; }
+    .gp-grid-2 { grid-template-columns: 1fr !important; }
+    .gp-col-reverse { flex-direction: column-reverse !important; }
+    .gp-hide-mobile { display: none !important; }
+    .gp-full-mobile { width: 100% !important; max-width: 100% !important; }
+    .gp-pad-mobile { padding-left: 16px !important; padding-right: 16px !important; }
+  }
+
+  /* Focus rings (keyboard accessibility) */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid #2A5240;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  button:focus:not(:focus-visible),
+  a:focus:not(:focus-visible) {
+    outline: none;
   }
 
   /* AI panel shimmer skeleton */

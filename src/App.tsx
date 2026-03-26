@@ -18,6 +18,7 @@ import { CommHub } from "./components/CommHub";
 import { ContractorWaitlist as ContractorWaitlistPanel } from "./components/ContractorWaitlist";
 import { HomeownerPortal } from "./components/HomeownerPortal";
 import { ContractorPortal } from "./components/ContractorPortal";
+import { ErrorBoundary } from "./components/error-boundary";
 
 // ─── Success screens ──────────────────────────────────────────────────
 function SuccessScreen({ type, position }: { type: "hoa" | "contractor"; position?: number }) {
@@ -301,6 +302,43 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
                 <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#737373", lineHeight: 1.7 }}>{f.body}</div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Security & Privacy ── */}
+      <section style={{ background: "#FFFFFF", padding: "80px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
+        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 64, flexWrap: "wrap" }}>
+            <div style={{ flex: "0 0 auto", maxWidth: 340 }}>
+              <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14, fontWeight: 600 }}>
+                Security & Privacy
+              </div>
+              <h2 style={{ fontFamily: T.fontSans, fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 16 }}>
+                Enterprise-grade infrastructure. Community-owned data.
+              </h2>
+              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "#737373", lineHeight: 1.75 }}>
+                GatePass runs on AWS infrastructure with end-to-end encryption in transit and at rest. Your HOA's data is never sold, never shared with third parties, and always exportable on request.
+              </p>
+            </div>
+            <div style={{ flex: 1, minWidth: 260, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
+              {[
+                { title: "TLS 1.3 encryption", body: "All data in transit is encrypted. Period." },
+                { title: "AES-256 at rest", body: "Stored data encrypted on AWS RDS with automated backups." },
+                { title: "No data selling", body: "We make money from subscriptions, not your residents' data." },
+                { title: "Data portability", body: "Export your full HOA dataset any time. No lock-in." },
+                { title: "Stripe payments", body: "Zero card data touches our servers. All payments via Stripe." },
+                { title: "SOC 2 roadmap", body: "Formal audit in progress. Report available upon request." },
+              ].map(item => (
+                <div key={item.title} style={{ padding: "18px 20px", background: "#FAFAFA", border: "1px solid #E5E5E5", borderRadius: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "#0A0A0A" }}>{item.title}</span>
+                  </div>
+                  <p style={{ fontFamily: T.fontSans, fontSize: 12, color: "#737373", lineHeight: 1.6, margin: 0 }}>{item.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -807,9 +845,9 @@ export default function App() {
   return (
     <>
       {view === "landing"    && <Landing onNav={handleNav} />}
-      {view === "hoa"        && <HOAOnboarding onBack={() => setView("landing")} />}
-      {view === "contractor" && <ContractorWaitlist onBack={() => setView("landing")} />}
-      {view === "demo"       && <GatePassDemo onBack={() => setView("landing")} />}
+      {view === "hoa"        && <ErrorBoundary><HOAOnboarding onBack={() => setView("landing")} /></ErrorBoundary>}
+      {view === "contractor" && <ErrorBoundary><ContractorWaitlist onBack={() => setView("landing")} /></ErrorBoundary>}
+      {view === "demo"       && <ErrorBoundary><GatePassDemo onBack={() => setView("landing")} /></ErrorBoundary>}
       {view === "os-select"  && (
         auth.status === "authenticated"
           ? <HOASelector onSelect={(id) => { setActiveHoaId(id); setView("os"); }} onPublic={() => setView("landing")} />

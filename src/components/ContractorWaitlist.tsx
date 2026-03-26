@@ -16,9 +16,9 @@ const CATEGORIES = [
 ];
 
 const TRUST_POINTS = [
-  { icon: "✓", text: "First access to verified HOA leads on launch day" },
-  { icon: "✓", text: "Direct integration into GatePass WorkOrder routing" },
-  { icon: "✓", text: "AI-matched to jobs by category and ZIP code" },
+  { icon: "✓", text: "Permit-matched leads — homeowners with active Austin permits pulled from city data, matched to your trade" },
+  { icon: "✓", text: "These are warm leads. A homeowner with a roofing permit is already spending money — you just get there first" },
+  { icon: "✓", text: "Direct integration into GatePass WorkOrder routing for HOA-dispatched jobs" },
   { icon: "✓", text: "Full refund if Austin doesn't launch within 6 months" },
 ];
 
@@ -112,7 +112,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
           </h1>
 
           <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.75, marginBottom: 28, maxWidth: 380 }}>
-            GatePass routes verified maintenance requests directly to vetted contractors. No bidding wars, no brokers — just matched work in your ZIP code.
+            GatePass cross-references Austin permit data with HOA homeowner records. Every contractor on the platform gets matched to homeowners who are actively spending on their trade — before anyone else even knows the job exists.
           </p>
 
           {/* Benefits list */}
