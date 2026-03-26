@@ -242,7 +242,7 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
           </div>
 
           {/* 3-col grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+          <div className="gp-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
             {MODULES.map((m) => (
               <div key={m.name} className="card-hover" style={{
                 background: "#FAFAFA",
@@ -310,7 +310,7 @@ function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") =
       <section style={{ background: "#FFFFFF", padding: "80px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
         <div style={{ maxWidth: 1080, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 64, flexWrap: "wrap" }}>
-            <div style={{ flex: "0 0 auto", maxWidth: 340 }}>
+            <div className="gp-full-mobile" style={{ flex: "0 0 auto", maxWidth: 340 }}>
               <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14, fontWeight: 600 }}>
                 Security & Privacy
               </div>

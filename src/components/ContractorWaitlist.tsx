@@ -81,7 +81,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
       </header>
 
       {/* Body */}
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: "52px 32px", display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 40, alignItems: "start" }}>
+      <div className="gp-grid-2" style={{ maxWidth: 960, margin: "0 auto", padding: "52px 32px", display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 40, alignItems: "start" }}>
 
         {/* ── Left: value prop ── */}
         <div className="anim-up">
@@ -130,7 +130,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
           {/* Category grid */}
           <div>
             <Label>Trade categories accepting applications</Label>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 7, marginTop: 10 }}>
+            <div className="gp-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 7, marginTop: 10 }}>
               {CATEGORIES.map(c => (
                 <div
                   key={c.id}
@@ -199,7 +199,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
               Reserve your seat
             </h3>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="gp-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div style={{ gridColumn: "1 / -1" }}>
                 <FDInput label="Company Name" placeholder="Summit Roofing Co." value={form.company} onChange={e => set("company", e.target.value)} />
               </div>
