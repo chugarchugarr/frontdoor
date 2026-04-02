@@ -206,7 +206,8 @@ export async function getWaitlistPosition(id: string) {
 
 // ─── Austin Open Data — Shared helpers ───────────────────────────────
 
-const AUSTIN_API_HEADERS = { "X-App-Token": "GatePass-AustinFeeds" };
+// No app token needed for anonymous access to Austin Open Data (public datasets)
+const AUSTIN_API_HEADERS = {};
 
 function fmtDate(d: string | undefined): string | null {
   if (!d) return null;
