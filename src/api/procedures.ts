@@ -204,40 +204,56 @@ export async function getWaitlistPosition(id: string) {
   return db.contractorWaitlist.findUnique({ where: { id } });
 }
 
-// ─── Austin Permit Feed ───────────────────────────────────────────────
+// ─── Austin Open Data — Shared helpers ───────────────────────────────
+
+const AUSTIN_API_HEADERS = { "X-App-Token": "GatePass-AustinFeeds" };
+
+function fmtDate(d: string | undefined): string | null {
+  if (!d) return null;
+  try {
+    return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  } catch {
+    return null;
+  }
+}
+
+function fmtValue(v: string | undefined): string | null {
+  if (!v) return null;
+  const n = Number(v);
+  return isNaN(n) ? null : `$${n.toLocaleString()}`;
+}
+
+// ─── Austin Permit Feed (fixed) ───────────────────────────────────────
 
 export async function getAustinPermits(zip?: string) {
   try {
     const url = new URL("https://data.austintexas.gov/resource/3syk-w9eu.json");
-    url.searchParams.set("$limit", "20");
-    url.searchParams.set("$order", "issued_date DESC");
-    if (zip) url.searchParams.set("zip", zip);
+    url.searchParams.set("$limit", "25");
+    url.searchParams.set("$order", "issue_date DESC");
+    if (zip) {
+      url.searchParams.set("$where", `original_zip='${zip}'`);
+    }
 
-    const res = await fetch(url.toString(), {
-      headers: { "X-App-Token": "GatePass-Phase1" },
-    });
-
-    if (!res.ok) throw new Error("API error");
+    const res = await fetch(url.toString(), { headers: AUSTIN_API_HEADERS });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
     const data = (await res.json()) as Record<string, string>[];
 
     return data.map((p) => ({
-      id: p.permit_num || String(Math.random()),
+      id: p.permit_number || String(Math.random()),
       type: p.work_class || p.permit_type_desc || "Permit",
       description: p.description || "",
       address: p.original_address1 || "",
-      zip: p.zip || zip || "",
-      contractor: p.contractor_company_name || "Unknown Contractor",
-      value: p.total_valuation
-        ? `$${Number(p.total_valuation).toLocaleString()}`
-        : null,
-      date: p.issued_date
-        ? new Date(p.issued_date).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
-        : null,
+      zip: p.original_zip || zip || "",
+      contractor: p.contractor_company_name || p.contractor_full_name || "Unknown Contractor",
+      contractorTrade: p.contractor_trade || null,
+      contractorPhone: p.contractor_phone || null,
+      value: fmtValue(p.total_job_valuation),
+      date: fmtDate(p.issue_date),
       status: p.status_current || "Issued",
+      projectId: p.project_id || null,
+      permitClass: p.permit_class_mapped || p.permit_class || null,
+      latitude: p.latitude || null,
+      longitude: p.longitude || null,
     }));
   } catch (e) {
     console.warn("[permits] API fallback:", e);
@@ -245,13 +261,135 @@ export async function getAustinPermits(zip?: string) {
   }
 }
 
+// ─── Zoning Cases — rezoning/land-use changes near HOA ───────────────
+
+export async function getZoningCases(input?: { councilDistrict?: string; limit?: number }) {
+  try {
+    const url = new URL("https://data.austintexas.gov/resource/edir-dcnf.json");
+    url.searchParams.set("$limit", String(input?.limit ?? 20));
+    url.searchParams.set("$order", "application_start_date DESC");
+    if (input?.councilDistrict) {
+      url.searchParams.set("$where", `council_district='${input.councilDistrict}'`);
+    }
+
+    const res = await fetch(url.toString(), { headers: AUSTIN_API_HEADERS });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const data = (await res.json()) as Record<string, string>[];
+
+    return data.map((c) => ({
+      id: c.case_number || c.folderrsn || String(Math.random()),
+      caseNumber: c.case_number || "",
+      caseName: c.case_name || "",
+      caseType: c.case_type || "",
+      workType: c.work_type || "",
+      status: c.detailed_status || "",
+      proposedZoning: c.proposed_zoning || null,
+      existingZoning: c.existing_zoning || null,
+      proposedLandUse: c.proposed_land_use || null,
+      existingLandUse: c.existing_land_use || null,
+      siteAddress: c.site_address || "",
+      councilDistrict: c.council_district || null,
+      applicationDate: fmtDate(c.application_start_date),
+      statusDate: fmtDate(c.status_date),
+      ownerName: c.owner_fullname || null,
+      caseManager: c.case_manager || null,
+      // Flag as high-interest if it involves residential land use changes
+      isResidentialImpact: !!(
+        c.proposed_land_use?.toLowerCase().includes("residential") ||
+        c.existing_land_use?.toLowerCase().includes("residential") ||
+        c.proposed_zoning?.toLowerCase().startsWith("sf") ||
+        c.proposed_zoning?.toLowerCase().startsWith("mf")
+      ),
+    }));
+  } catch (e) {
+    console.warn("[zoning] API error:", e);
+    return [];
+  }
+}
+
+// ─── Zoning By Address ────────────────────────────────────────────────
+
+export async function getZoningByAddress(input: { streetName: string }) {
+  try {
+    const namePart = input.streetName.toUpperCase().replace(/[^A-Z0-9 ]/g, "");
+    const url = new URL("https://data.austintexas.gov/resource/nbzi-qabm.json");
+    url.searchParams.set("$where", `full_street_name like '%${namePart}%'`);
+    url.searchParams.set("$limit", "10");
+
+    const res = await fetch(url.toString(), { headers: AUSTIN_API_HEADERS });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const data = (await res.json()) as Record<string, string>[];
+
+    return data.map((z) => ({
+      streetName: z.full_street_name || "",
+      zoningType: z.zoning_ztype || "",
+      baseZone: z.base_zone || "",
+      baseZoneCategory: z.base_zone_category || "",
+    }));
+  } catch (e) {
+    console.warn("[zoning-address] API error:", e);
+    return [];
+  }
+}
+
+// ─── Permit Applications (pipeline — applied, not yet issued) ─────────
+
+export async function getPermitApplications(input?: { zip?: string; limit?: number }) {
+  try {
+    const url = new URL("https://data.austintexas.gov/resource/ryhf-m453.json");
+    url.searchParams.set("$limit", String(input?.limit ?? 25));
+    url.searchParams.set("$order", "applieddate DESC");
+    if (input?.zip) {
+      url.searchParams.set("$where", `original_zip='${input.zip}'`);
+    }
+
+    const res = await fetch(url.toString(), { headers: AUSTIN_API_HEADERS });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const data = (await res.json()) as Record<string, string>[];
+
+    return data.map((p) => ({
+      id: p.permit_number || String(Math.random()),
+      type: p.work_class || p.permit_type_desc || "Application",
+      description: p.description || "",
+      address: p.original_address1 || "",
+      zip: p.original_zip || input?.zip || "",
+      applicant: p.applicant_full_name || p.applicant_org || "Unknown",
+      contractor: p.contractor_company_name || p.contractor_full_name || null,
+      value: fmtValue(p.total_job_valuation),
+      appliedDate: fmtDate(p.applieddate),
+      status: p.status_current || "Applied",
+      permitClass: p.permit_class_mapped || p.permit_class || null,
+    }));
+  } catch (e) {
+    console.warn("[permit-applications] API error:", e);
+    return [];
+  }
+}
+
+// ─── Live City Feeds — aggregated payload ────────────────────────────
+
+export async function getLiveCityFeeds(input?: { zip?: string; councilDistrict?: string }) {
+  const [permits, zoningCases, applications] = await Promise.allSettled([
+    getAustinPermits(input?.zip),
+    getZoningCases({ councilDistrict: input?.councilDistrict }),
+    getPermitApplications({ zip: input?.zip }),
+  ]);
+
+  return {
+    permits: permits.status === "fulfilled" ? permits.value : [],
+    zoningCases: zoningCases.status === "fulfilled" ? zoningCases.value : [],
+    applications: applications.status === "fulfilled" ? applications.value : [],
+    lastUpdated: new Date().toISOString(),
+  };
+}
+
 const MOCK_PERMITS = [
-  { id: "1", type: "Roof Replacement", description: "Remove and replace asphalt shingle roof", address: "1847 Oakwood Dr", zip: "78752", contractor: "Summit Roofing Co.", value: "$14,200", date: "Mar 8, 2026", status: "Issued" },
-  { id: "2", type: "Foundation Repair", description: "Foundation leveling and pier installation", address: "1203 Elm St", zip: "78752", contractor: "Bedrock Foundation", value: "$8,900", date: "Mar 5, 2026", status: "Issued" },
-  { id: "3", type: "HVAC Replacement", description: "Full HVAC system replacement", address: "4521 Lamar Blvd", zip: "78751", contractor: "CoolAir Systems", value: "$11,600", date: "Feb 28, 2026", status: "Issued" },
-  { id: "4", type: "Electrical Panel", description: "200A panel upgrade", address: "902 Congress Ave", zip: "78701", contractor: "BrightWire Electric", value: "$4,800", date: "Feb 25, 2026", status: "Finaled" },
-  { id: "5", type: "Water Heater", description: "Tankless water heater installation", address: "3317 Red River St", zip: "78705", contractor: "AquaFlow Plumbing", value: "$3,400", date: "Feb 22, 2026", status: "Issued" },
-  { id: "6", type: "Solar Installation", description: "18-panel rooftop solar array", address: "6782 Burnet Rd", zip: "78757", contractor: "SunPower Austin", value: "$28,000", date: "Feb 20, 2026", status: "Issued" },
+  { id: "1", type: "Roof Replacement", description: "Remove and replace asphalt shingle roof", address: "1847 Oakwood Dr", zip: "78752", contractor: "Summit Roofing Co.", contractorTrade: "General Contractor", contractorPhone: null, value: "$14,200", date: "Mar 8, 2026", status: "Final", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
+  { id: "2", type: "Foundation Repair", description: "Foundation leveling and pier installation", address: "1203 Elm St", zip: "78752", contractor: "Bedrock Foundation", contractorTrade: "General Contractor", contractorPhone: null, value: "$8,900", date: "Mar 5, 2026", status: "Active", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
+  { id: "3", type: "HVAC Replacement", description: "Full HVAC system replacement", address: "4521 Lamar Blvd", zip: "78751", contractor: "CoolAir Systems", contractorTrade: "Mechanical", contractorPhone: null, value: "$11,600", date: "Feb 28, 2026", status: "Active", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
+  { id: "4", type: "Electrical Panel", description: "200A panel upgrade", address: "902 Congress Ave", zip: "78701", contractor: "BrightWire Electric", contractorTrade: "Electrical", contractorPhone: null, value: "$4,800", date: "Feb 25, 2026", status: "Final", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
+  { id: "5", type: "Water Heater", description: "Tankless water heater installation", address: "3317 Red River St", zip: "78705", contractor: "AquaFlow Plumbing", contractorTrade: "Plumbing", contractorPhone: null, value: "$3,400", date: "Feb 22, 2026", status: "Active", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
+  { id: "6", type: "Solar Installation", description: "18-panel rooftop solar array", address: "6782 Burnet Rd", zip: "78757", contractor: "SunPower Austin", contractorTrade: "Electrical", contractorPhone: null, value: "$28,000", date: "Feb 20, 2026", status: "Active", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
 ];
 
 // ─── Homeowners ───────────────────────────────────────────────────────

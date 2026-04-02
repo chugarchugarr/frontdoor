@@ -18,6 +18,7 @@ import { CommHub } from "./components/CommHub";
 import { ContractorWaitlist as ContractorWaitlistPanel } from "./components/ContractorWaitlist";
 import { HomeownerPortal } from "./components/HomeownerPortal";
 import { ContractorPortal } from "./components/ContractorPortal";
+import { LiveFeeds } from "./components/LiveFeeds";
 import { ErrorBoundary } from "./components/error-boundary";
 
 // ─── Success screens ──────────────────────────────────────────────────
@@ -807,6 +808,7 @@ function BoardDemo({ onBack }: { onBack: () => void }) {
           {view === "amenity"    && <AmenityModule hoaId={DEMO_HOA_ID} />}
           {view === "commhub"    && <CommHub hoaId={DEMO_HOA_ID} />}
           {view === "permits"    && <PermitFeedView />}
+          {view === "livefeeds"  && <LiveFeeds />}
         </main>
       </div>
     </div>
@@ -863,6 +865,7 @@ function PermitFeedView() {
 function HOAOSShell({ hoaId, onExit }: { hoaId: string; onExit: () => void }) {
   const [view, setView] = useState<OSView>("dashboard");
   const { data: hoa } = useQuery({ queryKey: ["hoa", hoaId], queryFn: () => rpc.getHOA(hoaId) });
+  const hoaZip = (hoa as {zip?: string} | null)?.zip;
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
@@ -880,6 +883,7 @@ function HOAOSShell({ hoaId, onExit }: { hoaId: string; onExit: () => void }) {
         {view === "amenity"     && <AmenityModule hoaId={hoaId} />}
         {view === "commhub"     && <CommHub hoaId={hoaId} />}
         {view === "permits"     && <PermitFeedView />}
+        {view === "livefeeds"   && <LiveFeeds hoaZip={hoaZip} />}
       </main>
     </div>
   );

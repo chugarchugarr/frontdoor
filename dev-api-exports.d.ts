@@ -262,10 +262,117 @@ export declare function getAustinPermits(zip?: string): Promise<{
 	address: string;
 	zip: string;
 	contractor: string;
+	contractorTrade: string | null;
+	contractorPhone: string | null;
 	value: string | null;
 	date: string | null;
 	status: string;
+	projectId: string | null;
+	permitClass: string | null;
+	latitude: string | null;
+	longitude: string | null;
 }[]>;
+export declare function getZoningCases(input?: {
+	councilDistrict?: string;
+	limit?: number;
+}): Promise<{
+	id: string;
+	caseNumber: string;
+	caseName: string;
+	caseType: string;
+	workType: string;
+	status: string;
+	proposedZoning: string | null;
+	existingZoning: string | null;
+	proposedLandUse: string | null;
+	existingLandUse: string | null;
+	siteAddress: string;
+	councilDistrict: string | null;
+	applicationDate: string | null;
+	statusDate: string | null;
+	ownerName: string | null;
+	caseManager: string | null;
+	isResidentialImpact: boolean;
+}[]>;
+export declare function getZoningByAddress(input: {
+	streetName: string;
+}): Promise<{
+	streetName: string;
+	zoningType: string;
+	baseZone: string;
+	baseZoneCategory: string;
+}[]>;
+export declare function getPermitApplications(input?: {
+	zip?: string;
+	limit?: number;
+}): Promise<{
+	id: string;
+	type: string;
+	description: string;
+	address: string;
+	zip: string;
+	applicant: string;
+	contractor: string | null;
+	value: string | null;
+	appliedDate: string | null;
+	status: string;
+	permitClass: string | null;
+}[]>;
+export declare function getLiveCityFeeds(input?: {
+	zip?: string;
+	councilDistrict?: string;
+}): Promise<{
+	permits: {
+		id: string;
+		type: string;
+		description: string;
+		address: string;
+		zip: string;
+		contractor: string;
+		contractorTrade: string | null;
+		contractorPhone: string | null;
+		value: string | null;
+		date: string | null;
+		status: string;
+		projectId: string | null;
+		permitClass: string | null;
+		latitude: string | null;
+		longitude: string | null;
+	}[];
+	zoningCases: {
+		id: string;
+		caseNumber: string;
+		caseName: string;
+		caseType: string;
+		workType: string;
+		status: string;
+		proposedZoning: string | null;
+		existingZoning: string | null;
+		proposedLandUse: string | null;
+		existingLandUse: string | null;
+		siteAddress: string;
+		councilDistrict: string | null;
+		applicationDate: string | null;
+		statusDate: string | null;
+		ownerName: string | null;
+		caseManager: string | null;
+		isResidentialImpact: boolean;
+	}[];
+	applications: {
+		id: string;
+		type: string;
+		description: string;
+		address: string;
+		zip: string;
+		applicant: string;
+		contractor: string | null;
+		value: string | null;
+		appliedDate: string | null;
+		status: string;
+		permitClass: string | null;
+	}[];
+	lastUpdated: string;
+}>;
 export declare function addHomeowner(input: {
 	hoaId: string;
 	name: string;
