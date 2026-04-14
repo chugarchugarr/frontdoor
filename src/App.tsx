@@ -1,7 +1,13 @@
 import { useState } from "react";
+import React from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { client as rpc } from "@/lib/client";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@adaptive-ai/sdk/client";
+import LandingPage from "./pages/Landing";
+import Pricing from "./pages/Pricing";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import { T, GLOBAL_CSS } from "./components/tokens";
 import { Btn, FDInput, FDSelect, Tag, Icons, Card, Label, EmptyState } from "./components/ui-kit";
 import { Sidebar, type OSView } from "./components/Sidebar";
@@ -22,7 +28,7 @@ import { LiveFeeds } from "./components/LiveFeeds";
 import { ErrorBoundary } from "./components/error-boundary";
 
 // ─── Success screens ──────────────────────────────────────────────────
-function SuccessScreen({ type, position }: { type: "hoa" | "contractor"; position?: number }) {
+function _SuccessScreen({ type, position }: { type: "hoa" | "contractor"; position?: number }) {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <style>{GLOBAL_CSS}</style>
@@ -52,7 +58,7 @@ function SuccessScreen({ type, position }: { type: "hoa" | "contractor"; positio
 }
 
 // Module icons as clean SVGs (no emoji)
-const MODULE_ICONS: Record<string, React.ReactNode> = {
+const _MODULE_ICONS: Record<string, React.ReactNode> = {
   "GatePass Core": <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
   "PayOS":          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>,
   "FineBot":        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
@@ -64,459 +70,6 @@ const MODULE_ICONS: Record<string, React.ReactNode> = {
   "CommHub":        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
 };
 
-// ─── Landing page ─────────────────────────────────────────────────────
-function Landing({ onNav }: { onNav: (v: "hoa" | "contractor" | "demo" | "os") => void }) {
-  const params = new URLSearchParams(window.location.search);
-  const auth = useAuth({ required: false });
-  const { data: contractorStats } = useQuery({ queryKey: ["contractorStats"], queryFn: () => rpc.getContractorStats(), refetchInterval: 30000 });
-  const { data: hoaStats } = useQuery({ queryKey: ["hoaStats"], queryFn: () => rpc.getHOAStats() });
-
-  if (params.get("hoa_success")) return <SuccessScreen type="hoa" />;
-  if (params.get("contractor_success")) return <SuccessScreen type="contractor" position={params.get("pos") ? Number(params.get("pos")) : undefined} />;
-
-  const MODULES = [
-    { name: "GatePass Core",  desc: "Gate access, contractor vetting, permit intel" },
-    { name: "PayOS",          desc: "Dues collection, budgeting, financial reports" },
-    { name: "FineBot",        desc: "Violations, CC&R enforcement, escalation" },
-    { name: "ARC Agent",      desc: "Architectural review, 45-day compliance clock" },
-    { name: "WorkOrder",      desc: "Maintenance requests, vendor routing, tracking" },
-    { name: "BoardRoom",      desc: "Meetings, AI agendas, minutes, governance" },
-    { name: "VoteBox",        desc: "Secure elections, motions, and surveys" },
-    { name: "Amenity",        desc: "Pool, clubhouse, and court reservations" },
-    { name: "CommHub",        desc: "Announcements, newsletters, messaging" },
-  ];
-
-  return (
-    <div style={{ minHeight: "100vh", background: "#FFFFFF", overflowX: "hidden" }}>
-      <style>{GLOBAL_CSS}</style>
-
-      {/* ── Floating pill nav ── */}
-      <div style={{ position: "fixed", top: 20, left: "50%", transform: "translateX(-50%)", zIndex: 100, width: "calc(100% - 40px)", maxWidth: 860 }}>
-        <nav style={{
-          background: "rgba(255,255,255,0.92)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          border: "1px solid #E5E5E5",
-          borderRadius: 999,
-          padding: "10px 16px 10px 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{
-              width: 26, height: 26, borderRadius: 8,
-              background: T.forest,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
-            }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
-              </svg>
-            </div>
-            <span style={{ fontFamily: T.fontSans, fontSize: 15, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.02em" }}>GatePass</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <button onClick={() => onNav("demo")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 400, color: "#525252", background: "none", border: "none", cursor: "pointer", padding: "6px 12px", borderRadius: 999 }}>Demo</button>
-            <button onClick={() => onNav("hoa")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 400, color: "#525252", background: "none", border: "none", cursor: "pointer", padding: "6px 12px", borderRadius: 999 }}>For HOAs</button>
-            <button onClick={() => onNav("contractor")} style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 400, color: "#525252", background: "none", border: "none", cursor: "pointer", padding: "6px 12px", borderRadius: 999 }}>Contractors</button>
-            {auth.status === "authenticated"
-              ? <Btn onClick={() => onNav("os")} style={{ padding: "8px 18px", fontSize: 13, background: T.forest }}>Open OS</Btn>
-              : <Btn onClick={() => auth.signIn()} style={{ padding: "8px 18px", fontSize: 13, background: T.forest }}>Sign in</Btn>
-            }
-          </div>
-        </nav>
-      </div>
-
-      {/* ── Hero ── */}
-      <section style={{ paddingTop: "clamp(140px, 16vw, 180px)", paddingBottom: "clamp(80px, 10vw, 120px)", paddingLeft: "clamp(20px, 4vw, 48px)", paddingRight: "clamp(20px, 4vw, 48px)", maxWidth: 1080, margin: "0 auto" }}>
-
-        {/* Status pill */}
-        <div className="anim-up" style={{
-          display: "inline-flex", alignItems: "center", gap: 7,
-          padding: "5px 14px 5px 10px",
-          background: T.forestPale,
-          borderRadius: 999,
-          border: `1px solid rgba(42,82,64,0.15)`,
-          marginBottom: 36,
-        }}>
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
-          <span style={{ fontFamily: T.fontSans, fontSize: 12, fontWeight: 500, color: T.forest, letterSpacing: "-0.01em" }}>
-            Now enrolling Austin HOAs
-          </span>
-        </div>
-
-        {/* Headline */}
-        <h1 className="anim-up-2" style={{
-          fontFamily: T.fontSans,
-          fontSize: "clamp(52px, 7.5vw, 96px)",
-          fontWeight: 800,
-          color: "#0A0A0A",
-          lineHeight: 1.0,
-          letterSpacing: "-0.04em",
-          maxWidth: 860,
-          marginBottom: 32,
-        }}>
-          The operating system<br />
-          for your HOA.
-        </h1>
-
-        <p className="anim-up-3" style={{
-          fontFamily: T.fontSans,
-          fontSize: "clamp(15px, 1.8vw, 18px)",
-          color: "#525252",
-          lineHeight: 1.7,
-          maxWidth: 520,
-          marginBottom: 12,
-          fontWeight: 400,
-        }}>
-          Your management company charges $50–150/unit/year to do what GatePass does automatically. Dues, violations, ARC reviews, work orders, elections — all handled by AI agents your community owns.
-        </p>
-
-        <p className="anim-up-3" style={{
-          fontFamily: T.fontSans,
-          fontSize: 15,
-          color: T.forest,
-          fontWeight: 500,
-          marginBottom: 48,
-          letterSpacing: "-0.01em",
-        }}>
-          $20/unit/year. No management company needed.
-        </p>
-
-        <div className="anim-up-4" style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 80 }}>
-          <Btn onClick={() => onNav("hoa")} style={{ padding: "14px 28px", fontSize: 14, fontWeight: 500, background: T.forest }}>
-            Enroll your HOA
-          </Btn>
-          <Btn variant="ghost" onClick={() => onNav("demo")} style={{ padding: "14px 28px", fontSize: 14, fontWeight: 500, borderColor: "#E5E5E5", color: "#525252" }}>
-            View live demo
-          </Btn>
-        </div>
-
-        {/* Stats row — clean, no dividers */}
-        <div className="anim-up-5" style={{ display: "flex", gap: 48, flexWrap: "wrap" }}>
-          {[
-            { label: "Units enrolled",         value: hoaStats ? hoaStats.totalUnits.toLocaleString() : "—" },
-            { label: "Contractor seats left",   value: contractorStats ? String(contractorStats.spotsLeft) : "—" },
-            { label: "Per unit / year",         value: "$20" },
-            { label: "vs. management company",  value: "−75%" },
-          ].map((s) => (
-            <div key={s.label}>
-              <div style={{ fontFamily: T.fontSans, fontSize: 32, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.035em", lineHeight: 1 }}>{s.value}</div>
-              <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", marginTop: 5, fontWeight: 400 }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 9 modules ── */}
-      <section style={{ background: "#FFFFFF", padding: "96px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
-        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 56, flexWrap: "wrap", gap: 20 }}>
-            <div>
-              <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14, fontWeight: 600 }}>
-                9 AI Agents
-              </div>
-              <h2 style={{
-                fontFamily: T.fontSans,
-                fontSize: "clamp(28px, 4vw, 46px)",
-                fontWeight: 700,
-                color: "#0A0A0A",
-                letterSpacing: "-0.03em",
-                lineHeight: 1.1,
-                maxWidth: 560,
-              }}>
-                One platform replaces every service a management company offers.
-              </h2>
-            </div>
-            <div style={{
-              padding: "16px 22px",
-              background: "#FFFFFF",
-              border: "1px solid #E5E5E5",
-              borderRadius: 16,
-              textAlign: "right",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-            }}>
-              <div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: T.forest, letterSpacing: "-0.03em" }}>$22<span style={{ fontSize: 13, opacity: 0.5 }}>/unit/yr</span></div>
-              <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: 4 }}>Full OS · All 9 modules</div>
-            </div>
-          </div>
-
-          {/* 3-col grid */}
-          <div className="gp-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-            {MODULES.map((m) => (
-              <div key={m.name} className="card-hover" style={{
-                background: "#FAFAFA",
-                padding: "24px 22px",
-                borderRadius: 16,
-                border: "1px solid #E5E5E5",
-                cursor: "default",
-                transition: "border-color 0.15s, transform 0.15s, box-shadow 0.15s",
-              }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: 10,
-                  background: T.forestPale,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: T.forest,
-                  marginBottom: 16,
-                  flexShrink: 0,
-                }}>
-                  {MODULE_ICONS[m.name]}
-                </div>
-                <div style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: "#0A0A0A", marginBottom: 6, letterSpacing: "-0.02em" }}>{m.name}</div>
-                <div style={{ fontFamily: T.fontSans, fontSize: 12.5, color: "#737373", lineHeight: 1.6, fontWeight: 400 }}>{m.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Why ── */}
-      <section style={{ background: "#FAFAFA", padding: "96px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
-        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-            {[
-              {
-                icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
-                title: "9 agents, zero staff",
-                body: "Every function runs automatically. No management company sitting in the middle collecting fees for emails and spreadsheets."
-              },
-              {
-                icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
-                title: "Your community owns it",
-                body: "No vendor lock-in. Your data, your rules, your platform. Cancel anytime — unlike a management contract."
-              },
-              {
-                icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
-                title: "Built for Austin",
-                body: "Pre-loaded with Travis County permit feeds, Austin code compliance data, and neighborhood-specific contractor intel."
-              },
-            ].map(f => (
-              <div key={f.title} style={{
-                background: "#FFFFFF",
-                border: "1px solid #E5E5E5",
-                borderRadius: 16,
-                padding: "28px 26px",
-              }}>
-                <div style={{ marginBottom: 16 }}>{f.icon}</div>
-                <div style={{ fontFamily: T.fontSans, fontSize: 16, fontWeight: 600, color: "#0A0A0A", marginBottom: 10, letterSpacing: "-0.02em" }}>{f.title}</div>
-                <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#737373", lineHeight: 1.7 }}>{f.body}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Security & Privacy ── */}
-      <section style={{ background: "#FFFFFF", padding: "80px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
-        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 64, flexWrap: "wrap" }}>
-            <div className="gp-full-mobile" style={{ flex: "0 0 auto", maxWidth: 340 }}>
-              <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14, fontWeight: 600 }}>
-                Security & Privacy
-              </div>
-              <h2 style={{ fontFamily: T.fontSans, fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 16 }}>
-                Enterprise-grade infrastructure. Community-owned data.
-              </h2>
-              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "#737373", lineHeight: 1.75 }}>
-                GatePass runs on AWS infrastructure with end-to-end encryption in transit and at rest. Your HOA's data is never sold, never shared with third parties, and always exportable on request.
-              </p>
-            </div>
-            <div style={{ flex: 1, minWidth: 260, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
-              {[
-                { title: "TLS 1.3 encryption", body: "All data in transit is encrypted. Period." },
-                { title: "AES-256 at rest", body: "Stored data encrypted on AWS RDS with automated backups nightly." },
-                { title: "No data selling", body: "We make money from subscriptions, not your residents' data." },
-                { title: "Data portability", body: "Export your full HOA dataset any time. No lock-in." },
-                { title: "Stripe payments", body: "Zero card data touches our servers. All payments via Stripe." },
-                { title: "SOC 2 roadmap", body: "Formal audit in progress. Report available upon request." },
-              ].map(item => (
-                <div key={item.title} style={{ padding: "18px 20px", background: "#FAFAFA", border: "1px solid #E5E5E5", borderRadius: 12 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "#0A0A0A" }}>{item.title}</span>
-                  </div>
-                  <p style={{ fontFamily: T.fontSans, fontSize: 12, color: "#737373", lineHeight: 1.6, margin: 0 }}>{item.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Reliability row ── */}
-          <div style={{ marginTop: 48, paddingTop: 40, borderTop: "1px solid #F0F0F0" }}>
-            <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 24, fontWeight: 500 }}>
-              Operational reliability
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 0, border: "1px solid #E5E5E5", borderRadius: 16, overflow: "hidden" }}>
-              {[
-                { stat: "99.9%",    label: "Uptime SLA",              sub: "Guaranteed availability" },
-                { stat: "Nightly",  label: "Automated backups",        sub: "30-day point-in-time restore" },
-                { stat: "< 200ms", label: "API response time",        sub: "P95 across all endpoints" },
-                { stat: "24h",      label: "Incident response",        sub: "Committed SLA for critical issues" },
-              ].map((item, i, arr) => (
-                <div key={item.stat} style={{
-                  padding: "24px 28px",
-                  background: "#FAFAFA",
-                  borderRight: i < arr.length - 1 ? "1px solid #E5E5E5" : "none",
-                }}>
-                  <div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.03em", marginBottom: 4 }}>{item.stat}</div>
-                  <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "#0A0A0A", marginBottom: 3 }}>{item.label}</div>
-                  <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3" }}>{item.sub}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Social Proof ── */}
-      <section style={{ background: "#FAFAFA", padding: "80px clamp(20px, 4vw, 48px)", borderTop: "1px solid #F0F0F0" }}>
-        <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, fontWeight: 600 }}>
-              Early Access Communities
-            </div>
-            <h2 style={{ fontFamily: T.fontSans, fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
-              HOA boards that made the switch.
-            </h2>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16, marginBottom: 48 }}>
-            {[
-              {
-                quote: "We were paying $112/unit/year to a management company that took 3 days to respond to work orders. GatePass routes them automatically. Our board meets once a month now instead of every week.",
-                name: "Sarah M.",
-                role: "Board President",
-                community: "Northwest Austin HOA · 214 units",
-                saving: "Saving $19,800/yr",
-              },
-              {
-                quote: "The permit feed alone is worth it. We knew about contractor activity in our neighborhood before homeowners even called us. It changed how we handle ARC reviews completely.",
-                name: "David R.",
-                role: "Board Treasurer",
-                community: "South Austin Community HOA · 87 units",
-                saving: "Saving $8,200/yr",
-              },
-              {
-                quote: "Violations used to be a board meeting argument every month. Now FineBot handles notices automatically and 80% of residents resolve them before we even see it. Board drama down 90%.",
-                name: "Michelle T.",
-                role: "HOA Secretary",
-                community: "Cedar Park Estates · 341 units",
-                saving: "Saving $31,600/yr",
-              },
-            ].map(t => (
-              <div key={t.name} style={{
-                background: "#FFFFFF",
-                border: "1px solid #E5E5E5",
-                borderRadius: 20,
-                padding: "28px 28px 24px",
-                display: "flex",
-                flexDirection: "column",
-              }}>
-                {/* Stars */}
-                <div style={{ display: "flex", gap: 3, marginBottom: 18 }}>
-                  {[1,2,3,4,5].map(s => (
-                    <svg key={s} width="13" height="13" viewBox="0 0 24 24" fill={T.gold} stroke="none">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                    </svg>
-                  ))}
-                </div>
-                <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "#404040", lineHeight: 1.75, flex: 1, marginBottom: 24, fontStyle: "italic" }}>
-                  "{t.quote}"
-                </p>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 18, borderTop: "1px solid #F0F0F0" }}>
-                  <div>
-                    <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: "#0A0A0A" }}>{t.name}</div>
-                    <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3", marginTop: 2 }}>{t.role}</div>
-                    <div style={{ fontFamily: T.fontSans, fontSize: 11, color: "#A3A3A3" }}>{t.community}</div>
-                  </div>
-                  <div style={{
-                    padding: "5px 12px",
-                    background: T.forestPale,
-                    borderRadius: 999,
-                    fontFamily: T.fontSans,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: T.forest,
-                    whiteSpace: "nowrap",
-                  }}>{t.saving}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          {/* Logo-style trust bar */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
-            {[
-              "Austin metro communities",
-              "642+ units managed",
-              "Beta program open",
-            ].map((item, i, arr) => (
-              <div key={item} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", fontWeight: 500 }}>{item}</span>
-                {i < arr.length - 1 && <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#D4D4D4", display: "inline-block" }} />}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section style={{
-        padding: "96px clamp(20px, 4vw, 48px)",
-        background: T.forest,
-      }}>
-        <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{
-            fontFamily: T.fontSans,
-            fontSize: "clamp(32px, 4.5vw, 52px)",
-            fontWeight: 700,
-            color: "#FFFFFF",
-            marginBottom: 18,
-            letterSpacing: "-0.035em",
-            lineHeight: 1.05,
-          }}>
-            Stop paying for a manager. Residents own the OS.
-          </h2>
-          <p style={{ fontFamily: T.fontSans, fontSize: 16, color: "rgba(255,255,255,0.65)", lineHeight: 1.75, marginBottom: 40, fontWeight: 400 }}>
-            GatePass puts every function of HOA management into software your community controls. No middleman. No markup. No 3am calls to a property manager.
-          </p>
-          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-            <Btn
-              onClick={() => onNav("hoa")}
-              style={{ padding: "14px 28px", fontSize: 14, background: "#FFFFFF", color: T.forest, fontWeight: 600 }}
-            >
-              Enroll your HOA
-            </Btn>
-            <Btn
-              variant="ghost"
-              onClick={() => onNav("contractor")}
-              style={{ padding: "14px 28px", fontSize: 14, borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.85)" }}
-            >
-              Contractor Waitlist
-            </Btn>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Footer ── */}
-      <footer style={{ background: "#FFFFFF", padding: "24px clamp(20px, 4vw, 48px)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, borderTop: "1px solid #E5E5E5" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{
-            width: 22, height: 22, borderRadius: 7,
-            background: T.forest,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-          </div>
-          <span style={{ fontFamily: T.fontSans, fontSize: 14, color: "#0A0A0A", fontWeight: 600, letterSpacing: "-0.02em" }}>GatePass</span>
-        </div>
-        <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", letterSpacing: "-0.01em" }}>© 2026 GatePass · Austin, TX</div>
-      </footer>
-    </div>
-  );
-}
 
 // ─── HOA Onboarding ───────────────────────────────────────────────────
 function HOAOnboarding({ onBack }: { onBack: () => void }) {
@@ -933,54 +486,66 @@ function HOASelector({ onSelect, onPublic }: { onSelect: (id: string) => void; o
   );
 }
 
-// ─── Root ─────────────────────────────────────────────────────────────
-type RootView = "landing" | "hoa" | "contractor" | "demo" | "os-select" | "os";
+// ─── Route wrappers ───────────────────────────────────────────────────
 
-export default function App() {
-  const [view, setView] = useState<RootView>("landing");
-  const [activeHoaId, setActiveHoaId] = useState<string | null>(null);
+function OnboardRoute() {
+  const navigate = useNavigate();
+  return <ErrorBoundary><HOAOnboarding onBack={() => navigate('/')} /></ErrorBoundary>;
+}
+
+function ContractorRoute() {
+  const navigate = useNavigate();
+  return <ErrorBoundary><ContractorWaitlist onBack={() => navigate('/')} /></ErrorBoundary>;
+}
+
+function DemoRoute() {
+  const navigate = useNavigate();
+  return <ErrorBoundary><GatePassDemo onBack={() => navigate('/')} /></ErrorBoundary>;
+}
+
+function OSRoute() {
   const auth = useAuth({ required: false });
+  const navigate = useNavigate();
+  const [activeHoaId, setActiveHoaId] = React.useState<string | null>(null);
+  const [osView, setOsView] = React.useState<'select' | 'shell'>('select');
 
-  function handleNav(v: "hoa" | "contractor" | "demo" | "os") {
-    if (v === "os") {
-      if (auth.status === "authenticated") {
-        setView("os-select");
-      } else {
-        auth.signIn();
-      }
-    } else if (v === "demo") setView("demo");
-    else if (v === "hoa") setView("hoa");
-    else setView("contractor");
+  if (auth.status !== 'authenticated') {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <style>{GLOBAL_CSS}</style>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontFamily: T.fontSans, fontSize: 20, color: 'var(--text)', marginBottom: 16 }}>Sign in to access GatePass OS</div>
+          <Btn onClick={() => auth.signIn()}>Sign In</Btn>
+        </div>
+      </div>
+    );
   }
 
-  // If user just authenticated and wanted OS, redirect them
-  if (auth.status === "authenticated" && view === "landing") {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("hoa_success")) {
-      // handled inside Landing
-    }
+  if (osView === 'shell' && activeHoaId) {
+    return <HOAOSShell hoaId={activeHoaId} onExit={() => setOsView('select')} />;
   }
 
   return (
-    <>
-      {view === "landing"    && <Landing onNav={handleNav} />}
-      {view === "hoa"        && <ErrorBoundary><HOAOnboarding onBack={() => setView("landing")} /></ErrorBoundary>}
-      {view === "contractor" && <ErrorBoundary><ContractorWaitlist onBack={() => setView("landing")} /></ErrorBoundary>}
-      {view === "demo"       && <ErrorBoundary><GatePassDemo onBack={() => setView("landing")} /></ErrorBoundary>}
-      {view === "os-select"  && (
-        auth.status === "authenticated"
-          ? <HOASelector onSelect={(id) => { setActiveHoaId(id); setView("os"); }} onPublic={() => setView("landing")} />
-          : <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <style>{GLOBAL_CSS}</style>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: T.fontSans, fontSize: 20, color: "var(--text)", marginBottom: 16 }}>Sign in to access GatePass OS</div>
-                <Btn onClick={() => auth.signIn()}>Sign In</Btn>
-              </div>
-            </div>
-      )}
-      {view === "os" && activeHoaId && auth.status === "authenticated" && (
-        <HOAOSShell hoaId={activeHoaId} onExit={() => setView("os-select")} />
-      )}
-    </>
+    <HOASelector
+      onSelect={(id) => { setActiveHoaId(id); setOsView('shell'); }}
+      onPublic={() => navigate('/')}
+    />
+  );
+}
+
+// ─── App ──────────────────────────────────────────────────────────────
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/onboard" element={<OnboardRoute />} />
+      <Route path="/contractors" element={<ContractorRoute />} />
+      <Route path="/demo" element={<DemoRoute />} />
+      <Route path="/os" element={<OSRoute />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

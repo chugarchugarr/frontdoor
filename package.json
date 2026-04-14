@@ -1,7 +1,7 @@
 {
   "name": "full-stack-app-template",
   "private": true,
-  "version": "1.33.0",
+  "version": "1.35.0",
   "type": "module",
   "scripts": {
     "dev:vite": "vite --host 0.0.0.0 2>&1 | tee -a vite-dev.log",
@@ -68,6 +68,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.38.0",
     "hono": "^4.12.7",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.525.0",
@@ -79,6 +80,7 @@
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.60.0",
     "react-resizable-panels": "^3.0.3",
+    "react-router-dom": "^7.14.1",
     "recharts": "^2.15.4",
     "resend": "^6.9.4",
     "sonner": "^2.0.6",
