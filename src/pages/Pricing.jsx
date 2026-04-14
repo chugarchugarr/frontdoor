@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Navbar from '../components/landing/Navbar';
+import Footer from '../components/landing/Footer';
 
 const features = [
   'All 9 operating modules included',
@@ -12,6 +14,7 @@ const features = [
   'Live in 14 days or less',
   '24/7 automated operations',
   'Austin-based support',
+  'Your data — exportable anytime',
 ];
 
 const comparisonRows = [
@@ -20,34 +23,44 @@ const comparisonRows = [
   { label: 'Per-module pricing', mgmt: 'Yes', gp: 'No' },
   { label: 'Response time', mgmt: 'Days to weeks', gp: 'Instant' },
   { label: 'Data ownership', mgmt: 'Theirs', gp: 'Yours' },
-  { label: 'Cancel anytime', mgmt: '12-mo contracts', gp: 'Yes' },
+  { label: 'Contract term', mgmt: '12-mo minimum', gp: 'Month-to-month' },
+  { label: 'Cancel anytime', mgmt: 'No', gp: 'Yes — 30 days notice' },
 ];
 
 const faqs = [
   {
     q: 'Is there a long-term contract?',
-    a: 'No. Month-to-month. Cancel anytime with 30 days notice.',
+    a: 'No. Month-to-month. Cancel anytime with 30 days notice. No cancellation fees. Your data is returned and deleted within 30 days of cancellation.',
   },
   {
     q: 'What does migration involve?',
-    a: 'We pull your homeowner data, dues history, and open violations from your current system. It typically takes 3–5 business days. You pay nothing.',
+    a: 'We pull your homeowner data, dues history, and open violations from your current system. Typically takes 3–5 business days. You pay nothing until you\'re live.',
   },
   {
     q: "What if our HOA doesn't have a physical gate?",
     a: "GatePass works for any board-managed residential community — gated or not. The name refers to giving your board access to modern operations, not physical infrastructure.",
   },
   {
+    q: 'Is GatePass a licensed property management company?',
+    a: 'No — intentionally. GatePass is a software tool, not a licensed property management company under Texas law. We are not subject to TREC licensing requirements and we hold no fiduciary responsibility for HOA funds. Payments are processed directly through your HOA\'s Stripe account. This distinction also reduces your board\'s liability by creating auditable, timestamped records for every decision.',
+  },
+  {
     q: 'Who handles support?',
-    a: 'Austin-based humans, not bots. Reach us at hello@gatepass.io.',
+    a: 'Austin-based humans, not bots. Reach us at hello@gatepass.io. We also provide board training as part of onboarding.',
+  },
+  {
+    q: 'What is the expansion path — is $20/unit the only pricing forever?',
+    a: 'The $20/unit flat rate is your community\'s full operating platform. As GatePass grows, we plan to introduce an optional contractor marketplace (GatePass earns a small commission on booked work orders — your HOA pays nothing extra), premium board analytics, and integrations with title/lender workflows for unit resales. These are opt-in additions, not required upgrades. The base platform stays flat-rate.',
   },
 ];
 
 export default function Pricing() {
   return (
     <div className="min-h-screen">
+      <Navbar />
 
       {/* Hero */}
-      <section className="bg-[#0d1a12] py-32 px-8">
+      <section className="bg-[#0d1a12] pt-40 pb-24 px-8">
         <div className="max-w-[900px] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -100,6 +113,84 @@ export default function Pricing() {
             >
               Switch your HOA — it's free <ArrowRight className="w-4 h-4" />
             </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* TAM Math — visible context for anyone doing the numbers */}
+      <section className="bg-[#0d1a12] py-16 px-8">
+        <div className="max-w-[900px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center gap-4 mb-10">
+              <span className="text-xs text-white/30 tracking-[0.25em] uppercase">The opportunity</span>
+              <div className="flex-1 h-px bg-white/10" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[
+                { val: '~22,000', label: 'HOAs in Texas' },
+                { val: '~3,000', label: 'Austin metro HOAs' },
+                { val: '$100B+', label: 'US HOA mgmt industry / yr' },
+                { val: '$4,000', label: 'avg ARR per 200-unit community' },
+              ].map(({ val, label }) => (
+                <div key={label} className="p-5 bg-white/5 border border-white/10 rounded-xl">
+                  <div className="text-2xl font-bold text-[#B8883A]">{val}</div>
+                  <div className="text-xs text-white/30 mt-1.5 leading-snug">{label}</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-white/20 mt-6">
+              10% penetration of Austin metro = ~300 communities = $1.2–3M ARR. Texas at 5% = category-defining scale.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Expansion path */}
+      <section className="bg-[#0a130d] py-16 px-8">
+        <div className="max-w-[900px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center gap-4 mb-10">
+              <span className="text-xs text-white/30 tracking-[0.25em] uppercase">Revenue path</span>
+              <div className="flex-1 h-px bg-white/10" />
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                {
+                  stage: 'Year 1',
+                  title: 'Platform subscription',
+                  desc: '$20/unit/yr. Displace the management company. Build community density in Austin.',
+                  color: '#B8883A',
+                },
+                {
+                  stage: 'Year 2',
+                  title: 'Contractor marketplace',
+                  desc: 'GatePass earns commission on work orders booked through the platform. HOAs pay nothing extra. Contractors get qualified leads.',
+                  color: '#5a9e7a',
+                },
+                {
+                  stage: 'Year 3+',
+                  title: 'Data & integrations',
+                  desc: 'Premium board analytics. Lender/title integrations for unit resales. The Austin residential dataset becomes the moat.',
+                  color: '#7b9fd4',
+                },
+              ].map((item) => (
+                <div key={item.stage} className="p-6 bg-white/5 border border-white/10 rounded-xl">
+                  <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: item.color }}>{item.stage}</span>
+                  <h3 className="text-white font-bold mt-2 mb-2">{item.title}</h3>
+                  <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
@@ -216,6 +307,7 @@ export default function Pricing() {
         </div>
       </section>
 
+      <Footer />
     </div>
   );
 }

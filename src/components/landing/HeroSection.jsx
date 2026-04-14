@@ -61,7 +61,7 @@ export default function HeroSection() {
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
           <div className="flex items-center gap-3 mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-white/50 tracking-[0.2em] uppercase">Now accepting Austin HOAs</span>
+            <span className="text-xs text-white/50 tracking-[0.2em] uppercase">Now accepting Austin HOAs — AI-native, built 2024</span>
           </div>
           <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[6.5rem] font-bold text-white leading-none tracking-tight max-w-4xl">
             Fire your<br />

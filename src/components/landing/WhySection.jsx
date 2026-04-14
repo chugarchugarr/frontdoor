@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 
 const points = [
   { num: '01', title: 'Built for Texas HOAs', body: 'We understand how Austin communities work — from deed restrictions to Travis County requirements. No generic one-size-fits-all software.' },
-  { num: '02', title: 'Flat-rate pricing. No surprises.', body: '$20 per unit per year. That\'s it. No hidden fees, no per-module costs, no "enterprise" tiers.' },
-  { num: '03', title: 'The work happens automatically', body: 'Nine agents run your day-to-day on autopilot — collecting dues, sending notices, processing ARC requests, and running votes.' },
-  { num: '04', title: 'Live in 14 days', body: 'We migrate your data and train your board. Most HOAs are fully live in under two weeks. You pay nothing until you\'re up.' },
+  { num: '02', title: 'Flat-rate pricing. No surprises.', body: '$20 per unit per year. That\'s it. No hidden fees, no per-module costs, no "enterprise" tiers. A 200-unit HOA pays $4,000/yr — vs. $16,000–$24,000 with a management company.' },
+  { num: '03', title: 'The work happens automatically', body: 'Nine agents run your day-to-day on autopilot — collecting dues, sending notices, processing ARC requests, and running votes. You approve. The platform executes.' },
+  { num: '04', title: 'Live in 14 days. No vendor lock-in.', body: 'We migrate your data and train your board. Fully live in under two weeks. You own your data — export it anytime. Cancel with 30 days notice. No contracts.' },
 ];
 
 export default function WhySection() {
@@ -27,6 +27,15 @@ export default function WhySection() {
             <p className="text-lg text-[#1C1C1A]/50 mt-8 max-w-md leading-relaxed">
               The average HOA board member spends 12 hours a month on admin. GatePass cuts that by over 80% — so you get your weekends back.
             </p>
+
+            {/* TAM context for investors scanning the page */}
+            <div className="mt-8 p-5 bg-[#2A5240]/8 border border-[#2A5240]/15 rounded-xl">
+              <p className="text-xs text-[#2A5240] tracking-[0.15em] uppercase font-semibold mb-2">The market</p>
+              <p className="text-sm text-[#1C1C1A]/60 leading-relaxed">
+                ~22,000 HOAs in Texas. ~3,000 in Austin metro alone. The US HOA management industry is a $100B/year market — almost entirely captured by legacy property management companies charging $80–120/unit/year. GatePass does it for $20.
+              </p>
+            </div>
+
             <Link to="/pricing" className="inline-flex items-center gap-2 mt-8 text-sm font-semibold text-white bg-[#2A5240] hover:bg-[#1e3d2f] px-6 py-3 rounded-full transition-colors">
               Calculate your savings <ArrowRight className="w-4 h-4" />
             </Link>

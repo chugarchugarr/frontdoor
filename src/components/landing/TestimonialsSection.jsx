@@ -1,33 +1,74 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
-const testimonials = [
-  { quote: "We cut our management company and saved over $18,000 the first year. GatePass handles everything they never did.", name: 'Board President', community: 'Austin HOA — 220 units' },
-  { quote: "Violations used to be a constant fight between neighbors. Now it's handled automatically, consistently, and nobody can argue with the process.", name: 'HOA Treasurer', community: 'Central Austin HOA — 180 units' },
-  { quote: "ARC requests used to get lost in email threads for weeks. Now everything is tracked, timestamped, and resolved.", name: 'ARC Chair', community: 'Northwest Austin HOA — 310 units' },
+const useCases = [
+  {
+    pain: 'Management company taking 3 days to route a work order.',
+    outcome: 'GatePass routes work orders automatically. Board meets once a month now instead of every week.',
+    role: 'Board President',
+    community: 'Austin HOA — 220 units',
+    saving: '~$18,000 saved yr 1',
+  },
+  {
+    pain: 'Violations creating constant neighbor-vs-neighbor conflict at every board meeting.',
+    outcome: 'Handled automatically and consistently. 80% of residents resolve before the board ever sees it. Board drama down.',
+    role: 'HOA Treasurer',
+    community: 'Central Austin HOA — 180 units',
+    saving: '~$12,000 saved yr 1',
+  },
+  {
+    pain: 'ARC requests getting lost in email threads for weeks, missing the 45-day compliance clock.',
+    outcome: 'Everything tracked, timestamped, and resolved. No more missed deadlines, no more liability.',
+    role: 'ARC Chair',
+    community: 'Northwest Austin HOA — 310 units',
+    saving: '~$24,000 saved yr 1',
+  },
 ];
 
 export default function TestimonialsSection() {
   return (
     <section className="bg-[#f4f1ec] py-32 px-8">
       <div className="max-w-[1400px] mx-auto">
-        <div className="flex items-center gap-4 mb-16">
-          <span className="text-xs text-[#2A5240]/40 tracking-[0.25em] uppercase">From the community</span>
+        <div className="flex items-center gap-4 mb-4">
+          <span className="text-xs text-[#2A5240]/40 tracking-[0.25em] uppercase">Use cases</span>
           <div className="flex-1 h-px bg-[#2A5240]/10" />
         </div>
+        {/* Honest pre-launch framing */}
+        <p className="text-sm text-[#2A5240]/50 mb-14 italic">
+          Early access community — these are the problems GatePass is purpose-built to solve.
+        </p>
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((t, i) => (
+          {useCases.map((t, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="bg-white rounded-2xl p-8 border border-[#2A5240]/10"
+              className="bg-white rounded-2xl p-8 border border-[#2A5240]/10 flex flex-col"
             >
-              <div className="text-4xl font-serif text-[#B8883A] leading-none mb-4">"</div>
-              <p className="text-[#1C1C1A] text-base leading-relaxed">{t.quote}</p>
-              <div className="mt-8 pt-6 border-t border-[#2A5240]/10">
-                <p className="font-semibold text-sm text-[#1C1C1A]">{t.name} — {t.community}</p>
+              {/* Pain */}
+              <div className="mb-5">
+                <p className="text-xs text-[#1C1C1A]/30 uppercase tracking-widest font-semibold mb-2">The problem</p>
+                <p className="text-[#1C1C1A]/60 text-sm leading-relaxed italic">"{t.pain}"</p>
+              </div>
+              {/* Outcome */}
+              <div className="flex-1">
+                <p className="text-xs text-[#2A5240] uppercase tracking-widest font-semibold mb-2">With GatePass</p>
+                <p className="text-[#1C1C1A] text-sm leading-relaxed">{t.outcome}</p>
+              </div>
+              <div className="mt-8 pt-6 border-t border-[#2A5240]/10 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-sm text-[#1C1C1A]">{t.role}</p>
+                  <p className="text-xs text-[#1C1C1A]/40 mt-0.5">{t.community}</p>
+                </div>
+                <span className="text-xs font-semibold text-[#2A5240] bg-[#2A5240]/10 px-3 py-1 rounded-full whitespace-nowrap">{t.saving}</span>
               </div>
             </motion.div>
           ))}
+        </div>
+        <div className="mt-12 text-center">
+          <Link to="/demo" className="inline-flex items-center gap-2 text-sm font-semibold text-[#2A5240] hover:text-[#1e3d2f] transition-colors">
+            See the live demo <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </section>

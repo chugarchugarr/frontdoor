@@ -1,5 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 export default function AustinSection() {
   return (
@@ -19,24 +21,50 @@ export default function AustinSection() {
         </div>
         <div className="flex flex-col justify-center px-10 md:px-16 py-20 bg-[#0d1a12]">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <span className="text-xs text-[#B8883A] tracking-[0.2em] uppercase mb-6 block">Deep in the heart</span>
+            <span className="text-xs text-[#B8883A] tracking-[0.2em] uppercase mb-6 block">The founder</span>
             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">We live here too.</h2>
+
+            {/* Founder identity */}
+            <div className="mt-8 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-[#B8883A]/20 border border-[#B8883A]/40 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-sm font-bold text-[#B8883A]">JL</span>
+              </div>
+              <div>
+                <p className="text-white font-semibold text-sm">Joseph Lerma — Founder</p>
+                <p className="text-white/40 text-xs mt-0.5">Field sales veteran. Austin native. Built the exit ramp from exploitative HOA management.</p>
+              </div>
+            </div>
+
             <p className="text-base text-white/40 mt-6 leading-relaxed max-w-md">
-              GatePass was built by Austinites tired of watching HOA boards suffer under outdated software and predatory management companies. We know what Travis County requires. We know the quirks of Hill Country deed restrictions. We built this for communities like ours.
+              Spent years in field sales watching HOA boards get crushed — overcharged by management companies that delivered nothing, trapped by 12-month contracts with no recourse. GatePass is the platform I wish existed. We know what Travis County requires. We know Hill Country deed restrictions. We built this for communities like ours.
             </p>
+
             <div className="mt-6 flex items-start gap-3 border-l-2 pl-4" style={{ borderColor: '#B8883A' }}>
               <p className="text-sm text-white/70 leading-relaxed">
-                No physical gate required. GatePass works for any HOA or board-managed community.
+                No physical gate required. GatePass works for any HOA or board-managed community — gated or not.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-8 mt-12 pt-8 border-t border-white/10">
-              {[['12 hrs', 'saved per board member / month'], ['14 days', 'avg. time to go live'], ['$0', 'setup or migration fees'], ['9 agents', 'working 24/7 for your HOA']].map(([val, label]) => (
+
+            {/* Data moat story */}
+            <div className="mt-8 p-5 bg-white/5 border border-white/10 rounded-xl">
+              <p className="text-xs text-[#B8883A] tracking-[0.15em] uppercase font-semibold mb-2">The platform gets smarter over time</p>
+              <p className="text-sm text-white/50 leading-relaxed">
+                Every community that joins feeds GatePass data on Austin violation patterns, contractor performance, payment behavior, and ARC approval history. The platform compounds — more communities means better benchmarks, smarter automation, and a dataset no management company can replicate.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-8 mt-10 pt-8 border-t border-white/10">
+              {[['~3,000', 'HOAs in Austin metro'], ['$100B+', 'US HOA mgmt industry'], ['$0', 'setup or migration fees'], ['9 agents', 'working 24/7 for your HOA']].map(([val, label]) => (
                 <div key={label}>
                   <div className="text-2xl font-bold text-[#B8883A]">{val}</div>
                   <div className="text-xs text-white/30 mt-1 leading-snug">{label}</div>
                 </div>
               ))}
             </div>
+
+            <Link to="/onboard" className="inline-flex items-center gap-2 mt-10 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-6 py-3 rounded-full transition-colors">
+              Switch your HOA <ArrowRight className="w-4 h-4" />
+            </Link>
           </motion.div>
         </div>
       </div>
