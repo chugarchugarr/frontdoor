@@ -22,6 +22,7 @@ export default function Navbar() {
           <Link to="/demo" className="text-sm text-white/60 hover:text-white transition-colors tracking-wide uppercase">Demo</Link>
           <Link to="/onboard" className="text-sm text-white/60 hover:text-white transition-colors tracking-wide uppercase">For HOAs</Link>
           <Link to="/contractors" className="text-sm text-white/60 hover:text-white transition-colors tracking-wide uppercase">Contractors</Link>
+          <Link to="/pricing" className="text-sm text-white/60 hover:text-white transition-colors tracking-wide uppercase">Pricing</Link>
         </nav>
         <div className="hidden md:flex items-center gap-6">
           <span className="text-xs text-white/40 tracking-widest uppercase">Austin, TX</span>
@@ -38,6 +39,7 @@ export default function Navbar() {
           <Link to="/demo" className="block text-sm text-white/70 uppercase tracking-wide" onClick={() => setMobileOpen(false)}>Demo</Link>
           <Link to="/onboard" className="block text-sm text-white/70 uppercase tracking-wide" onClick={() => setMobileOpen(false)}>For HOAs</Link>
           <Link to="/contractors" className="block text-sm text-white/70 uppercase tracking-wide" onClick={() => setMobileOpen(false)}>Contractors</Link>
+          <Link to="/pricing" className="block text-sm text-white/70 uppercase tracking-wide" onClick={() => setMobileOpen(false)}>Pricing</Link>
           <Link to="/onboard" className="inline-block mt-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] px-6 py-2.5 rounded-full" onClick={() => setMobileOpen(false)}>
             Get started
           </Link>
