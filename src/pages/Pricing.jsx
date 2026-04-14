@@ -1,0 +1,221 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Check, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const features = [
+  'All 9 operating modules included',
+  'Unlimited board members',
+  'Unlimited homeowners',
+  'Data migration from your current system — free',
+  'Board training included — free',
+  'Live in 14 days or less',
+  '24/7 automated operations',
+  'Austin-based support',
+];
+
+const comparisonRows = [
+  { label: 'Annual cost (200 units)', mgmt: '$16,000–$24,000/yr', gp: '$4,000/yr' },
+  { label: 'Setup fee', mgmt: '$500–$2,000', gp: '$0' },
+  { label: 'Per-module pricing', mgmt: 'Yes', gp: 'No' },
+  { label: 'Response time', mgmt: 'Days to weeks', gp: 'Instant' },
+  { label: 'Data ownership', mgmt: 'Theirs', gp: 'Yours' },
+  { label: 'Cancel anytime', mgmt: '12-mo contracts', gp: 'Yes' },
+];
+
+const faqs = [
+  {
+    q: 'Is there a long-term contract?',
+    a: 'No. Month-to-month. Cancel anytime with 30 days notice.',
+  },
+  {
+    q: 'What does migration involve?',
+    a: 'We pull your homeowner data, dues history, and open violations from your current system. It typically takes 3–5 business days. You pay nothing.',
+  },
+  {
+    q: "What if our HOA doesn't have a physical gate?",
+    a: "GatePass works for any board-managed residential community — gated or not. The name refers to giving your board access to modern operations, not physical infrastructure.",
+  },
+  {
+    q: 'Who handles support?',
+    a: 'Austin-based humans, not bots. Reach us at hello@gatepass.io.',
+  },
+];
+
+export default function Pricing() {
+  return (
+    <div className="min-h-screen">
+
+      {/* Hero */}
+      <section className="bg-[#0d1a12] py-32 px-8">
+        <div className="max-w-[900px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase mb-6 block">Pricing</span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              One plan.<br />Everything included.
+            </h1>
+            <p className="text-lg text-white/40 mt-6 max-w-lg leading-relaxed">
+              No tiers. No add-ons. No management company markups. Just $20 per unit, per year.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Pricing Card */}
+      <section className="bg-[#0a130d] py-20 px-8">
+        <div className="max-w-lg mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="bg-[#0d1a12] border border-white/10 rounded-2xl p-10"
+          >
+            <span className="text-xs text-[#B8883A] tracking-[0.2em] uppercase font-semibold">GatePass — Full Access</span>
+
+            <div className="flex items-end gap-3 mt-6">
+              <span className="text-7xl font-bold text-white leading-none">$20</span>
+              <span className="text-white/40 text-base mb-2">/unit/year</span>
+            </div>
+            <p className="text-white/40 text-sm mt-3">No contracts. No setup fees. Cancel anytime.</p>
+
+            <div className="my-8 border-t border-white/10" />
+
+            <ul className="space-y-4">
+              {features.map((f) => (
+                <li key={f} className="flex items-start gap-3">
+                  <Check className="w-4 h-4 text-[#B8883A] mt-0.5 shrink-0" />
+                  <span className="text-sm text-white/70">{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              to="/onboard"
+              className="mt-10 w-full inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-8 py-4 rounded-full transition-colors"
+            >
+              Switch your HOA — it's free <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section className="bg-[#f4f1ec] py-24 px-8">
+        <div className="max-w-[900px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center gap-4 mb-14">
+              <span className="text-xs text-[#2A5240]/40 tracking-[0.25em] uppercase">Comparison</span>
+              <div className="flex-1 h-px bg-[#2A5240]/10" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1C1C1A] mb-12">
+              What you're paying now vs. GatePass
+            </h2>
+
+            {/* Header row */}
+            <div className="grid grid-cols-3 gap-4 mb-3 px-4">
+              <div />
+              <div className="text-xs text-[#1C1C1A]/40 font-semibold uppercase tracking-widest text-center">Management Co.</div>
+              <div className="text-xs text-[#2A5240] font-semibold uppercase tracking-widest text-center">GatePass</div>
+            </div>
+
+            {/* Rows */}
+            <div className="rounded-2xl overflow-hidden border border-[#2A5240]/10">
+              {comparisonRows.map((row, i) => (
+                <div
+                  key={row.label}
+                  className={`grid grid-cols-3 gap-4 px-4 py-4 ${i % 2 === 0 ? 'bg-white' : 'bg-[#f4f1ec]'}`}
+                >
+                  <div className="text-sm text-[#1C1C1A] font-medium">{row.label}</div>
+                  <div className="text-sm text-[#1C1C1A]/50 text-center">{row.mgmt}</div>
+                  <div className="text-sm text-[#2A5240] font-semibold text-center">{row.gp}</div>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-[#1C1C1A]/40 mt-4">
+              Based on average Austin-area HOA management company pricing for a 200-unit community.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="bg-[#0d1a12] py-24 px-8">
+        <div className="max-w-[900px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center gap-4 mb-14">
+              <span className="text-xs text-white/30 tracking-[0.25em] uppercase">Questions</span>
+              <div className="flex-1 h-px bg-white/10" />
+            </div>
+
+            <div className="space-y-0">
+              {faqs.map((faq, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.07, duration: 0.5 }}
+                  className="border-b border-white/10 py-8"
+                >
+                  <p className="font-semibold text-white text-base">{faq.q}</p>
+                  <p className="text-sm text-white/50 mt-2 leading-relaxed">{faq.a}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="bg-[#0a130d] py-32 px-8">
+        <div className="max-w-[700px] mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase mb-6 block">Ready when you are</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+              Ready to cut your costs?
+            </h2>
+            <p className="text-lg text-white/40 mt-6 leading-relaxed">
+              Switch from your management company in 14 days. Setup and migration are free.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+              <Link
+                to="/onboard"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-8 py-4 rounded-full transition-colors"
+              >
+                Get started — it's free <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to="/demo"
+                className="text-sm text-white/50 hover:text-white transition-colors border border-white/20 hover:border-white/40 px-8 py-4 rounded-full"
+              >
+                See the demo →
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+    </div>
+  );
+}
