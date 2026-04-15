@@ -4,10 +4,10 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const points = [
-  { num: '01', title: 'Built for Texas HOAs', body: 'We understand how Austin communities work — from deed restrictions to Travis County requirements. No generic one-size-fits-all software.' },
-  { num: '02', title: 'Flat-rate pricing. No surprises.', body: '$20 per unit per year. That\'s it. No hidden fees, no per-module costs, no "enterprise" tiers. A 200-unit HOA pays $4,000/yr — vs. $16,000–$24,000 with a management company.' },
-  { num: '03', title: 'The work happens automatically', body: 'Nine agents run your day-to-day on autopilot — collecting dues, sending notices, processing ARC requests, and running votes. You approve. The platform executes.' },
-  { num: '04', title: 'Live in 14 days. No vendor lock-in.', body: 'We migrate your data and train your board. Fully live in under two weeks. You own your data — export it anytime. Cancel with 30 days notice. No contracts.' },
+  { num: '01', title: 'Your legal history. Permanently yours.', body: 'Every violation notice, ARC decision, board vote, and dues record is timestamped and stored in a searchable compliance ledger. When you switch from a PMC, your history doesn\'t disappear with them.' },
+  { num: '02', title: 'Flat-rate pricing. No PMC games.', body: '$20 per unit per year. That\'s it. A 200-unit HOA pays $4,000/yr — vs. $16,000–$24,000 with a management company that invoices you for every phone call.' },
+  { num: '03', title: 'The work happens automatically.', body: 'Nine agents run your day-to-day on autopilot — collecting dues, sending notices, processing ARC requests, and running votes. You approve. The platform executes.' },
+  { num: '04', title: 'Switch in 14 days. We cover the exit fee.', body: 'We migrate your data and train your board. Fully live in under two weeks. If you\'re under a PMC contract, ask us about contract buyout — we\'ll make the switch risk-free.' },
 ];
 
 export default function WhySection() {
@@ -21,11 +21,11 @@ export default function WhySection() {
         <div className="grid md:grid-cols-2 gap-16">
           <div>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1C1C1A] leading-tight">
-              Your board does community.<br />
-              <span className="text-[#2A5240]">We do the paperwork.</span>
+              Your community's records.<br />
+              <span className="text-[#2A5240]">Never held hostage again.</span>
             </h2>
             <p className="text-lg text-[#1C1C1A]/50 mt-8 max-w-md leading-relaxed">
-              The average HOA board member spends 12 hours a month on admin. GatePass cuts that by over 80% — so you get your weekends back.
+              When you fire a PMC, they take your records with them — or charge you to get them back. GatePass stores every compliance event, financial transaction, and board decision in a permanent, exportable ledger that belongs to your community.
             </p>
 
             {/* TAM context for investors scanning the page */}

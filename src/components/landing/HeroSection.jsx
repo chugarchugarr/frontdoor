@@ -61,7 +61,7 @@ export default function HeroSection() {
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
           <div className="flex items-center gap-3 mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-white/50 tracking-[0.2em] uppercase">Now accepting Austin HOAs — AI-native, built 2024</span>
+            <span className="text-xs text-white/50 tracking-[0.2em] uppercase">Built for HOAs done being ignored by their management company</span>
           </div>
           <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[6.5rem] font-bold text-white leading-none tracking-tight max-w-4xl">
             Fire your<br />
@@ -87,7 +87,7 @@ export default function HeroSection() {
             </AnimatePresence>
           </div>
           <p className="text-lg md:text-xl text-white/50 mt-8 max-w-lg leading-relaxed font-light">
-            The average HOA pays $80–120/unit/year for a management company that ignores their calls. GatePass does more, for less, starting day one.
+            If your HOA has left a 1-star review for a management company, you already know the problem. GatePass is the exit — 9 AI modules, full compliance records, $20/unit/year.
           </p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-10">
             <Link to="/onboard" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
