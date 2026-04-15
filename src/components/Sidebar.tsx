@@ -7,7 +7,8 @@ export type OSView =
   | "landing" | "hoa" | "contractor"
   | "dashboard" | "homeowners" | "payos" | "violations"
   | "arc" | "boardroom" | "votebox" | "workorders"
-  | "amenity" | "commhub" | "permits" | "livefeeds";
+  | "amenity" | "commhub" | "permits" | "livefeeds"
+  | "compliance";
 
 const NAV_ITEMS: { id: OSView; label: string; icon: React.ReactNode; section?: string }[] = [
   { id: "dashboard",   label: "Overview",    icon: <Icons.Home />,     section: "HOA OS" },
@@ -22,6 +23,7 @@ const NAV_ITEMS: { id: OSView; label: string; icon: React.ReactNode; section?: s
   { id: "commhub",     label: "CommHub",     icon: <Icons.Bell /> },
   { id: "permits",     label: "Permit Feed", icon: <Icons.Activity />, section: "Intel" },
   { id: "livefeeds",   label: "Live Feeds",  icon: <Icons.Signal /> },
+  { id: "compliance",  label: "Compliance",  icon: <Icons.Shield />, section: "Records" },
 ];
 
 export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (v: OSView) => void; hoaName?: string }) {

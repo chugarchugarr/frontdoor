@@ -560,7 +560,7 @@ export async function createViolation(input: {
   reportedBy?: string;
   photoUrls?: string[];
 }) {
-  return db.violation.create({
+  const violation = await db.violation.create({
     data: {
       hoaId: input.hoaId,
       homeownerId: input.homeownerId,
@@ -570,10 +570,18 @@ export async function createViolation(input: {
       severity: input.severity || "minor",
       reportedBy: input.reportedBy,
       photoUrls: input.photoUrls ? JSON.stringify(input.photoUrls) : null,
-      // Next notice due in 14 days by default
       nextNoticeAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
     },
   });
+  logComplianceEvent({
+    hoaId: input.hoaId, module: "finebot", eventType: "violation.created",
+    actorType: "board", actorName: input.reportedBy || "Board",
+    targetType: "unit", targetId: violation.id, targetLabel: input.address,
+    summary: `Violation logged at ${input.address}: ${input.category} (${input.severity || "minor"})`,
+    legalFlag: false, legalCategory: "enforcement",
+    dataSnapshot: { category: input.category, description: input.description, severity: input.severity },
+  });
+  return violation;
 }
 
 export async function getViolations(hoaId: string) {
@@ -641,14 +649,35 @@ This is an automated notice from GatePass HOA OS.
     console.error("[sendViolationNotice] email failed:", e)
   );
 
+  logComplianceEvent({
+    hoaId: violation.hoaId, module: "finebot", eventType: "violation.notice_sent",
+    actorType: "system", actorName: "GatePass System",
+    targetType: "unit", targetId: violationId, targetLabel: violation.address,
+    summary: `Notice #${noticeNumber} sent to ${violation.address}: ${violation.category}${fineCents > 0 ? ` — fine: $${fineCents / 100}` : ""}`,
+    legalFlag: true, legalCategory: "enforcement",
+    dataSnapshot: { noticeNumber, fineCents, dueDate: dueDate.toISOString(), sentTo: notice.sentTo },
+  });
+
   return { notice, noticeNumber, fineCents };
 }
 
 export async function resolveViolation(violationId: string, notes?: string) {
-  return db.violation.update({
+  const violation = await db.violation.findUnique({ where: { id: violationId } });
+  const result = await db.violation.update({
     where: { id: violationId },
     data: { status: "resolved", resolvedAt: new Date(), notes },
   });
+  if (violation) {
+    logComplianceEvent({
+      hoaId: violation.hoaId, module: "finebot", eventType: "violation.resolved",
+      actorType: "board", actorName: "Board",
+      targetType: "unit", targetId: violationId, targetLabel: violation.address,
+      summary: `Violation resolved — ${violation.address} confirmed compliant`,
+      legalFlag: false, legalCategory: "enforcement",
+      dataSnapshot: { category: violation.category, notes },
+    });
+  }
+  return result;
 }
 
 // ─── ARC Agent ────────────────────────────────────────────────────────
@@ -697,6 +726,7 @@ export async function reviewARCRequest(input: {
   reviewNotes?: string;
   conditions?: string;
 }) {
+  const arc = await db.aRCRequest.findUnique({ where: { id: input.id } });
   const result = await db.aRCRequest.update({
     where: { id: input.id },
     data: {
@@ -712,6 +742,19 @@ export async function reviewARCRequest(input: {
   sendARCDecisionEmail(input.id).catch((e) =>
     console.error("[reviewARCRequest] email failed:", e)
   );
+
+  if (arc) {
+    const isLegal = input.status === "approved" || input.status === "denied";
+    logComplianceEvent({
+      hoaId: arc.hoaId, module: "arc",
+      eventType: `arc.${input.status}`,
+      actorType: "board", actorName: input.reviewedBy,
+      targetType: "arc_request", targetId: input.id, targetLabel: `${arc.projectType} at ${arc.address}`,
+      summary: `ARC ${input.status}: ${arc.projectType} at ${arc.address}${input.conditions ? ` — conditions: ${input.conditions}` : ""}`,
+      legalFlag: isLegal, legalCategory: "governance",
+      dataSnapshot: { status: input.status, reviewNotes: input.reviewNotes, conditions: input.conditions },
+    });
+  }
 
   return result;
 }
@@ -759,7 +802,8 @@ export async function updateMeetingMinutes(input: {
   quorumMet?: boolean;
   status?: string;
 }) {
-  return db.meeting.update({
+  const meeting = await db.meeting.findUnique({ where: { id: input.id } });
+  const result = await db.meeting.update({
     where: { id: input.id },
     data: {
       minutes: input.minutes,
@@ -767,6 +811,17 @@ export async function updateMeetingMinutes(input: {
       status: input.status || "completed",
     },
   });
+  if (meeting) {
+    logComplianceEvent({
+      hoaId: meeting.hoaId, module: "boardroom", eventType: "meeting.minutes_recorded",
+      actorType: "board", actorName: "Board Secretary",
+      targetType: "meeting", targetId: input.id, targetLabel: meeting.title,
+      summary: `Meeting minutes recorded: ${meeting.title}`,
+      legalFlag: true, legalCategory: "governance",
+      dataSnapshot: { quorumMet: input.quorumMet, status: input.status || "completed" },
+    });
+  }
+  return result;
 }
 
 export async function addAgendaItem(input: {
@@ -870,16 +925,30 @@ export async function getVoteResults(voteId: string) {
 }
 
 export async function closeVote(voteId: string) {
+  const voteRecord = await db.vote.findUnique({ where: { id: voteId } });
   const results = await getVoteResults(voteId);
   const winner = Object.entries(results.tallies).sort((a, b) => b[1] - a[1])[0];
   const summary = winner
     ? `Result: "${winner[0]}" — ${winner[1]} votes (${results.totalCasts} total)`
     : "No votes cast";
 
-  return db.vote.update({
+  const closed = await db.vote.update({
     where: { id: voteId },
     data: { status: "closed", resultSummary: summary, certifiedAt: new Date() },
   });
+
+  if (voteRecord) {
+    logComplianceEvent({
+      hoaId: voteRecord.hoaId, module: "votebox", eventType: "vote.closed",
+      actorType: "system", actorName: "GatePass System",
+      targetType: "vote", targetId: voteId, targetLabel: voteRecord.title,
+      summary: `Vote closed: "${voteRecord.title}" — ${summary}`,
+      legalFlag: true, legalCategory: "governance",
+      dataSnapshot: { tallies: results.tallies, totalCasts: results.totalCasts, quorumMet: results.quorumMet },
+    });
+  }
+
+  return closed;
 }
 
 // ─── WorkOrder ────────────────────────────────────────────────────────
@@ -928,6 +997,7 @@ export async function updateWorkOrder(input: {
   completionNotes?: string;
   boardApproved?: boolean;
 }) {
+  const wo = await db.workOrder.findUnique({ where: { id: input.id } });
   const data: Record<string, unknown> = {};
   if (input.status !== undefined) data.status = input.status;
   if (input.assignedTo !== undefined) {
@@ -946,7 +1016,31 @@ export async function updateWorkOrder(input: {
     data.boardApprovedAt = input.boardApproved ? new Date() : null;
   }
 
-  return db.workOrder.update({ where: { id: input.id }, data });
+  const result = await db.workOrder.update({ where: { id: input.id }, data });
+
+  if (wo) {
+    if (input.boardApproved === true) {
+      logComplianceEvent({
+        hoaId: wo.hoaId, module: "workorder", eventType: "workorder.board_approved",
+        actorType: "board", actorName: "Board",
+        targetType: "work_order", targetId: input.id, targetLabel: wo.title,
+        summary: `Board approved work order: ${wo.title}${wo.estimatedCost ? ` — est. $${wo.estimatedCost / 100}` : ""}`,
+        legalFlag: true, legalCategory: "financial",
+        dataSnapshot: { title: wo.title, estimatedCost: wo.estimatedCost, location: wo.location },
+      });
+    } else if (input.completionNotes !== undefined || input.status === "completed") {
+      logComplianceEvent({
+        hoaId: wo.hoaId, module: "workorder", eventType: "workorder.completed",
+        actorType: "system", actorName: "GatePass System",
+        targetType: "work_order", targetId: input.id, targetLabel: wo.title,
+        summary: `Work order completed: ${wo.title}${input.actualCost ? ` — actual cost $${input.actualCost / 100}` : ""}`,
+        legalFlag: false, legalCategory: "contract",
+        dataSnapshot: { actualCost: input.actualCost, completionNotes: input.completionNotes },
+      });
+    }
+  }
+
+  return result;
 }
 
 // ─── Amenity Reservations ─────────────────────────────────────────────
@@ -1855,4 +1949,176 @@ export async function seedDemoData() {
       announcements: annData.length,
     },
   };
+}
+
+// ─── Compliance Memory Layer ──────────────────────────────────────────
+// L3 Trust → L8 Memory moat. Every legally/financially significant
+// action is timestamped and stored permanently in an immutable ledger.
+
+/**
+ * Internal utility — called by other procedures after the triggering DB write.
+ * Fire-and-forget: never throws, never blocks the parent operation.
+ */
+export async function logComplianceEvent(input: {
+  hoaId: string;
+  module: "core" | "payos" | "finebot" | "arc" | "workorder" | "boardroom" | "votebox" | "amenity" | "commhub";
+  eventType: string;
+  actorType: "board" | "homeowner" | "system" | "admin";
+  actorId?: string;
+  actorName: string;
+  targetType?: string;
+  targetId?: string;
+  targetLabel?: string;
+  summary: string;
+  detail?: string;
+  dataSnapshot?: Record<string, unknown>;
+  legalFlag?: boolean;
+  legalCategory?: "liability" | "financial" | "governance" | "enforcement" | "contract";
+  documentHash?: string;
+  documentUrl?: string;
+}) {
+  try {
+    await db.complianceEvent.create({
+      data: {
+        hoaId: input.hoaId,
+        module: input.module,
+        eventType: input.eventType,
+        actorType: input.actorType,
+        actorId: input.actorId,
+        actorName: input.actorName,
+        targetType: input.targetType,
+        targetId: input.targetId,
+        targetLabel: input.targetLabel,
+        summary: input.summary,
+        detail: input.detail,
+        dataSnapshot: input.dataSnapshot ? JSON.stringify(input.dataSnapshot) : undefined,
+        legalFlag: input.legalFlag ?? false,
+        legalCategory: input.legalCategory,
+        documentHash: input.documentHash,
+        documentUrl: input.documentUrl,
+      },
+    });
+  } catch (err) {
+    // Never propagate — compliance logging must never break the parent operation
+    console.error("[ComplianceEvent] Failed to log event:", err);
+  }
+}
+
+export async function getComplianceTimeline(input: {
+  hoaId: string;
+  page?: number;
+  pageSize?: number;
+  module?: string;
+  legalOnly?: boolean;
+  actorType?: string;
+  targetId?: string;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}) {
+  const page = input.page ?? 1;
+  const pageSize = input.pageSize ?? 25;
+  const skip = (page - 1) * pageSize;
+
+  const where: Record<string, unknown> = { hoaId: input.hoaId };
+  if (input.module) where.module = input.module;
+  if (input.legalOnly) where.legalFlag = true;
+  if (input.actorType) where.actorType = input.actorType;
+  if (input.targetId) where.targetId = input.targetId;
+  if (input.search) where.summary = { contains: input.search };
+  if (input.dateFrom || input.dateTo) {
+    where.createdAt = {
+      ...(input.dateFrom ? { gte: new Date(input.dateFrom) } : {}),
+      ...(input.dateTo ? { lte: new Date(input.dateTo) } : {}),
+    };
+  }
+
+  const [events, total, legalCount] = await Promise.all([
+    db.complianceEvent.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: pageSize,
+    }),
+    db.complianceEvent.count({ where }),
+    db.complianceEvent.count({ where: { hoaId: input.hoaId, legalFlag: true } }),
+  ]);
+
+  return { events, total, page, pageSize, totalPages: Math.ceil(total / pageSize), legalCount };
+}
+
+export async function exportCompliancePack(input: {
+  hoaId: string;
+  dateFrom: string;
+  dateTo: string;
+  purpose?: string;
+  requestedBy: string;
+}) {
+  const hoa = await db.hOA.findUnique({ where: { id: input.hoaId } });
+  if (!hoa) throw new Error("HOA not found");
+
+  const events = await db.complianceEvent.findMany({
+    where: {
+      hoaId: input.hoaId,
+      createdAt: { gte: new Date(input.dateFrom), lte: new Date(input.dateTo) },
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const legalEvents = events.filter(e => e.legalFlag);
+
+  const pack = {
+    exportMeta: {
+      generatedAt: new Date().toISOString(),
+      requestedBy: input.requestedBy,
+      purpose: input.purpose ?? "general",
+      hoaId: hoa.id,
+      hoaName: hoa.name,
+      community: hoa.community,
+      dateRangeStart: input.dateFrom,
+      dateRangeEnd: input.dateTo,
+    },
+    summary: {
+      totalEvents: events.length,
+      legalEvents: legalEvents.length,
+      moduleBreakdown: events.reduce((acc, e) => {
+        acc[e.module] = (acc[e.module] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+    },
+    legalHighlights: legalEvents.map(e => ({
+      date: e.createdAt,
+      module: e.module,
+      eventType: e.eventType,
+      summary: e.summary,
+      actor: e.actorName,
+      legalCategory: e.legalCategory,
+    })),
+    fullTimeline: events.map(e => ({
+      id: e.id,
+      date: e.createdAt,
+      module: e.module,
+      eventType: e.eventType,
+      summary: e.summary,
+      detail: e.detail,
+      actor: `${e.actorName} (${e.actorType})`,
+      target: e.targetLabel,
+      legalFlag: e.legalFlag,
+      legalCategory: e.legalCategory,
+    })),
+  };
+
+  await db.complianceExport.create({
+    data: {
+      hoaId: input.hoaId,
+      requestedBy: input.requestedBy,
+      dateRangeStart: new Date(input.dateFrom),
+      dateRangeEnd: new Date(input.dateTo),
+      eventCount: events.length,
+      exportJson: JSON.stringify(pack),
+      purpose: input.purpose,
+    },
+  });
+
+  return pack;
 }

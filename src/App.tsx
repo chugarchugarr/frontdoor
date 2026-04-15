@@ -25,6 +25,7 @@ import { ContractorWaitlist as ContractorWaitlistPanel } from "./components/Cont
 import { HomeownerPortal } from "./components/HomeownerPortal";
 import { ContractorPortal } from "./components/ContractorPortal";
 import { LiveFeeds } from "./components/LiveFeeds";
+import { ComplianceTimeline } from "./components/ComplianceTimeline";
 import { ErrorBoundary } from "./components/error-boundary";
 
 // ─── Success screens ──────────────────────────────────────────────────
@@ -362,6 +363,7 @@ function BoardDemo({ onBack }: { onBack: () => void }) {
           {view === "commhub"    && <CommHub hoaId={DEMO_HOA_ID} />}
           {view === "permits"    && <PermitFeedView />}
           {view === "livefeeds"  && <LiveFeeds />}
+          {view === "compliance" && <ComplianceTimeline hoaId={DEMO_HOA_ID} />}
         </main>
       </div>
     </div>
@@ -437,6 +439,7 @@ function HOAOSShell({ hoaId, onExit }: { hoaId: string; onExit: () => void }) {
         {view === "commhub"     && <CommHub hoaId={hoaId} />}
         {view === "permits"     && <PermitFeedView />}
         {view === "livefeeds"   && <LiveFeeds hoaZip={hoaZip} />}
+        {view === "compliance"  && <ComplianceTimeline hoaId={hoaId} />}
       </main>
     </div>
   );

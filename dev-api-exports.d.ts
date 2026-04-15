@@ -1402,5 +1402,110 @@ export declare function seedDemoData(): Promise<{
 		announcements: number;
 	};
 }>;
+/**
+ * Internal utility — called by other procedures after the triggering DB write.
+ * Fire-and-forget: never throws, never blocks the parent operation.
+ */
+export declare function logComplianceEvent(input: {
+	hoaId: string;
+	module: "core" | "payos" | "finebot" | "arc" | "workorder" | "boardroom" | "votebox" | "amenity" | "commhub";
+	eventType: string;
+	actorType: "board" | "homeowner" | "system" | "admin";
+	actorId?: string;
+	actorName: string;
+	targetType?: string;
+	targetId?: string;
+	targetLabel?: string;
+	summary: string;
+	detail?: string;
+	dataSnapshot?: Record<string, unknown>;
+	legalFlag?: boolean;
+	legalCategory?: "liability" | "financial" | "governance" | "enforcement" | "contract";
+	documentHash?: string;
+	documentUrl?: string;
+}): Promise<void>;
+export declare function getComplianceTimeline(input: {
+	hoaId: string;
+	page?: number;
+	pageSize?: number;
+	module?: string;
+	legalOnly?: boolean;
+	actorType?: string;
+	targetId?: string;
+	search?: string;
+	dateFrom?: string;
+	dateTo?: string;
+}): Promise<{
+	events: {
+		id: string;
+		createdAt: Date;
+		hoaId: string;
+		module: string;
+		eventType: string;
+		actorType: string;
+		actorId: string | null;
+		actorName: string;
+		targetType: string | null;
+		targetId: string | null;
+		targetLabel: string | null;
+		summary: string;
+		detail: string | null;
+		dataSnapshot: string | null;
+		legalFlag: boolean;
+		legalCategory: string | null;
+		documentHash: string | null;
+		documentUrl: string | null;
+		ipAddress: string | null;
+		userAgent: string | null;
+	}[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+	legalCount: number;
+}>;
+export declare function exportCompliancePack(input: {
+	hoaId: string;
+	dateFrom: string;
+	dateTo: string;
+	purpose?: string;
+	requestedBy: string;
+}): Promise<{
+	exportMeta: {
+		generatedAt: string;
+		requestedBy: string;
+		purpose: string;
+		hoaId: string;
+		hoaName: string;
+		community: string;
+		dateRangeStart: string;
+		dateRangeEnd: string;
+	};
+	summary: {
+		totalEvents: number;
+		legalEvents: number;
+		moduleBreakdown: Record<string, number>;
+	};
+	legalHighlights: {
+		date: Date;
+		module: string;
+		eventType: string;
+		summary: string;
+		actor: string;
+		legalCategory: string | null;
+	}[];
+	fullTimeline: {
+		id: string;
+		date: Date;
+		module: string;
+		eventType: string;
+		summary: string;
+		detail: string | null;
+		actor: string;
+		target: string | null;
+		legalFlag: boolean;
+		legalCategory: string | null;
+	}[];
+}>;
 
 export {};

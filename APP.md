@@ -1,16 +1,28 @@
 # GatePass — HOA Operating System
 
-**Purpose**: Full HOA operating system — 9 AI agent modules that replace HOA management companies
+**Purpose**: HOA self-management platform — replaces property management companies. PMC displacement play, not a tools upgrade.
 
 **Type**: app
 
-**Status**: active — Phase 2 (OS build complete, public launch prep)
+**Status**: active — Phase 2 complete. GTM pivot underway: targeting HOAs with 1-star PMC reviews.
 
 **Live URL**: https://frontdoor-userh9akm9bjl1wy8lioze14285.adaptive.ai
 
 ## What It Does
 
 GatePass is the OS for HOAs. Replaces the $50–150/unit/year management company with 9 AI agent modules at $20–22/unit/year.
+
+**Positioning (post stress test):** Lead with Trust/compliance moat, not feature count. The asymmetric advantage is L3 Trust → L8 Memory — every violation, vote, ARC decision, and financial action stored permanently in an immutable, exportable compliance ledger. PMCs cannot match this. No other HOA software owns this layer.
+
+**Strategic layer (Supply Chain of Intelligence):**
+- Primary today: L5 Workflows
+- Asymmetric advantage: L3 Trust → L8 Memory (Compliance Memory Layer — now built)
+- Trajectory: CONSOLIDATES — fragmented PMC market, no dominant self-management alternative
+- Moat: compliance records + vendor history + permit trails with legal/financial consequence
+
+**GTM Wedge:** Target HOAs giving their PMC 1-star Google reviews. These communities are trapped and want out. GatePass is the escape hatch. Offer contract buyout (up to $5K) to close. See `.memory/gatepass/gtm-pmc-displacement-playbook.md`.
+
+**Naming note:** "GatePass" risks triggering visitor management / access control mental model. Acknowledged liability — positioning copy leads with compliance/governance, not gate/access.
 
 ### 9 Modules
 
@@ -90,15 +102,33 @@ src/
 **Amenity**: Amenity, Reservation
 **CommHub**: Announcement, Message
 
+## Backend Procedures (47 total)
+
+**Core**: `health`, `createHOACheckout`, `getHOAStats`, `getHOAList`, `getHOA`
+**Homeowners**: `addHomeowner`, `getHomeowners`
+**Contractor**: `createContractorCheckout`, `getContractorStats`, `getWaitlistPosition`
+**PayOS**: `chargeMonthlyDues`, `recordPayment`, `getFinancialSummary`, `getDuesAccount`, `addBudgetLine`
+**FineBot**: `createViolation`, `getViolations`, `sendViolationNotice`, `resolveViolation`
+**ARC**: `submitARCRequest`, `getARCRequests`, `reviewARCRequest`
+**BoardRoom**: `createMeeting`, `getMeetings`, `updateMeetingMinutes`, `addAgendaItem`
+**VoteBox**: `createVote`, `getVotes`, `castVote`, `getVoteResults`, `closeVote`
+**WorkOrder**: `createWorkOrder`, `getWorkOrders`, `updateWorkOrder`
+**Amenity**: `createAmenity`, `getAmenities`, `createReservation`, `cancelReservation`
+**CommHub**: `createAnnouncement`, `getAnnouncements`, `sendMessage`, `getMessages`, `getHOAMessages`
+**Dashboard**: `getOSDashboard`
+**Permits**: `getAustinPermits`
+**Compliance Memory Layer (NEW)**: `logComplianceEvent` (internal), `getComplianceTimeline`, `exportCompliancePack`
+
 ## Next Steps
 
+- [ ] Find first HOA with 1-star PMC review → execute PMC displacement play (see GTM playbook)
 - [ ] Wire Stripe webhook → mark paid=true on HOA/Contractor records
 - [ ] Add Resend email on HOA signup, violation notices, ARC decisions
 - [ ] Homeowner CSV import (bulk roster upload)
 - [ ] Register domain (gatepass.io)
 - [ ] Texas LLC filing ($300)
 - [ ] Move to production Stripe keys
-- [ ] NAR REACH grant deadline: March 31, 2026
+- [ ] Confirm `joseph@gatepass.io` email before sending Touch 1 outreach templates
 
 ## Grant Applications
 

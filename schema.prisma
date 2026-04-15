@@ -48,9 +48,11 @@ model HOA {
   arcRequests  ARCRequest[]
   workOrders   WorkOrder[]
   amenities    Amenity[]
-  announcements Announcement[]
-  votes        Vote[]
-  budgets      Budget[]
+  announcements    Announcement[]
+  votes            Vote[]
+  budgets          Budget[]
+  complianceEvents ComplianceEvent[]
+  complianceExports ComplianceExport[]
 }
 
 model Homeowner {
@@ -411,4 +413,57 @@ model Message {
   referenceType   String?  // violation | workorder | arc | dues
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+// ─── Compliance Memory Layer ──────────────────────────────────────────
+// Immutable audit ledger — every legally/financially significant action
+// timestamped and stored permanently. This is the L3 Trust → L8 Memory moat.
+
+model ComplianceEvent {
+  id              String   @id @default(cuid())
+
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  module          String   // core | payos | finebot | arc | workorder | boardroom | votebox | amenity | commhub
+  eventType       String   // see taxonomy in docs/compliance-memory-layer.md
+
+  actorType       String   // board | homeowner | system | admin
+  actorId         String?
+  actorName       String   // denormalized — immutable even if actor record changes
+
+  targetType      String?  // unit | vendor | vote | violation | arc_request | work_order | meeting | dues_account
+  targetId        String?  // soft reference (no FK) — events outlive source records
+  targetLabel     String?  // human-readable: "123 Oak Ln", "Motion: Special Assessment"
+
+  summary         String   // plain-English one-liner
+  detail          String?  // extended markdown detail
+  dataSnapshot    String?  // JSON snapshot of source record fields at time of event
+
+  legalFlag       Boolean  @default(false)
+  legalCategory   String?  // liability | financial | governance | enforcement | contract
+
+  documentHash    String?
+  documentUrl     String?
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime @default(now())
+
+  @@index([hoaId, createdAt])
+  @@index([hoaId, module])
+  @@index([hoaId, eventType])
+  @@index([hoaId, legalFlag])
+  @@index([targetId])
+}
+
+model ComplianceExport {
+  id              String   @id @default(cuid())
+  hoaId           String
+  hoa             HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  requestedBy     String
+  dateRangeStart  DateTime
+  dateRangeEnd    DateTime
+  eventCount      Int
+  exportJson      String
+  purpose         String?  // pmc_transition | legal_hold | insurance_claim | board_review
+  createdAt       DateTime @default(now())
 }
