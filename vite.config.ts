@@ -30,6 +30,10 @@ export default ({ mode }: { mode: "development" | "production" }) => {
       port: Number(env.PORT),
       strictPort: true,
       allowedHosts: true,
+      hmr: {
+        clientPort: 443,
+        protocol: "wss",
+      },
       proxy: {
         "/_logger": {
           target: "http://localhost:" + (Number(env.PORT) + 1),

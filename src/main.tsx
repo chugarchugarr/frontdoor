@@ -8,6 +8,13 @@ import { initializeClientEnvironment } from "@adaptive-ai/sdk/client";
 import { RootErrorBoundary } from "@/components/error-boundary";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+// Suppress known third-party console noise (Omada chat widget uses outdated remarkable)
+const _origWarn = console.warn;
+console.warn = (...args: unknown[]) => {
+  if (typeof args[0] === "string" && args[0].includes("linkify option is removed")) return;
+  _origWarn(...args);
+};
+
 initializeClientEnvironment({
   appId: import.meta.env.VITE_APP_ID,
   rootUrl: import.meta.env.VITE_ROOT_URL,
