@@ -2,7 +2,7 @@
 // All transactional emails. Uses Resend API directly (no SDK needed).
 
 const RESEND_KEY = process.env.RESEND_API_KEY;
-const FROM = "GatePass <hello@gatepass.io>";
+const FROM = "GatePass <info@gatepasshoa.com>";
 
 async function send(to: string, subject: string, html: string) {
   if (!RESEND_KEY) {
@@ -84,7 +84,7 @@ export async function sendHOAConfirmation(input: {
         </td></tr>
         <!-- Footer -->
         <tr><td style="padding:20px 40px;border-top:1px solid #EAE6DE;">
-          <p style="margin:0;color:#8A8A82;font-size:11px;font-family:'Courier New',monospace;">Austin TX · Metro 1 · gatepass.io</p>
+          <p style="margin:0;color:#8A8A82;font-size:11px;font-family:'Courier New',monospace;">Austin TX · Metro 1 · gatepasshoa.com</p>
         </td></tr>
       </table>
     </td></tr>
@@ -154,7 +154,7 @@ export async function sendContractorConfirmation(input: {
         </td></tr>
         <!-- Footer -->
         <tr><td style="padding:20px 40px;border-top:1px solid #EAE6DE;">
-          <p style="margin:0;color:#8A8A82;font-size:11px;font-family:'Courier New',monospace;">Austin TX · Metro 1 · gatepass.io</p>
+          <p style="margin:0;color:#8A8A82;font-size:11px;font-family:'Courier New',monospace;">Austin TX · Metro 1 · gatepasshoa.com</p>
         </td></tr>
       </table>
     </td></tr>

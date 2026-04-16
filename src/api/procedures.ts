@@ -1185,7 +1185,7 @@ export async function sendHOAWelcomeEmail(hoaId: string) {
 
   const resend = getResend();
   await resend.emails.send({
-    from: "GatePass <onboarding@gatepass.io>",
+    from: "GatePass <info@gatepasshoa.com>",
     to: hoa.contactEmail,
     subject: `Welcome to GatePass OS — ${hoa.community}`,
     html: `
@@ -1208,7 +1208,7 @@ export async function sendHOAWelcomeEmail(hoaId: string) {
               <li>Activate your 9 OS modules</li>
             </ul>
           </div>
-          <p style="color: #888; font-size: 13px; line-height: 1.6;">Questions? Reply to this email or reach us at <a href="mailto:hello@gatepass.io" style="color: #2A5240;">hello@gatepass.io</a></p>
+          <p style="color: #888; font-size: 13px; line-height: 1.6;">Questions? Reply to this email or reach us at <a href="mailto:info@gatepasshoa.com" style="color: #2A5240;">info@gatepasshoa.com</a></p>
         </div>
       </div>
     `,
@@ -1228,7 +1228,7 @@ export async function sendViolationNoticeEmail(violationId: string) {
   const dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   await resend.emails.send({
-    from: "GatePass OS <violations@gatepass.io>",
+    from: "GatePass OS <info@gatepasshoa.com>",
     to: violation.homeowner.email,
     subject: `Violation Notice — ${violation.category} · ${violation.hoa.community}`,
     html: `
@@ -1278,7 +1278,7 @@ export async function sendARCDecisionEmail(arcId: string) {
   const statusColor = approved ? "#2A5240" : arc.status === "denied" ? "#B91C1C" : "#B8883A";
 
   await resend.emails.send({
-    from: "GatePass OS <arc@gatepass.io>",
+    from: "GatePass OS <info@gatepasshoa.com>",
     to: arc.homeowner.email,
     subject: `ARC Decision: ${arc.projectType} — ${arc.status === "approved" ? "Approved" : "Not Approved"}`,
     html: `
@@ -1315,7 +1315,7 @@ export async function sendContractorWelcomeEmail(contractorId: string) {
 
   const resend = getResend();
   await resend.emails.send({
-    from: "GatePass <contractors@gatepass.io>",
+    from: "GatePass <info@gatepasshoa.com>",
     to: contractor.email,
     subject: `You're #${contractor.position} on the GatePass Founding Contractor list`,
     html: `

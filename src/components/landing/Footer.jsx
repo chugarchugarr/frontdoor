@@ -18,7 +18,7 @@ export default function Footer() {
           <Link to="/pricing" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Pricing</Link>
           <Link to="/privacy" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Privacy</Link>
           <Link to="/terms" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Terms</Link>
-          <a href="mailto:hello@gatepass.io" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide">hello@gatepass.io</a>
+          <a href="mailto:info@gatepasshoa.com" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide">info@gatepasshoa.com</a>
         </div>
         <p className="text-xs text-white/20">© {new Date().getFullYear()} GatePass — Austin, Texas</p>
       </div>

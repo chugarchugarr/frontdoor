@@ -46,7 +46,7 @@ const faqs = [
   },
   {
     q: 'Who handles support?',
-    a: 'Austin-based humans, not bots. Reach us at hello@gatepass.io. We also provide board training as part of onboarding.',
+    a: 'Austin-based humans, not bots. Reach us at info@gatepasshoa.com. We also provide board training as part of onboarding.',
   },
   {
     q: 'What is the expansion path — is $20/unit the only pricing forever?',
