@@ -21,21 +21,9 @@ export default function AustinSection() {
         </div>
         <div className="flex flex-col justify-center px-10 md:px-16 py-20 bg-[#0d1a12]">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <span className="text-xs text-[#B8883A] tracking-[0.2em] uppercase mb-6 block">The founder</span>
             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">We live here too.</h2>
 
-            {/* Founder identity */}
-            <div className="mt-8 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-[#B8883A]/20 border border-[#B8883A]/40 flex items-center justify-center shrink-0 mt-0.5">
-                <span className="text-sm font-bold text-[#B8883A]">JL</span>
-              </div>
-              <div>
-                <p className="text-white font-semibold text-sm">Joseph Lerma — Founder</p>
-                <p className="text-white/40 text-xs mt-0.5">Field sales veteran. Austin native. Built the exit ramp from exploitative HOA management.</p>
-              </div>
-            </div>
-
-            <p className="text-base text-white/40 mt-6 leading-relaxed max-w-md">
+            <p className="text-base text-white/40 mt-8 leading-relaxed max-w-md">
               Spent years in field sales watching HOA boards get crushed — overcharged by management companies that delivered nothing, trapped by 12-month contracts with no recourse. GatePass is the platform I wish existed. We know what Travis County requires. We know Hill Country deed restrictions. We built this for communities like ours.
             </p>
 
