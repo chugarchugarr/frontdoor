@@ -1,5 +1,14 @@
 // ─── GatePass Email via Resend ────────────────────────────────────────
 // All transactional emails. Uses Resend API directly (no SDK needed).
+//
+// BEFORE GO-LIVE: Verify gatepasshoa.com is added as a verified sending domain
+// in the Resend dashboard at https://resend.com/domains
+// Without this, all emails (violation notices, ARC decisions, welcome emails)
+// will fail silently — the catch() handlers will swallow the error.
+// Required DNS records (add in Cloudflare for gatepasshoa.com):
+//   - MX record for inbound (if needed)
+//   - SPF TXT record
+//   - DKIM TXT record (Resend provides the values)
 
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const FROM = "GatePass <info@gatepasshoa.com>";

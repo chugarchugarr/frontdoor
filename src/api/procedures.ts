@@ -3,6 +3,7 @@ import { env } from "@/lib/env";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { queue } from "@/api/queue";
+import { getAuth } from "@adaptive-ai/sdk/server";
 
 function getStripe() {
   const key = env.STRIPE_SECRET_KEY;
@@ -147,6 +148,7 @@ export async function createContractorCheckout(input: {
 }) {
   const stripe = getStripe();
   const count = await db.contractorWaitlist.count();
+  if (count >= 25) throw new Error("All 25 founding contractor seats are filled.");
   const position = count + 1;
 
   const contractor = await db.contractorWaitlist.create({
@@ -425,6 +427,15 @@ export async function addHomeowner(input: {
     },
   });
 
+  logComplianceEvent({
+    hoaId: input.hoaId, module: "core", eventType: "homeowner.added",
+    actorType: "board", actorName: "Board",
+    targetType: "unit", targetId: homeowner.id, targetLabel: input.address,
+    summary: `Homeowner added: ${input.name} at ${input.address}`,
+    legalFlag: false, legalCategory: "governance",
+    dataSnapshot: { name: input.name, email: input.email, address: input.address, role: input.role || "resident" },
+  });
+
   return homeowner;
 }
 
@@ -481,6 +492,15 @@ export async function chargeMonthlyDues(hoaId: string) {
         data: { balanceCents: { increment: acct.monthlyDueCents } },
       });
       results.push({ homeownerId: acct.homeownerId, transactionId: tx.id, amountCents: acct.monthlyDueCents });
+
+      logComplianceEvent({
+        hoaId, module: "payos", eventType: "dues.charged",
+        actorType: "system", actorName: "GatePass System",
+        targetType: "dues_account", targetId: acct.id, targetLabel: acct.homeowner.address,
+        summary: `Monthly dues charged: ${acct.homeowner.name} — $${(acct.monthlyDueCents / 100).toFixed(2)} for ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}`,
+        legalFlag: true, legalCategory: "financial",
+        dataSnapshot: { homeownerId: acct.homeownerId, amountCents: acct.monthlyDueCents, transactionId: tx.id },
+      });
     }
   }
   return { charged: results.length, results };
@@ -507,6 +527,16 @@ export async function recordPayment(input: {
   await db.duesAccount.update({
     where: { id: input.duesAccountId },
     data: { balanceCents: { decrement: input.amountCents }, lastChargedAt: new Date() },
+  });
+
+  logComplianceEvent({
+    hoaId: (await db.duesAccount.findUnique({ where: { id: input.duesAccountId }, include: { homeowner: { select: { hoaId: true, name: true, address: true } } } }))?.homeowner.hoaId ?? "unknown",
+    module: "payos", eventType: "payment.received",
+    actorType: "homeowner", actorName: "Homeowner",
+    targetType: "dues_account", targetId: input.duesAccountId,
+    summary: `Payment received: $${(input.amountCents / 100).toFixed(2)}${input.description ? ` — ${input.description}` : ""}`,
+    legalFlag: true, legalCategory: "financial",
+    dataSnapshot: { amountCents: input.amountCents, description: input.description, stripePaymentIntentId: input.stripePaymentIntentId },
   });
 
   return tx;
@@ -1453,6 +1483,15 @@ export async function bulkImportHomeowners(input: {
       data: { homeownerId: homeowner.id, monthlyDueCents },
     });
 
+    logComplianceEvent({
+      hoaId: input.hoaId, module: "core", eventType: "homeowner.added",
+      actorType: "board", actorName: "Board (CSV Import)",
+      targetType: "unit", targetId: homeowner.id, targetLabel: address,
+      summary: `Homeowner added via CSV import: ${name} at ${address}`,
+      legalFlag: false, legalCategory: "governance",
+      dataSnapshot: { name, email, address },
+    });
+
     results.push({ name, status: "created" });
   }
 
@@ -1617,6 +1656,8 @@ export async function getAIAnalysis(input: {
 // ─── Admin: Delete HOA ────────────────────────────────────────────────
 // Hard-deletes an HOA and all its data. Used for cleanup of test/garbage HOAs.
 export async function deleteHOA(hoaId: string) {
+  const auth = await getAuth();
+  if (!auth.userId) throw new Error("Unauthorized: must be logged in to delete an HOA");
   const hoa = await db.hOA.findUnique({ where: { id: hoaId } });
   if (!hoa) return { deleted: false };
   const hwIds = (await db.homeowner.findMany({ where: { hoaId }, select: { id: true } })).map(h => h.id);
