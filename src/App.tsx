@@ -154,7 +154,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
 const ContractorWaitlist = ContractorWaitlistPanel;
 
 // ─── Live Demo — 3-persona selector + OS shell ───────────────────────
-const DEMO_HOA_ID = "cmn5kapjd0000jitlk3ehms51";
+const DEMO_HOA_ID = "cmoc0ybrz0000s5tl4m19sfp7";
 
 type DemoPersona = "select" | "board" | "homeowner" | "contractor";
 

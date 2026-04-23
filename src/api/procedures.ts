@@ -1694,6 +1694,9 @@ export async function seedDemoData() {
     const priorHomeowners = await db.homeowner.findMany({ where: { hoaId: prior.id }, select: { id: true } });
     const hwIds = priorHomeowners.map(h => h.id);
     // Leaf tables that reference homeowner
+    // Must delete Transactions before DuesAccounts (FK constraint)
+    const priorDuesAccounts = await db.duesAccount.findMany({ where: { homeownerId: { in: hwIds } }, select: { id: true } });
+    await db.transaction.deleteMany({ where: { duesAccountId: { in: priorDuesAccounts.map(d => d.id) } } });
     await db.duesAccount.deleteMany({ where: { homeownerId: { in: hwIds } } });
     await db.voteCast.deleteMany({ where: { homeownerId: { in: hwIds } } });
     await db.violation.deleteMany({ where: { hoaId: prior.id } });
@@ -1711,6 +1714,8 @@ export async function seedDemoData() {
     await db.amenity.deleteMany({ where: { hoaId: prior.id } });
     await db.announcement.deleteMany({ where: { hoaId: prior.id } });
     await db.budget.deleteMany({ where: { hoaId: prior.id } });
+    // ComplianceEvents reference HOA directly
+    await db.complianceEvent.deleteMany({ where: { hoaId: prior.id } });
     // aiAnalysis records reference the HOA indirectly — delete by refId patterns if needed
     await db.homeowner.deleteMany({ where: { hoaId: prior.id } });
     await db.hOA.delete({ where: { id: prior.id } });
