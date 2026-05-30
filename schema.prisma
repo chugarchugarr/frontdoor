@@ -53,6 +53,9 @@ model HOA {
   budgets          Budget[]
   complianceEvents ComplianceEvent[]
   complianceExports ComplianceExport[]
+  transitionCases TransitionCase[]
+  boardStakeholders BoardStakeholder[]
+  moatSignals MoatSignal[]
 }
 
 model Homeowner {
@@ -466,4 +469,94 @@ model ComplianceExport {
   exportJson      String
   purpose         String?  // pmc_transition | legal_hold | insurance_claim | board_review
   createdAt       DateTime @default(now())
+}
+
+// ─── Transition Intelligence Graph ────────────────────────────────────
+// Proprietary PMC-displacement memory. Public lead data starts the motion;
+// these records capture why a board actually leaves, what blocks switching,
+// and which operational proof makes the next transition safer/faster.
+
+model TransitionCase {
+  id                    String   @id @default(cuid())
+  hoaId                 String
+  hoa                   HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+
+  currentPmc            String
+  priorPmc              String?
+  sourceSignal          String   // google_review | referral | board_conversation | public_meeting | inbound | other
+  sourceUrl             String?
+  signalSummary         String
+  complaintThemes       String   // JSON array: responsiveness, billing, violations, maintenance, board_packet, vendor, etc.
+
+  contractStatus        String   @default("unknown") // unknown | in_window | auto_renewed | locked | month_to_month | expired
+  renewalDate           DateTime?
+  noticeWindowDays      Int?
+  terminationFeeCents   Int?
+  buyoutOfferedCents    Int?
+
+  boardFear             String?  // legal continuity, time burden, homeowner backlash, data loss, vendor disruption
+  decidingProof         String?  // the artifact or moment that made switching feel safe
+  counterMove           String?  // how PMC or status quo pushed back
+  nextStep              String?
+  status                String   @default("identified") // identified | contacted | meeting | exit_pack_sent | pilot_scoped | won | lost | parked
+
+  transitionScore       Int      @default(0) // 0-100, proprietary readiness score
+  replicabilityScore    Int      @default(0) // 0-100, how hard this learned pattern is to copy
+  dataCompleteness      Int      @default(0) // 0-100, how much proprietary transition data has been captured
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  stakeholders          BoardStakeholder[]
+  moatSignals           MoatSignal[]
+
+  @@index([hoaId, status])
+  @@index([currentPmc])
+  @@index([sourceSignal])
+}
+
+model BoardStakeholder {
+  id                    String   @id @default(cuid())
+  hoaId                 String
+  hoa                   HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  transitionCaseId      String?
+  transitionCase        TransitionCase? @relation(fields: [transitionCaseId], references: [id], onDelete: SetNull)
+
+  name                  String
+  role                  String   // president | treasurer | secretary | director | committee | homeowner_voice | vendor | other
+  contact               String?
+  stance                String   @default("unknown") // champion | supporter | neutral | blocker | unknown
+  primaryConcern        String?
+  persuasionAngle       String?
+  lastInteractionAt     DateTime?
+  notes                 String?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([hoaId, role])
+  @@index([transitionCaseId, stance])
+}
+
+model MoatSignal {
+  id                    String   @id @default(cuid())
+  hoaId                 String
+  hoa                   HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  transitionCaseId      String?
+  transitionCase        TransitionCase? @relation(fields: [transitionCaseId], references: [id], onDelete: SetNull)
+
+  category              String   // board_objection | contract_fact | pmc_failure | switching_trigger | compliance_risk | proof_artifact | case_study_metric
+  label                 String
+  evidence              String
+  source                String   // public | board_call | board_email | document | meeting | platform_usage | operator_note
+  confidence            String   @default("medium") // low | medium | high | verified
+  isPubliclyReplicable  Boolean  @default(false)
+  moatWeight            Int      @default(1) // 1-5: importance to proprietary exit graph
+  capturedBy            String   @default("GatePass")
+
+  createdAt             DateTime @default(now())
+
+  @@index([hoaId, category])
+  @@index([transitionCaseId, category])
+  @@index([isPubliclyReplicable, moatWeight])
 }

@@ -1533,6 +1533,347 @@ export async function getGatePassMetrics() {
   };
 }
 
+// ─── Transition Intelligence Graph ────────────────────────────────────
+// Public HOA/PMC data is only the acquisition wedge. These procedures capture
+// the proprietary PMC exit memory: board psychology, contract blockers,
+// transition triggers, proof artifacts, and reusable exit patterns.
+
+type TransitionStatus = "identified" | "contacted" | "meeting" | "exit_pack_sent" | "pilot_scoped" | "won" | "lost" | "parked";
+type MoatSignalCategory = "board_objection" | "contract_fact" | "pmc_failure" | "switching_trigger" | "compliance_risk" | "proof_artifact" | "case_study_metric";
+
+function parseJsonArray(raw: string | null | undefined): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+function computeTransitionScores(input: {
+  complaintThemes?: string[];
+  contractStatus?: string;
+  renewalDate?: string;
+  noticeWindowDays?: number;
+  terminationFeeCents?: number;
+  boardFear?: string;
+  decidingProof?: string;
+  stakeholderCount?: number;
+  moatSignalCount?: number;
+  privateSignalCount?: number;
+}) {
+  let readiness = 0;
+  let completeness = 0;
+  let replicability = 0;
+
+  if ((input.complaintThemes ?? []).length) { readiness += 12; completeness += 12; }
+  if (input.contractStatus && input.contractStatus !== "unknown") { readiness += 18; completeness += 15; replicability += 12; }
+  if (input.renewalDate || input.noticeWindowDays) { readiness += 14; completeness += 12; replicability += 10; }
+  if (input.terminationFeeCents !== undefined) { readiness += 10; completeness += 10; replicability += 8; }
+  if (input.boardFear) { readiness += 12; completeness += 12; replicability += 15; }
+  if (input.decidingProof) { readiness += 14; completeness += 12; replicability += 15; }
+  if ((input.stakeholderCount ?? 0) > 0) { readiness += Math.min(12, (input.stakeholderCount ?? 0) * 4); completeness += 10; replicability += 10; }
+  if ((input.moatSignalCount ?? 0) > 0) { completeness += Math.min(17, (input.moatSignalCount ?? 0) * 3); }
+  if ((input.privateSignalCount ?? 0) > 0) { replicability += Math.min(30, (input.privateSignalCount ?? 0) * 6); }
+
+  return {
+    transitionScore: Math.min(100, readiness),
+    dataCompleteness: Math.min(100, completeness),
+    replicabilityScore: Math.min(100, replicability),
+  };
+}
+
+async function refreshTransitionScores(transitionCaseId: string) {
+  const tc = await db.transitionCase.findUnique({
+    where: { id: transitionCaseId },
+    include: { stakeholders: true, moatSignals: true },
+  });
+  if (!tc) return null;
+
+  const privateSignals = tc.moatSignals.filter((s) => !s.isPubliclyReplicable).length;
+  const scores = computeTransitionScores({
+    complaintThemes: parseJsonArray(tc.complaintThemes),
+    contractStatus: tc.contractStatus,
+    renewalDate: tc.renewalDate?.toISOString(),
+    noticeWindowDays: tc.noticeWindowDays ?? undefined,
+    terminationFeeCents: tc.terminationFeeCents ?? undefined,
+    boardFear: tc.boardFear ?? undefined,
+    decidingProof: tc.decidingProof ?? undefined,
+    stakeholderCount: tc.stakeholders.length,
+    moatSignalCount: tc.moatSignals.length,
+    privateSignalCount: privateSignals,
+  });
+
+  return db.transitionCase.update({ where: { id: transitionCaseId }, data: scores });
+}
+
+export async function createTransitionCase(input: {
+  hoaId: string;
+  currentPmc: string;
+  priorPmc?: string;
+  sourceSignal: string;
+  sourceUrl?: string;
+  signalSummary: string;
+  complaintThemes: string[];
+  contractStatus?: string;
+  renewalDate?: string;
+  noticeWindowDays?: number;
+  terminationFeeCents?: number;
+  buyoutOfferedCents?: number;
+  boardFear?: string;
+  decidingProof?: string;
+  counterMove?: string;
+  nextStep?: string;
+  status?: TransitionStatus;
+}) {
+  const scores = computeTransitionScores(input);
+  const transitionCase = await db.transitionCase.create({
+    data: {
+      hoaId: input.hoaId,
+      currentPmc: input.currentPmc,
+      priorPmc: input.priorPmc,
+      sourceSignal: input.sourceSignal,
+      sourceUrl: input.sourceUrl,
+      signalSummary: input.signalSummary,
+      complaintThemes: JSON.stringify(input.complaintThemes),
+      contractStatus: input.contractStatus ?? "unknown",
+      renewalDate: input.renewalDate ? new Date(input.renewalDate) : null,
+      noticeWindowDays: input.noticeWindowDays,
+      terminationFeeCents: input.terminationFeeCents,
+      buyoutOfferedCents: input.buyoutOfferedCents,
+      boardFear: input.boardFear,
+      decidingProof: input.decidingProof,
+      counterMove: input.counterMove,
+      nextStep: input.nextStep,
+      status: input.status ?? "identified",
+      ...scores,
+    },
+  });
+
+  await logComplianceEvent({
+    hoaId: input.hoaId,
+    module: "transition",
+    eventType: "transition.case_created",
+    actorType: "board",
+    actorName: "GatePass Operator",
+    targetType: "transition_case",
+    targetId: transitionCase.id,
+    targetLabel: `${input.currentPmc} exit case`,
+    summary: `PMC exit case opened for ${input.currentPmc}: ${input.signalSummary}`,
+    legalFlag: false,
+    legalCategory: "contract",
+    dataSnapshot: { sourceSignal: input.sourceSignal, complaintThemes: input.complaintThemes, contractStatus: input.contractStatus },
+  });
+
+  return transitionCase;
+}
+
+export async function updateTransitionCase(input: {
+  id: string;
+  contractStatus?: string;
+  renewalDate?: string;
+  noticeWindowDays?: number;
+  terminationFeeCents?: number;
+  buyoutOfferedCents?: number;
+  boardFear?: string;
+  decidingProof?: string;
+  counterMove?: string;
+  nextStep?: string;
+  status?: TransitionStatus;
+}) {
+  const prior = await db.transitionCase.findUnique({ where: { id: input.id } });
+  if (!prior) throw new Error("Transition case not found");
+
+  const updated = await db.transitionCase.update({
+    where: { id: input.id },
+    data: {
+      contractStatus: input.contractStatus,
+      renewalDate: input.renewalDate ? new Date(input.renewalDate) : undefined,
+      noticeWindowDays: input.noticeWindowDays,
+      terminationFeeCents: input.terminationFeeCents,
+      buyoutOfferedCents: input.buyoutOfferedCents,
+      boardFear: input.boardFear,
+      decidingProof: input.decidingProof,
+      counterMove: input.counterMove,
+      nextStep: input.nextStep,
+      status: input.status,
+    },
+  });
+
+  await logComplianceEvent({
+    hoaId: prior.hoaId,
+    module: "transition",
+    eventType: "transition.case_updated",
+    actorType: "board",
+    actorName: "GatePass Operator",
+    targetType: "transition_case",
+    targetId: input.id,
+    targetLabel: `${prior.currentPmc} exit case`,
+    summary: `PMC exit case updated: ${prior.currentPmc}${input.status ? ` — ${input.status}` : ""}`,
+    legalFlag: false,
+    legalCategory: "contract",
+    dataSnapshot: input,
+  });
+
+  return (await refreshTransitionScores(updated.id)) ?? updated;
+}
+
+export async function addBoardStakeholder(input: {
+  hoaId: string;
+  transitionCaseId?: string;
+  name: string;
+  role: string;
+  contact?: string;
+  stance?: "champion" | "supporter" | "neutral" | "blocker" | "unknown";
+  primaryConcern?: string;
+  persuasionAngle?: string;
+  notes?: string;
+}) {
+  const stakeholder = await db.boardStakeholder.create({
+    data: {
+      hoaId: input.hoaId,
+      transitionCaseId: input.transitionCaseId,
+      name: input.name,
+      role: input.role,
+      contact: input.contact,
+      stance: input.stance ?? "unknown",
+      primaryConcern: input.primaryConcern,
+      persuasionAngle: input.persuasionAngle,
+      notes: input.notes,
+      lastInteractionAt: new Date(),
+    },
+  });
+
+  if (input.transitionCaseId) await refreshTransitionScores(input.transitionCaseId);
+  return stakeholder;
+}
+
+export async function addMoatSignal(input: {
+  hoaId: string;
+  transitionCaseId?: string;
+  category: MoatSignalCategory;
+  label: string;
+  evidence: string;
+  source: string;
+  confidence?: "low" | "medium" | "high" | "verified";
+  isPubliclyReplicable?: boolean;
+  moatWeight?: number;
+  capturedBy?: string;
+}) {
+  const signal = await db.moatSignal.create({
+    data: {
+      hoaId: input.hoaId,
+      transitionCaseId: input.transitionCaseId,
+      category: input.category,
+      label: input.label,
+      evidence: input.evidence,
+      source: input.source,
+      confidence: input.confidence ?? "medium",
+      isPubliclyReplicable: input.isPubliclyReplicable ?? false,
+      moatWeight: Math.max(1, Math.min(5, input.moatWeight ?? 1)),
+      capturedBy: input.capturedBy ?? "GatePass",
+    },
+  });
+
+  await logComplianceEvent({
+    hoaId: input.hoaId,
+    module: "transition",
+    eventType: `moat_signal.${input.category}`,
+    actorType: "board",
+    actorName: input.capturedBy ?? "GatePass",
+    targetType: "moat_signal",
+    targetId: signal.id,
+    targetLabel: input.label,
+    summary: `Moat signal captured: ${input.label}`,
+    legalFlag: input.category === "contract_fact" || input.category === "compliance_risk",
+    legalCategory: input.category === "contract_fact" ? "contract" : input.category === "compliance_risk" ? "liability" : "governance",
+    dataSnapshot: { evidence: input.evidence, source: input.source, confidence: input.confidence, isPubliclyReplicable: input.isPubliclyReplicable },
+  });
+
+  if (input.transitionCaseId) await refreshTransitionScores(input.transitionCaseId);
+  return signal;
+}
+
+export async function getTransitionMoat(hoaId: string) {
+  const [cases, stakeholders, signals, complianceCount, legalComplianceCount] = await Promise.all([
+    db.transitionCase.findMany({ where: { hoaId }, include: { stakeholders: true, moatSignals: true }, orderBy: { updatedAt: "desc" } }),
+    db.boardStakeholder.findMany({ where: { hoaId }, orderBy: [{ stance: "asc" }, { updatedAt: "desc" }] }),
+    db.moatSignal.findMany({ where: { hoaId }, orderBy: [{ moatWeight: "desc" }, { createdAt: "desc" }] }),
+    db.complianceEvent.count({ where: { hoaId } }),
+    db.complianceEvent.count({ where: { hoaId, legalFlag: true } }),
+  ]);
+
+  const privateSignals = signals.filter((s) => !s.isPubliclyReplicable);
+  const weightedMoat = signals.reduce((sum, s) => sum + s.moatWeight * (s.isPubliclyReplicable ? 1 : 2), 0);
+  const averageReplicability = cases.length ? Math.round(cases.reduce((sum, c) => sum + c.replicabilityScore, 0) / cases.length) : 0;
+
+  return {
+    summary: {
+      transitionCases: cases.length,
+      boardStakeholders: stakeholders.length,
+      moatSignals: signals.length,
+      privateSignals: privateSignals.length,
+      weightedMoat,
+      averageReplicability,
+      complianceEvents: complianceCount,
+      legalComplianceEvents: legalComplianceCount,
+      investorLine: "Public HOA data is the wedge. GatePass's moat is private PMC exit memory plus compliance history.",
+    },
+    cases: cases.map((c) => ({ ...c, complaintThemes: parseJsonArray(c.complaintThemes) })),
+    stakeholders,
+    signals,
+  };
+}
+
+export async function exportPilotProofPack(input: {
+  hoaId: string;
+  transitionCaseId?: string;
+  requestedBy: string;
+}) {
+  const hoa = await db.hOA.findUnique({ where: { id: input.hoaId } });
+  if (!hoa) throw new Error("HOA not found");
+
+  const moat = await getTransitionMoat(input.hoaId);
+  const compliance = await exportCompliancePack({
+    hoaId: input.hoaId,
+    dateFrom: "2000-01-01T00:00:00.000Z",
+    dateTo: new Date().toISOString(),
+    requestedBy: input.requestedBy,
+    purpose: "pmc_transition",
+  });
+  const selectedCase = input.transitionCaseId
+    ? moat.cases.find((c) => c.id === input.transitionCaseId)
+    : moat.cases[0];
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestedBy: input.requestedBy,
+    title: `${hoa.community} PMC Exit Proof Pack`,
+    positioning: "GatePass turns every PMC exit into structured transition memory.",
+    moatThesis: {
+      publicData: "HOA names, PMC names, and public reviews are copyable acquisition signals.",
+      proprietaryData: "Board objections, private contract terms, switching triggers, transition timelines, compliance events, and operating benchmarks are generated only by helping boards actually leave PMCs.",
+      hardLine: "A competitor can buy the map. They cannot buy the scar tissue.",
+    },
+    community: { id: hoa.id, name: hoa.name, community: hoa.community, units: hoa.units, plan: hoa.plan },
+    selectedCase,
+    moatSummary: moat.summary,
+    topSignals: moat.signals.slice(0, 12),
+    boardMap: moat.stakeholders,
+    complianceSummary: compliance.summary,
+    legalHighlights: compliance.legalHighlights,
+    firstPilotProofChecklist: [
+      "One real PMC contract reviewed",
+      "One board decision path captured",
+      "One transition timeline opened",
+      "One compliance timeline export generated",
+      "One before/after benchmark report produced",
+      "One redacted case study approved for investor/customer use",
+    ],
+  };
+}
+
 export async function getOSDashboard(hoaId: string) {
   const [hoa, violations, workOrders, arcRequests, meetings, votes, financial] = await Promise.all([
     db.hOA.findUnique({ where: { id: hoaId }, include: { homeowners: { select: { id: true } } } }),
@@ -1736,6 +2077,49 @@ export async function seedDemoData() {
       paidAt: new Date("2026-01-15"),
       amountCents: 847 * 2200,
     },
+  });
+
+  // ── Transition Intelligence Graph demo seed ──
+  const transitionCase = await db.transitionCase.create({
+    data: {
+      hoaId: hoa.id,
+      currentPmc: "RealManage",
+      sourceSignal: "google_review",
+      sourceUrl: "https://maps.google.com/?q=RealManage+Austin+reviews",
+      signalSummary: "Board frustration centered on slow response, violation inconsistency, and uncertainty about how to leave safely.",
+      complaintThemes: JSON.stringify(["responsiveness", "violations", "board_packet", "contract_exit"]),
+      contractStatus: "in_window",
+      renewalDate: new Date("2026-10-31T00:00:00-05:00"),
+      noticeWindowDays: 90,
+      terminationFeeCents: 450000,
+      buyoutOfferedCents: 450000,
+      boardFear: "Legal continuity and homeowner backlash during the PMC cutover.",
+      decidingProof: "Board-safe Exit Pack showing notice letter, vote language, resident announcement, vendor continuity checklist, and compliance export.",
+      counterMove: "PMC offered a new manager and promised a response-time reset without changing contract terms.",
+      nextStep: "Review management agreement, confirm notice window, and present the Exit Pack at the next board meeting.",
+      status: "pilot_scoped",
+      transitionScore: 92,
+      replicabilityScore: 84,
+      dataCompleteness: 88,
+    },
+  });
+
+  await db.boardStakeholder.createMany({
+    data: [
+      { hoaId: hoa.id, transitionCaseId: transitionCase.id, name: "Sarah Mitchell", role: "president", contact: "sarah@steinerhoa.org", stance: "champion", primaryConcern: "Safe board vote and resident communication", persuasionAngle: "Show the transition is governed, documented, and reversible.", lastInteractionAt: new Date("2026-05-20T14:00:00-05:00"), notes: "Responds to compliance-memory framing over software feature count." },
+      { hoaId: hoa.id, transitionCaseId: transitionCase.id, name: "Marcus Torres", role: "treasurer", contact: "mtorres@email.com", stance: "supporter", primaryConcern: "Termination fee and first-year savings math", persuasionAngle: "Compare buyout-adjusted year-one cost against management fees and reserve impact.", lastInteractionAt: new Date("2026-05-20T14:00:00-05:00"), notes: "Needs spreadsheet-ready economics." },
+      { hoaId: hoa.id, transitionCaseId: transitionCase.id, name: "Jennifer Park", role: "director", contact: "jpark@gmail.com", stance: "neutral", primaryConcern: "Homeowner backlash if the transition looks like DIY work", persuasionAngle: "Lead with resident announcement sequence and support continuity.", lastInteractionAt: new Date("2026-05-20T14:00:00-05:00"), notes: "Potential swing vote." },
+    ],
+  });
+
+  await db.moatSignal.createMany({
+    data: [
+      { hoaId: hoa.id, transitionCaseId: transitionCase.id, category: "contract_fact", label: "90-day notice window", evidence: "Management agreement requires written notice 90 days before annual auto-renewal.", source: "document", confidence: "verified", isPubliclyReplicable: false, moatWeight: 5, capturedBy: "GatePass" },
+      { hoaId: hoa.id, transitionCaseId: transitionCase.id, category: "board_objection", label: "Legal continuity fear", evidence: "President asked who owns violation notices, meeting minutes, and ARC deadlines during handoff.", source: "board_call", confidence: "high", isPubliclyReplicable: false, moatWeight: 5, capturedBy: "GatePass" },
+      { hoaId: hoa.id, transitionCaseId: transitionCase.id, category: "switching_trigger", label: "Vendor handoff incident", evidence: "Pool repair delay exposed that the board lacked direct vendor continuity outside the PMC.", source: "board_call", confidence: "high", isPubliclyReplicable: false, moatWeight: 4, capturedBy: "GatePass" },
+      { hoaId: hoa.id, transitionCaseId: transitionCase.id, category: "pmc_failure", label: "Public RealManage complaint pattern", evidence: "Local reviews repeatedly mention slow response, billing confusion, and manager turnover.", source: "public", confidence: "medium", isPubliclyReplicable: true, moatWeight: 2, capturedBy: "GatePass" },
+      { hoaId: hoa.id, transitionCaseId: transitionCase.id, category: "proof_artifact", label: "Board-safe Exit Pack", evidence: "Packet includes notice letter, board motion, resident announcement, vendor checklist, and compliance timeline export.", source: "operator_note", confidence: "verified", isPubliclyReplicable: false, moatWeight: 5, capturedBy: "GatePass" },
+    ],
   });
 
   // ── Homeowners ──
@@ -1981,6 +2365,51 @@ export async function seedDemoData() {
     });
   }
 
+  // ── Compliance memory proof events ──
+  await logComplianceEvent({
+    hoaId: hoa.id,
+    module: "transition",
+    eventType: "transition.exit_pack_generated",
+    actorType: "board",
+    actorName: "Sarah Mitchell",
+    targetType: "transition_case",
+    targetId: transitionCase.id,
+    targetLabel: "RealManage exit case",
+    summary: "Board-safe PMC Exit Pack generated for RealManage transition review",
+    legalFlag: true,
+    legalCategory: "contract",
+    dataSnapshot: { artifacts: ["notice_letter", "board_motion", "resident_announcement", "vendor_checklist", "document_request"] },
+  });
+
+  await logComplianceEvent({
+    hoaId: hoa.id,
+    module: "boardroom",
+    eventType: "meeting.minutes_recorded",
+    actorType: "board",
+    actorName: "Board Secretary",
+    targetType: "meeting",
+    targetId: meeting1.id,
+    targetLabel: meeting1.title,
+    summary: "Board meeting agenda recorded with PMC transition review as governed discussion item",
+    legalFlag: true,
+    legalCategory: "governance",
+    dataSnapshot: { quorumRequired: 3, transitionCaseId: transitionCase.id },
+  });
+
+  await logComplianceEvent({
+    hoaId: hoa.id,
+    module: "workorder",
+    eventType: "vendor.continuity_risk_logged",
+    actorType: "board",
+    actorName: "Marcus Torres",
+    targetType: "work_order",
+    targetLabel: "Pool pump replacement",
+    summary: "Vendor continuity risk logged after pool repair exposed dependency on PMC-controlled vendor history",
+    legalFlag: false,
+    legalCategory: "contract",
+    dataSnapshot: { transitionCaseId: transitionCase.id, risk: "vendor_history_locked_inside_pmc" },
+  });
+
   return {
     hoaId: hoa.id,
     community: DEMO_COMMUNITY,
@@ -2007,7 +2436,7 @@ export async function seedDemoData() {
  */
 export async function logComplianceEvent(input: {
   hoaId: string;
-  module: "core" | "payos" | "finebot" | "arc" | "workorder" | "boardroom" | "votebox" | "amenity" | "commhub";
+  module: "core" | "payos" | "finebot" | "arc" | "workorder" | "boardroom" | "votebox" | "amenity" | "commhub" | "transition";
   eventType: string;
   actorType: "board" | "homeowner" | "system" | "admin";
   actorId?: string;

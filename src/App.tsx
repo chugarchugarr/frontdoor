@@ -1,6 +1,6 @@
 import { useState } from "react";
 import React from "react";
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import { client as rpc } from "@/lib/client";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@adaptive-ai/sdk/client";
@@ -26,6 +26,7 @@ import { HomeownerPortal } from "./components/HomeownerPortal";
 import { ContractorPortal } from "./components/ContractorPortal";
 import { LiveFeeds } from "./components/LiveFeeds";
 import { ComplianceTimeline } from "./components/ComplianceTimeline";
+import { TransitionMoat } from "./components/TransitionMoat";
 import { ErrorBoundary } from "./components/error-boundary";
 
 // ─── Success screens ──────────────────────────────────────────────────
@@ -154,7 +155,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
 const ContractorWaitlist = ContractorWaitlistPanel;
 
 // ─── Live Demo — 3-persona selector + OS shell ───────────────────────
-const DEMO_HOA_ID = "cmoc0ybrz0000s5tl4m19sfp7";
+const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
 
 type DemoPersona = "select" | "board" | "homeowner" | "contractor";
 
@@ -301,8 +302,10 @@ function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona,
   );
 }
 
-function BoardDemo({ onBack }: { onBack: () => void }) {
-  const [view, setView] = useState<OSView>("dashboard");
+function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; initialView?: OSView }) {
+  const [view, setView] = useState<OSView>(initialView);
+  const { data: demoHoas = [] } = useQuery({ queryKey: ["hoa-list", "demo"], queryFn: () => rpc.getHOAList() });
+  const demoHoaId = ((demoHoas as { id: string; community: string }[]).find((h) => h.community === "Steiner Ranch HOA (Demo)")?.id) ?? DEMO_HOA_ID;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -351,19 +354,20 @@ function BoardDemo({ onBack }: { onBack: () => void }) {
           hoaName="Steiner Ranch HOA (Demo)"
         />
         <main style={{ flex: 1, overflow: "auto", background: "var(--bg)" }}>
-          {view === "dashboard"  && <Dashboard hoaId={DEMO_HOA_ID} onNav={setView} />}
-          {view === "homeowners" && <Homeowners hoaId={DEMO_HOA_ID} />}
-          {view === "payos"      && <PayOS hoaId={DEMO_HOA_ID} />}
-          {view === "violations" && <Violations hoaId={DEMO_HOA_ID} />}
-          {view === "arc"        && <ARCAgent hoaId={DEMO_HOA_ID} />}
-          {view === "boardroom"  && <BoardRoom hoaId={DEMO_HOA_ID} />}
-          {view === "votebox"    && <VoteBox hoaId={DEMO_HOA_ID} />}
-          {view === "workorders" && <WorkOrders hoaId={DEMO_HOA_ID} />}
-          {view === "amenity"    && <AmenityModule hoaId={DEMO_HOA_ID} />}
-          {view === "commhub"    && <CommHub hoaId={DEMO_HOA_ID} />}
+          {view === "dashboard"  && <Dashboard hoaId={demoHoaId} onNav={setView} />}
+          {view === "homeowners" && <Homeowners hoaId={demoHoaId} />}
+          {view === "payos"      && <PayOS hoaId={demoHoaId} />}
+          {view === "violations" && <Violations hoaId={demoHoaId} />}
+          {view === "arc"        && <ARCAgent hoaId={demoHoaId} />}
+          {view === "boardroom"  && <BoardRoom hoaId={demoHoaId} />}
+          {view === "votebox"    && <VoteBox hoaId={demoHoaId} />}
+          {view === "workorders" && <WorkOrders hoaId={demoHoaId} />}
+          {view === "amenity"    && <AmenityModule hoaId={demoHoaId} />}
+          {view === "commhub"    && <CommHub hoaId={demoHoaId} />}
           {view === "permits"    && <PermitFeedView />}
           {view === "livefeeds"  && <LiveFeeds />}
-          {view === "compliance" && <ComplianceTimeline hoaId={DEMO_HOA_ID} />}
+          {view === "transition" && <TransitionMoat hoaId={demoHoaId} />}
+          {view === "compliance" && <ComplianceTimeline hoaId={demoHoaId} />}
         </main>
       </div>
     </div>
@@ -439,6 +443,7 @@ function HOAOSShell({ hoaId, onExit }: { hoaId: string; onExit: () => void }) {
         {view === "commhub"     && <CommHub hoaId={hoaId} />}
         {view === "permits"     && <PermitFeedView />}
         {view === "livefeeds"   && <LiveFeeds hoaZip={hoaZip} />}
+        {view === "transition"  && <TransitionMoat hoaId={hoaId} />}
         {view === "compliance"  && <ComplianceTimeline hoaId={hoaId} />}
       </main>
     </div>
@@ -503,7 +508,16 @@ function ContractorRoute() {
 
 function DemoRoute() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  if (searchParams.get("view") === "transition") {
+    return <ErrorBoundary><BoardDemo initialView="transition" onBack={() => navigate('/demo')} /></ErrorBoundary>;
+  }
   return <ErrorBoundary><GatePassDemo onBack={() => navigate('/')} /></ErrorBoundary>;
+}
+
+function TransitionDemoRoute() {
+  const navigate = useNavigate();
+  return <ErrorBoundary><BoardDemo initialView="transition" onBack={() => navigate('/demo')} /></ErrorBoundary>;
 }
 
 function OSRoute() {
@@ -544,6 +558,7 @@ export default function App() {
       <Route path="/onboard" element={<OnboardRoute />} />
       <Route path="/contractors" element={<ContractorRoute />} />
       <Route path="/demo" element={<DemoRoute />} />
+      <Route path="/demo/transition" element={<TransitionDemoRoute />} />
       <Route path="/os" element={<OSRoute />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/privacy" element={<Privacy />} />

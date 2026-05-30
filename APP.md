@@ -22,6 +22,8 @@ GatePass is the OS for HOAs. Replaces the $50–150/unit/year management company
 
 **GTM Wedge:** Target HOAs giving their PMC 1-star Google reviews. These communities are trapped and want out. GatePass is the escape hatch. Offer contract buyout (up to $5K) to close. See `.memory/gatepass/gtm-pmc-displacement-playbook.md`.
 
+**Moat posture (May 29/30, 2026):** Public HOA/PMC/review data is **not** the moat; it is the acquisition wedge. The uncopiable layer is the **Transition Intelligence Graph**: private PMC contract facts, board-specific switching fears, stakeholder stances, objection patterns, transition triggers, Exit Pack proof artifacts, and downstream Compliance Memory. Investor-safe line: GatePass turns every PMC exit into structured transition memory.
+
 **Naming note:** "GatePass" risks triggering visitor management / access control mental model. Acknowledged liability — positioning copy leads with compliance/governance, not gate/access.
 
 ### 9 Modules
@@ -72,6 +74,7 @@ src/
     WorkOrders.tsx     — maintenance ops
     AmenityModule.tsx  — reservations
     CommHub.tsx        — announcements + comms
+    TransitionMoat.tsx — PMC exit graph + board psychology + moat signal capture
 ```
 
 ## Backend Procedures (44 total)
@@ -89,6 +92,7 @@ src/
 **CommHub**: `createAnnouncement`, `getAnnouncements`, `sendMessage`, `getMessages`, `getHOAMessages`
 **Dashboard**: `getOSDashboard`
 **Permits**: `getAustinPermits`
+**Transition Intelligence Graph**: `createTransitionCase`, `updateTransitionCase`, `addBoardStakeholder`, `addMoatSignal`, `getTransitionMoat`, `exportPilotProofPack`
 
 ## Database Schema (SQLite via Prisma)
 
@@ -101,6 +105,8 @@ src/
 **WorkOrder**: WorkOrder
 **Amenity**: Amenity, Reservation
 **CommHub**: Announcement, Message
+**Transition Moat**: TransitionCase, BoardStakeholder, MoatSignal
+**Compliance Memory**: ComplianceEvent, ComplianceExport
 
 ## Backend Procedures (47 total)
 
@@ -118,6 +124,24 @@ src/
 **Dashboard**: `getOSDashboard`
 **Permits**: `getAustinPermits`
 **Compliance Memory Layer (NEW)**: `logComplianceEvent` (internal), `getComplianceTimeline`, `exportCompliancePack`
+**Transition Intelligence Graph (NEW)**: `createTransitionCase`, `updateTransitionCase`, `addBoardStakeholder`, `addMoatSignal`, `getTransitionMoat`, `exportPilotProofPack`
+
+## Transition Intelligence Graph
+
+New app surface: **Moat → Transition Graph**.
+
+Demo entry: `/demo?view=transition` opens the board demo directly on the Transition Graph surface for investor/operator review.
+
+Purpose: make GatePass more uncopiable starting with the first board conversation. Every prospect should become structured data, even before close.
+
+What it captures:
+- **PMC Exit Intake** — current PMC, source signal, complaint themes, contract status, board fear, next step.
+- **Board Psychology Map** — stakeholder role, stance, primary concern, persuasion angle.
+- **Moat Signals** — board objections, private contract facts, PMC failures, switching triggers, compliance risks, proof artifacts, and case-study metrics.
+- **Scoring** — exit readiness, data completeness, and hard-to-copy / replicability score.
+- **Pilot Proof Pack** — JSON export combining transition memory + compliance summary + first-pilot proof checklist.
+
+Strategic rule: do not claim the scraped lead database is proprietary. Claim the transition graph becomes proprietary only after GatePass engages boards and captures private transition facts competitors cannot scrape.
 
 ## Next Steps
 
