@@ -5,6 +5,8 @@ import { Resend } from "resend";
 import { queue } from "@/api/queue";
 import { getAuth } from "@adaptive-ai/sdk/server";
 
+const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
+
 function getStripe() {
   const key = env.STRIPE_SECRET_KEY;
   if (!key) throw new Error("Stripe not configured");
@@ -204,6 +206,304 @@ export async function getContractorStats() {
 
 export async function getWaitlistPosition(id: string) {
   return db.contractorWaitlist.findUnique({ where: { id } });
+}
+
+// ─── Marketplace Proof Loop ───────────────────────────────────────────
+
+function demoMarketplaceDashboard() {
+  return {
+    demo: true,
+    slots: [
+      { id: "demo-slot-roofing", trade: "Roofing", status: "open", capacity: 3, seatsTaken: 1, priceCents: 9900, scarcityLabel: "2 founding seats left" },
+      { id: "demo-slot-hvac", trade: "HVAC", status: "open", capacity: 2, seatsTaken: 1, priceCents: 9900, scarcityLabel: "1 founding seat left" },
+    ],
+    jobs: [
+      { id: "demo-job-arc-roof", title: "ARC-approved roof replacement", category: "roofing", status: "quoted", estimatedValueCents: 1850000, source: "ARC request" },
+      { id: "demo-job-hvac", title: "Clubhouse HVAC repair", category: "hvac", status: "completed", estimatedValueCents: 180000, source: "Work order" },
+    ],
+    quotes: [
+      { id: "demo-quote-1", contractor: "Hill Country Roofing Co.", amountCents: 1850000, status: "approved", scope: "Replace shingle roof with HOA-approved color/material packet attached." },
+    ],
+    transactions: [
+      { id: "demo-tx-1", grossAmountCents: 1850000, gatepassFeeCents: 92500, hoaShareCents: 46250, status: "recorded", contractor: "Hill Country Roofing Co." },
+    ],
+    credits: [
+      { id: "demo-credit-1", amountCents: 46250, status: "earned", memo: "HOA share from ARC-approved roof job; eligible to offset platform or transition support." },
+    ],
+    complianceRecords: [
+      { id: "demo-compliance-1", summary: "Roof replacement transaction linked to ARC approval, contractor status, quote, payment record, and HOA revenue-share credit.", status: "generated" },
+    ],
+    proofLoop: [
+      { label: "PMC transition case opened", detail: "Board enters through RealManage exit pain and compliance-risk mapping.", value: "Transition" },
+      { label: "Contractor access slot opened", detail: "GatePass opens roofing access for Steiner Ranch after board-safe workflow review.", value: "$99 seat" },
+      { label: "Homeowner job routed", detail: "ARC-approved roof replacement becomes a marketplace job instead of a dead lead.", value: "$18.5K job" },
+      { label: "Contractor quote approved", detail: "Verified contractor submits scope through GatePass and the board/homeowner approves.", value: "Approved" },
+      { label: "Fee + HOA credit recorded", detail: "Transaction creates GatePass fee and community revenue-share credit.", value: "$462 HOA" },
+      { label: "Compliance memory generated", detail: "The completed job becomes permanent board-owned operating memory.", value: "Moat" },
+    ],
+  };
+}
+
+function demoInvestorProofMetrics() {
+  return {
+    demo: true,
+    headline: "Software wedge. Marketplace business. Transition-memory moat.",
+    metrics: {
+      hoaPipeline: 5,
+      transitionCases: 1,
+      privateMoatSignals: 4,
+      contractorSlotsOpen: 5,
+      contractorSignups: 1,
+      marketplaceJobs: 2,
+      quotesSubmitted: 1,
+      complianceRecords: 1,
+    },
+    money: { demoGmvCents: 1850000, gatepassFeeCents: 92500, hoaCreditsCents: 46250 },
+    checklist: [
+      { label: "Board-safe transition graph live", status: "done" as const },
+      { label: "Compliance memory export live", status: "done" as const },
+      { label: "Marketplace transaction loop visible", status: "demo" as const },
+      { label: "First paid HOA record", status: "missing" as const },
+      { label: "Real contractor payment + webhook", status: "missing" as const },
+      { label: "Real proof pack from production HOA", status: "missing" as const },
+    ],
+    proofLinks: [
+      { label: "Marketplace proof loop", href: "/demo?view=marketplace", note: "Atomic contractor transaction with HOA credit + compliance record." },
+      { label: "Transition graph", href: "/demo?view=transition", note: "Private PMC exit memory and board psychology map." },
+      { label: "Contractor access", href: "/contractors", note: "Austin founding-contractor supply path." },
+      { label: "Investor brief", href: "/investors", note: "$300K SAFE at $4M cap and verified market proof." },
+    ],
+    caution: [
+      "Demo marketplace GMV is not production revenue.",
+      "No fake production HOA records were seeded.",
+      "Use Austin HOA pipeline, not committed communities, until signed/paid.",
+      "Use case-by-case transition support, not cancellation-penalty buyout language.",
+    ],
+  };
+}
+
+function demoTransitionMoat() {
+  const now = new Date().toISOString();
+  const transitionCase = {
+    id: "demo-transition-realmanage",
+    hoaId: DEMO_HOA_ID,
+    currentPmc: "RealManage",
+    priorPmc: null,
+    sourceSignal: "google_review",
+    sourceUrl: "https://maps.google.com/?q=RealManage+Austin+reviews",
+    signalSummary: "Board frustration centered on slow response, violation inconsistency, and uncertainty about how to leave safely.",
+    complaintThemes: ["responsiveness", "violations", "board_packet", "contract_exit"],
+    contractStatus: "in_window",
+    renewalDate: "2026-10-31T05:00:00.000Z",
+    noticeWindowDays: 90,
+    terminationFeeCents: 450000,
+    buyoutOfferedCents: null,
+    boardFear: "Legal continuity and homeowner backlash during the PMC cutover.",
+    decidingProof: "Board-safe Exit Pack showing notice letter, vote language, resident announcement, vendor continuity checklist, and compliance export.",
+    counterMove: "PMC offered a new manager and promised a response-time reset without changing contract terms.",
+    nextStep: "Review management agreement, confirm notice window, and present the Exit Pack at the next board meeting.",
+    status: "pilot_scoped",
+    transitionScore: 92,
+    replicabilityScore: 84,
+    dataCompleteness: 88,
+    createdAt: now,
+    updatedAt: now,
+    stakeholders: [] as unknown[],
+    moatSignals: [] as unknown[],
+  };
+  const stakeholders = [
+    { id: "demo-stakeholder-sarah", hoaId: DEMO_HOA_ID, transitionCaseId: transitionCase.id, name: "Sarah Mitchell", role: "president", contact: "sarah@steinerhoa.org", stance: "champion", primaryConcern: "Safe board vote and resident communication", persuasionAngle: "Show the transition is governed, documented, and reversible.", lastInteractionAt: "2026-05-20T19:00:00.000Z", notes: "Responds to compliance-memory framing over software feature count.", createdAt: now, updatedAt: now },
+    { id: "demo-stakeholder-marcus", hoaId: DEMO_HOA_ID, transitionCaseId: transitionCase.id, name: "Marcus Torres", role: "treasurer", contact: "mtorres@email.com", stance: "supporter", primaryConcern: "Year-one savings, fee exposure, and case-by-case transition support", persuasionAngle: "Compare governed transition cost against management fees, reserve impact, and operating continuity.", lastInteractionAt: "2026-05-20T19:00:00.000Z", notes: "Needs spreadsheet-ready economics.", createdAt: now, updatedAt: now },
+    { id: "demo-stakeholder-jennifer", hoaId: DEMO_HOA_ID, transitionCaseId: transitionCase.id, name: "Jennifer Park", role: "director", contact: "jpark@gmail.com", stance: "neutral", primaryConcern: "Homeowner backlash if the transition looks like DIY work", persuasionAngle: "Lead with resident announcement sequence and support continuity.", lastInteractionAt: "2026-05-20T19:00:00.000Z", notes: "Potential swing vote.", createdAt: now, updatedAt: now },
+  ];
+  const signals = [
+    { id: "demo-signal-notice", hoaId: DEMO_HOA_ID, transitionCaseId: transitionCase.id, category: "contract_fact", label: "90-day notice window", evidence: "Management agreement requires written notice 90 days before annual auto-renewal.", source: "document", confidence: "verified", isPubliclyReplicable: false, moatWeight: 5, capturedBy: "GatePass", createdAt: now },
+    { id: "demo-signal-continuity", hoaId: DEMO_HOA_ID, transitionCaseId: transitionCase.id, category: "board_objection", label: "Legal continuity fear", evidence: "President asked who owns violation notices, meeting minutes, and ARC deadlines during handoff.", source: "board_call", confidence: "high", isPubliclyReplicable: false, moatWeight: 5, capturedBy: "GatePass", createdAt: now },
+    { id: "demo-signal-vendor", hoaId: DEMO_HOA_ID, transitionCaseId: transitionCase.id, category: "switching_trigger", label: "Vendor handoff incident", evidence: "Pool repair delay exposed that the board lacked direct vendor continuity outside the PMC.", source: "board_call", confidence: "high", isPubliclyReplicable: false, moatWeight: 4, capturedBy: "GatePass", createdAt: now },
+    { id: "demo-signal-public", hoaId: DEMO_HOA_ID, transitionCaseId: transitionCase.id, category: "pmc_failure", label: "Public RealManage complaint pattern", evidence: "Local reviews repeatedly mention slow response, billing confusion, and manager turnover.", source: "public", confidence: "medium", isPubliclyReplicable: true, moatWeight: 2, capturedBy: "GatePass", createdAt: now },
+    { id: "demo-signal-pack", hoaId: DEMO_HOA_ID, transitionCaseId: transitionCase.id, category: "proof_artifact", label: "Board-safe Exit Pack", evidence: "Packet includes notice letter, board motion, resident announcement, vendor checklist, and compliance timeline export.", source: "operator_note", confidence: "verified", isPubliclyReplicable: false, moatWeight: 5, capturedBy: "GatePass", createdAt: now },
+  ];
+  const demoCase = { ...transitionCase, stakeholders, moatSignals: signals };
+  return {
+    summary: {
+      transitionCases: 1,
+      boardStakeholders: stakeholders.length,
+      moatSignals: signals.length,
+      privateSignals: 4,
+      weightedMoat: 40,
+      averageReplicability: 84,
+      complianceEvents: 3,
+      legalComplianceEvents: 2,
+      investorLine: "Public HOA data is the wedge. GatePass's moat is private PMC exit memory plus compliance history.",
+    },
+    cases: [demoCase],
+    stakeholders,
+    signals,
+  };
+}
+
+export async function createContractorProfile(input: {
+  waitlistId?: string;
+  company: string;
+  contactName: string;
+  email: string;
+  phone?: string;
+  trades: string[];
+  serviceZips: string[];
+  licenseNumber?: string;
+  insuranceStatus?: string;
+  screeningStatus?: string;
+  notes?: string;
+}) {
+  return db.contractorProfile.create({
+    data: {
+      waitlistId: input.waitlistId,
+      company: input.company,
+      contactName: input.contactName,
+      email: input.email,
+      phone: input.phone,
+      trades: JSON.stringify(input.trades),
+      serviceZips: JSON.stringify(input.serviceZips),
+      licenseNumber: input.licenseNumber,
+      insuranceStatus: input.insuranceStatus ?? "unknown",
+      screeningStatus: input.screeningStatus ?? "waitlisted",
+      notes: input.notes,
+    },
+  });
+}
+
+export async function promoteWaitlistToContractorProfile(input: { waitlistId: string; trades?: string[]; serviceZips?: string[] }) {
+  const waitlist = await db.contractorWaitlist.findUnique({ where: { id: input.waitlistId } });
+  if (!waitlist) throw new Error("Waitlist contractor not found");
+  return createContractorProfile({
+    waitlistId: waitlist.id,
+    company: waitlist.company,
+    contactName: waitlist.contactName,
+    email: waitlist.email,
+    phone: waitlist.phone ?? undefined,
+    trades: input.trades ?? [waitlist.category],
+    serviceZips: input.serviceZips ?? [waitlist.zip],
+    screeningStatus: waitlist.paid ? "paid_founding_seat" : "waitlisted",
+  });
+}
+
+export async function openContractorSlot(input: { hoaId: string; trade: string; capacity?: number; priceCents?: number; scarcityLabel?: string }) {
+  return db.contractorSlot.create({ data: { hoaId: input.hoaId, trade: input.trade, capacity: input.capacity ?? 1, priceCents: input.priceCents ?? 9900, scarcityLabel: input.scarcityLabel } });
+}
+
+export async function grantContractorCommunityAccess(input: { contractorId: string; hoaId: string; trade: string; status?: string; accessType?: string }) {
+  return db.contractorCommunityAccess.create({ data: { contractorId: input.contractorId, hoaId: input.hoaId, trade: input.trade, status: input.status ?? "active", accessType: input.accessType ?? "founding_slot", activeFrom: new Date() } });
+}
+
+export async function createMarketplaceJobFromWorkOrder(input: { workOrderId: string; title?: string }) {
+  const wo = await db.workOrder.findUnique({ where: { id: input.workOrderId } });
+  if (!wo) throw new Error("Work order not found");
+  const job = await db.marketplaceJob.create({ data: { hoaId: wo.hoaId, homeownerId: wo.homeownerId, workOrderId: wo.id, category: wo.category, title: input.title ?? wo.title, description: wo.description, estimatedValueCents: wo.estimatedCost, status: "open" } });
+  await logComplianceEvent({ hoaId: wo.hoaId, module: "marketplace", eventType: "marketplace.job_created_from_work_order", actorType: "board", actorName: "GatePass Operator", targetType: "marketplace_job", targetId: job.id, targetLabel: job.title, summary: `Marketplace job opened from work order: ${job.title}`, dataSnapshot: { workOrderId: wo.id, category: wo.category, estimatedValueCents: wo.estimatedCost } });
+  return job;
+}
+
+export async function createMarketplaceJobFromARC(input: { arcRequestId: string; title?: string }) {
+  const arc = await db.aRCRequest.findUnique({ where: { id: input.arcRequestId } });
+  if (!arc) throw new Error("ARC request not found");
+  const job = await db.marketplaceJob.create({ data: { hoaId: arc.hoaId, homeownerId: arc.homeownerId, arcRequestId: arc.id, category: arc.projectType, title: input.title ?? `${arc.projectType} project`, description: arc.description, estimatedValueCents: arc.estimatedCost, status: "open" } });
+  await logComplianceEvent({ hoaId: arc.hoaId, module: "marketplace", eventType: "marketplace.job_created_from_arc", actorType: "board", actorName: "GatePass Operator", targetType: "marketplace_job", targetId: job.id, targetLabel: job.title, summary: `Marketplace job opened from ARC request: ${job.title}`, legalFlag: true, legalCategory: "governance", dataSnapshot: { arcRequestId: arc.id, projectType: arc.projectType, estimatedCost: arc.estimatedCost } });
+  return job;
+}
+
+export async function submitContractorQuote(input: { marketplaceJobId: string; contractorId: string; amountCents: number; scope: string }) {
+  const quote = await db.contractorQuote.create({ data: { marketplaceJobId: input.marketplaceJobId, contractorId: input.contractorId, amountCents: input.amountCents, scope: input.scope } });
+  await db.marketplaceJob.update({ where: { id: input.marketplaceJobId }, data: { status: "quoted" } });
+  return quote;
+}
+
+export async function approveContractorQuote(input: { quoteId: string }) {
+  const quote = await db.contractorQuote.update({ where: { id: input.quoteId }, data: { status: "approved" }, include: { marketplaceJob: true } });
+  await db.marketplaceJob.update({ where: { id: quote.marketplaceJobId }, data: { status: "approved" } });
+  return quote;
+}
+
+export async function recordMarketplaceTransaction(input: { jobId: string; quoteId?: string; contractorId: string; grossAmountCents: number; gatepassFeeCents: number; hoaShareCents: number; stripePaymentIntentId?: string; status?: string }) {
+  const job = await db.marketplaceJob.findUnique({ where: { id: input.jobId } });
+  if (!job) throw new Error("Marketplace job not found");
+  const tx = await db.marketplaceTransaction.create({ data: { jobId: input.jobId, quoteId: input.quoteId, hoaId: job.hoaId, contractorId: input.contractorId, grossAmountCents: input.grossAmountCents, gatepassFeeCents: input.gatepassFeeCents, hoaShareCents: input.hoaShareCents, stripePaymentIntentId: input.stripePaymentIntentId, status: input.status ?? "recorded" } });
+  await db.marketplaceJob.update({ where: { id: input.jobId }, data: { status: "completed" } });
+  return tx;
+}
+
+export async function recordCommunityRevenueShare(input: { hoaId: string; transactionId?: string; amountCents: number; type?: string; status?: string; appliedTo?: string; memo?: string }) {
+  const credit = await db.communityRevenueShare.create({ data: { hoaId: input.hoaId, transactionId: input.transactionId, amountCents: input.amountCents, type: input.type ?? "transaction_share", status: input.status ?? "earned", appliedTo: input.appliedTo, memo: input.memo } });
+  await logComplianceEvent({ hoaId: input.hoaId, module: "marketplace", eventType: "marketplace.community_revenue_share", actorType: "system", actorName: "GatePass", targetType: "community_revenue_share", targetId: credit.id, targetLabel: input.memo ?? "HOA marketplace credit", summary: `HOA marketplace credit recorded: $${(input.amountCents / 100).toLocaleString()}`, legalFlag: true, legalCategory: "financial", dataSnapshot: input });
+  return credit;
+}
+
+export async function getMarketplaceDashboard(input: { hoaId: string; demo?: boolean }) {
+  if (input.demo || input.hoaId === DEMO_HOA_ID) return demoMarketplaceDashboard();
+  const [slots, jobs, quotes, transactions, credits, complianceRecords] = await Promise.all([
+    db.contractorSlot.findMany({ where: { hoaId: input.hoaId }, orderBy: { createdAt: "desc" } }),
+    db.marketplaceJob.findMany({ where: { hoaId: input.hoaId }, orderBy: { createdAt: "desc" } }),
+    db.contractorQuote.findMany({ where: { marketplaceJob: { hoaId: input.hoaId } }, include: { contractor: true }, orderBy: { createdAt: "desc" } }),
+    db.marketplaceTransaction.findMany({ where: { hoaId: input.hoaId }, include: { contractor: true }, orderBy: { createdAt: "desc" } }),
+    db.communityRevenueShare.findMany({ where: { hoaId: input.hoaId }, orderBy: { createdAt: "desc" } }),
+    db.contractorComplianceRecord.findMany({ where: { hoaId: input.hoaId }, orderBy: { createdAt: "desc" } }),
+  ]);
+  return {
+    demo: false,
+    slots,
+    jobs: jobs.map((j) => ({ ...j, source: j.workOrderId ? "Work order" : j.arcRequestId ? "ARC request" : "Manual" })),
+    quotes: quotes.map((q) => ({ id: q.id, contractor: q.contractor.company, amountCents: q.amountCents, status: q.status, scope: q.scope })),
+    transactions: transactions.map((t) => ({ id: t.id, grossAmountCents: t.grossAmountCents, gatepassFeeCents: t.gatepassFeeCents, hoaShareCents: t.hoaShareCents, status: t.status, contractor: t.contractor.company })),
+    credits: credits.map((c) => ({ id: c.id, amountCents: c.amountCents, status: c.status, memo: c.memo ?? c.type })),
+    complianceRecords,
+    proofLoop: [
+      { label: "Transition case", detail: "Open or import a PMC transition case.", value: "Wedge" },
+      { label: "Contractor access", detail: "Open slots for verified contractors by community/trade.", value: `${slots.length} slots` },
+      { label: "Marketplace job", detail: "Route ARC/work-order demand into a job.", value: `${jobs.length} jobs` },
+      { label: "Quote", detail: "Verified contractor submits scope and price.", value: `${quotes.length} quotes` },
+      { label: "Transaction", detail: "Record fee capture and HOA revenue share.", value: `${transactions.length} tx` },
+      { label: "Compliance memory", detail: "Link completed work back into board-owned records.", value: `${complianceRecords.length} records` },
+    ],
+  };
+}
+
+export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boolean }) {
+  if (input.demo || input.hoaId === DEMO_HOA_ID) return demoInvestorProofMetrics();
+  const [moat, marketplace, waitlistCount] = await Promise.all([
+    getTransitionMoat(input.hoaId),
+    getMarketplaceDashboard({ hoaId: input.hoaId }),
+    db.contractorWaitlist.count(),
+  ]);
+  const txs = marketplace.transactions;
+  const credits = marketplace.credits;
+  return {
+    demo: false,
+    headline: "Software wedge. Marketplace business. Transition-memory moat.",
+    metrics: {
+      hoaPipeline: await db.hOA.count(),
+      transitionCases: moat.summary.transitionCases,
+      privateMoatSignals: moat.summary.privateSignals,
+      contractorSlotsOpen: marketplace.slots.length,
+      contractorSignups: waitlistCount,
+      marketplaceJobs: marketplace.jobs.length,
+      quotesSubmitted: marketplace.quotes.length,
+      complianceRecords: moat.summary.complianceEvents,
+    },
+    money: {
+      demoGmvCents: txs.reduce((sum, t) => sum + t.grossAmountCents, 0),
+      gatepassFeeCents: txs.reduce((sum, t) => sum + t.gatepassFeeCents, 0),
+      hoaCreditsCents: credits.reduce((sum, c) => sum + c.amountCents, 0),
+    },
+    checklist: [
+      { label: "Board-safe transition graph live", status: moat.summary.transitionCases ? "done" as const : "missing" as const },
+      { label: "Compliance memory export live", status: moat.summary.complianceEvents ? "done" as const : "missing" as const },
+      { label: "Marketplace transaction loop visible", status: marketplace.jobs.length ? "done" as const : "missing" as const },
+      { label: "First paid HOA record", status: (await db.hOA.count({ where: { paid: true } })) ? "done" as const : "missing" as const },
+      { label: "Real contractor payment + webhook", status: (await db.contractorWaitlist.count({ where: { paid: true } })) ? "done" as const : "missing" as const },
+      { label: "Real proof pack from production HOA", status: moat.summary.complianceEvents ? "done" as const : "missing" as const },
+    ],
+    proofLinks: demoInvestorProofMetrics().proofLinks,
+    caution: ["Production counts only. Demo data is labeled separately.", "Use Austin HOA pipeline until signed/paid commitments exist.", "Transition support remains case-by-case and board-safe."],
+  };
 }
 
 // ─── Austin Open Data — Shared helpers ───────────────────────────────
@@ -1808,6 +2108,8 @@ export async function getTransitionMoat(hoaId: string) {
   const weightedMoat = signals.reduce((sum, s) => sum + s.moatWeight * (s.isPubliclyReplicable ? 1 : 2), 0);
   const averageReplicability = cases.length ? Math.round(cases.reduce((sum, c) => sum + c.replicabilityScore, 0) / cases.length) : 0;
 
+  if (hoaId === DEMO_HOA_ID && cases.length === 0) return demoTransitionMoat();
+
   return {
     summary: {
       transitionCases: cases.length,
@@ -1832,6 +2134,42 @@ export async function exportPilotProofPack(input: {
   requestedBy: string;
 }) {
   const hoa = await db.hOA.findUnique({ where: { id: input.hoaId } });
+  if (!hoa && input.hoaId === DEMO_HOA_ID) {
+    const moat = demoTransitionMoat();
+    const selectedCase = input.transitionCaseId
+      ? moat.cases.find((c) => c.id === input.transitionCaseId)
+      : moat.cases[0];
+    return {
+      generatedAt: new Date().toISOString(),
+      requestedBy: input.requestedBy,
+      demo: true,
+      title: "Steiner Ranch HOA (Demo) PMC Exit Proof Pack",
+      positioning: "GatePass turns every PMC exit into structured transition memory.",
+      moatThesis: {
+        publicData: "HOA names, PMC names, and public reviews are copyable acquisition signals.",
+        proprietaryData: "Board objections, private contract terms, switching triggers, transition timelines, compliance events, and operating benchmarks are generated only by helping boards actually leave PMCs.",
+        hardLine: "A competitor can buy the map. They cannot buy the scar tissue.",
+      },
+      community: { id: DEMO_HOA_ID, name: "Steiner Ranch HOA", community: "Steiner Ranch HOA (Demo)", units: 847, plan: "full" },
+      selectedCase,
+      moatSummary: moat.summary,
+      topSignals: moat.signals.slice(0, 12),
+      boardMap: moat.stakeholders,
+      complianceSummary: { totalEvents: 3, legalEvents: 2, moduleBreakdown: { transition: 1, boardroom: 1, workorder: 1 } },
+      legalHighlights: [
+        { module: "transition", eventType: "transition.exit_pack_generated", summary: "Board-safe PMC Exit Pack generated for RealManage transition review", actor: "Sarah Mitchell", legalCategory: "contract" },
+        { module: "boardroom", eventType: "meeting.minutes_recorded", summary: "Board meeting agenda recorded with PMC transition review as governed discussion item", actor: "Board Secretary", legalCategory: "governance" },
+      ],
+      firstPilotProofChecklist: [
+        "One real PMC contract reviewed",
+        "One board decision path captured",
+        "One transition timeline opened",
+        "One compliance timeline export generated",
+        "One before/after benchmark report produced",
+        "One redacted case study approved for investor/customer use",
+      ],
+    };
+  }
   if (!hoa) throw new Error("HOA not found");
 
   const moat = await getTransitionMoat(input.hoaId);
@@ -2436,7 +2774,7 @@ export async function seedDemoData() {
  */
 export async function logComplianceEvent(input: {
   hoaId: string;
-  module: "core" | "payos" | "finebot" | "arc" | "workorder" | "boardroom" | "votebox" | "amenity" | "commhub" | "transition";
+  module: "core" | "payos" | "finebot" | "arc" | "workorder" | "boardroom" | "votebox" | "amenity" | "commhub" | "transition" | "marketplace";
   eventType: string;
   actorType: "board" | "homeowner" | "system" | "admin";
   actorId?: string;

@@ -23,14 +23,14 @@ const comparisonRows = [
   { label: 'Per-module pricing', mgmt: 'Yes', gp: 'No' },
   { label: 'Response time', mgmt: 'Days to weeks', gp: 'Instant' },
   { label: 'Data ownership', mgmt: 'Theirs', gp: 'Yours' },
-  { label: 'Contract term', mgmt: '12-mo minimum', gp: 'Month-to-month' },
-  { label: 'Cancel anytime', mgmt: 'No', gp: 'Yes — 30 days notice' },
+  { label: 'Contract term', mgmt: '12-mo minimum', gp: 'Annual platform enrollment' },
+  { label: 'Transition review', mgmt: 'Slow / opaque', gp: 'Starts before payment' },
 ];
 
 const faqs = [
   {
     q: 'Is there a long-term contract?',
-    a: 'No. Month-to-month. Cancel anytime with 30 days notice. No cancellation fees. Your data is returned and deleted within 30 days of cancellation.',
+    a: 'GatePass starts with a board-safe transition review before payment. Platform enrollment is annual at $20/unit/year once your board approves the pilot. Your data remains exportable if you leave.',
   },
   {
     q: 'What does migration involve?',
@@ -50,7 +50,7 @@ const faqs = [
   },
   {
     q: 'What is the expansion path — is $20/unit the only pricing forever?',
-    a: 'The $20/unit flat rate is your community\'s operating platform. As GatePass grows, we plan to introduce an optional contractor marketplace where contractors pay for verified community access and booked work. The goal is for marketplace economics to offset the HOA subscription over time; the base platform stays flat-rate.',
+    a: 'The $20/unit flat rate is your community\'s operating platform. GatePass is opening founding contractor access in Austin as communities move through transition review. Contractor fees and transaction economics are designed to offset the HOA subscription over time; the base platform stays flat-rate.',
   },
 ];
 
@@ -94,7 +94,7 @@ export default function Pricing() {
               <span className="text-7xl font-bold text-white leading-none">$20</span>
               <span className="text-white/40 text-base mb-2">/unit/year</span>
             </div>
-            <p className="text-white/40 text-sm mt-3">No contracts. No setup fees. Cancel anytime.</p>
+            <p className="text-white/40 text-sm mt-3">Annual platform enrollment. No setup fee. Transition review starts before payment.</p>
 
             <div className="my-8 border-t border-white/10" />
 
@@ -111,7 +111,7 @@ export default function Pricing() {
               to="/onboard"
               className="mt-10 w-full inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-8 py-4 rounded-full transition-colors"
             >
-              Switch your HOA — it's free <ArrowRight className="w-4 h-4" />
+              Start transition review <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
         </div>
@@ -172,9 +172,9 @@ export default function Pricing() {
                   color: '#B8883A',
                 },
                 {
-                  stage: 'Year 2',
-                  title: 'Contractor marketplace',
-                  desc: 'Contractors pay for verified access to HOA-backed demand. Fees and transaction economics can flow back to the community.',
+                  stage: 'Austin Launch',
+                  title: 'Founding contractor marketplace',
+                  desc: 'Contractors pay for verified access as communities move through transition review. Fees and transaction economics can flow back to the community.',
                   color: '#5a9e7a',
                 },
                 {
@@ -287,14 +287,14 @@ export default function Pricing() {
               Ready to cut your costs?
             </h2>
             <p className="text-lg text-white/40 mt-6 leading-relaxed">
-              Switch from your management company in 14 days. Setup and migration are free.
+              Start with a board-safe transition review. Setup and migration are included when your board approves enrollment.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
               <Link
                 to="/onboard"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-8 py-4 rounded-full transition-colors"
               >
-                Get started — it's free <ArrowRight className="w-4 h-4" />
+                Request transition review <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/demo"

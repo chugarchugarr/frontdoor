@@ -56,6 +56,12 @@ model HOA {
   transitionCases TransitionCase[]
   boardStakeholders BoardStakeholder[]
   moatSignals MoatSignal[]
+  contractorAccess ContractorCommunityAccess[]
+  contractorSlots ContractorSlot[]
+  marketplaceJobs MarketplaceJob[]
+  marketplaceTransactions MarketplaceTransaction[]
+  communityRevenueShares CommunityRevenueShare[]
+  contractorComplianceRecords ContractorComplianceRecord[]
 }
 
 model Homeowner {
@@ -106,9 +112,171 @@ model ContractorWaitlist {
   paid                Boolean  @default(false)
   paidAt              DateTime?
   position            Int?
+  profile             ContractorProfile?
   aiScreeningResult   String?  // JSON
   aiScreenedAt        DateTime?
   createdAt           DateTime @default(now())
+}
+
+model ContractorProfile {
+  id                  String   @id @default(cuid())
+  waitlistId          String?  @unique
+  waitlist            ContractorWaitlist? @relation(fields: [waitlistId], references: [id], onDelete: SetNull)
+  company             String
+  contactName         String
+  email               String
+  phone               String?
+  trades              String   // JSON array
+  serviceZips         String   // JSON array
+  licenseNumber       String?
+  insuranceStatus     String   @default("unknown") // unknown | pending | verified | expired
+  screeningStatus     String   @default("waitlisted") // waitlisted | paid_founding_seat | screened | verified | board_endorsed | active | rejected | refunded
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  access              ContractorCommunityAccess[]
+  quotes              ContractorQuote[]
+  transactions        MarketplaceTransaction[]
+  complianceRecords   ContractorComplianceRecord[]
+
+  @@index([screeningStatus])
+  @@index([email])
+}
+
+model ContractorCommunityAccess {
+  id                  String   @id @default(cuid())
+  contractorId        String
+  contractor          ContractorProfile @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  hoaId               String
+  hoa                 HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  trade               String
+  status              String   @default("pending") // pending | active | paused | revoked | expired
+  accessType          String   @default("founding_slot") // founding_slot | board_endorsed | transaction_only
+  activeFrom          DateTime?
+  activeUntil         DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([contractorId, hoaId, trade])
+  @@index([hoaId, status])
+}
+
+model ContractorSlot {
+  id                  String   @id @default(cuid())
+  hoaId               String
+  hoa                 HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  trade               String
+  capacity            Int      @default(1)
+  seatsTaken          Int      @default(0)
+  priceCents          Int      @default(9900)
+  status              String   @default("open") // open | reserved | filled | paused
+  scarcityLabel       String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([hoaId, trade])
+  @@index([status])
+}
+
+model MarketplaceJob {
+  id                  String   @id @default(cuid())
+  hoaId               String
+  hoa                 HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  homeownerId         String?
+  workOrderId         String?
+  arcRequestId        String?
+  category            String
+  title               String
+  description         String
+  status              String   @default("open") // open | quoted | approved | in_progress | completed | cancelled
+  estimatedValueCents Int?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  quotes              ContractorQuote[]
+  transactions        MarketplaceTransaction[]
+  complianceRecords   ContractorComplianceRecord[]
+
+  @@index([hoaId, status])
+  @@index([workOrderId])
+  @@index([arcRequestId])
+}
+
+model ContractorQuote {
+  id                  String   @id @default(cuid())
+  marketplaceJobId    String
+  marketplaceJob      MarketplaceJob @relation(fields: [marketplaceJobId], references: [id], onDelete: Cascade)
+  contractorId        String
+  contractor          ContractorProfile @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  amountCents         Int
+  scope               String
+  status              String   @default("submitted") // submitted | approved | declined | withdrawn
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  transactions        MarketplaceTransaction[]
+
+  @@index([marketplaceJobId, status])
+  @@index([contractorId])
+}
+
+model MarketplaceTransaction {
+  id                    String   @id @default(cuid())
+  jobId                 String
+  job                   MarketplaceJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  quoteId               String?
+  quote                 ContractorQuote? @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  hoaId                 String
+  hoa                   HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  contractorId          String
+  contractor            ContractorProfile @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  grossAmountCents      Int
+  gatepassFeeCents      Int
+  hoaShareCents         Int
+  stripePaymentIntentId String?
+  status                String   @default("recorded") // pending | recorded | paid | refunded | failed
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  revenueShares         CommunityRevenueShare[]
+
+  @@index([hoaId, status])
+  @@index([contractorId])
+}
+
+model CommunityRevenueShare {
+  id                    String   @id @default(cuid())
+  hoaId                 String
+  hoa                   HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  transactionId         String?
+  transaction           MarketplaceTransaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  amountCents           Int
+  type                  String   @default("transaction_share") // transaction_share | access_fee_share | transition_credit | manual_adjustment
+  status                String   @default("pending") // pending | earned | applied | reversed
+  appliedTo             String?
+  memo                  String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([hoaId, status])
+}
+
+model ContractorComplianceRecord {
+  id                    String   @id @default(cuid())
+  contractorId          String
+  contractor            ContractorProfile @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  hoaId                 String
+  hoa                   HOA      @relation(fields: [hoaId], references: [id], onDelete: Cascade)
+  marketplaceJobId      String?
+  marketplaceJob        MarketplaceJob? @relation(fields: [marketplaceJobId], references: [id], onDelete: SetNull)
+  complianceEventId     String?
+  summary               String
+  status                String   @default("generated") // generated | reviewed | exported
+  createdAt             DateTime @default(now())
+
+  @@index([hoaId, contractorId])
+  @@index([marketplaceJobId])
 }
 
 // ─── PayOS: Dues & Financials ─────────────────────────────────────────

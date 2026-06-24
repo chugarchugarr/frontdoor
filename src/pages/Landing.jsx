@@ -4,6 +4,7 @@ import HeroSection from '../components/landing/HeroSection';
 import ModulesGrid from '../components/landing/ModulesGrid';
 import ComplianceMemorySection from '../components/landing/ComplianceMemorySection';
 import MarketplaceSection from '../components/landing/MarketplaceSection';
+import AtomicLoopSection from '../components/landing/AtomicLoopSection';
 import WhySection from '../components/landing/WhySection';
 import AustinSection from '../components/landing/AustinSection';
 import TestimonialsSection from '../components/landing/TestimonialsSection';
@@ -18,6 +19,7 @@ export default function LandingPage() {
       <ModulesGrid />
       <ComplianceMemorySection />
       <MarketplaceSection />
+      <AtomicLoopSection />
       <WhySection />
       <AustinSection />
       <TestimonialsSection />

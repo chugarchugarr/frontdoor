@@ -53,7 +53,7 @@ export default function MarketplaceSection() {
                 <span style={{ color: '#B8883A' }}>The contractor market makes it compound.</span>
               </h2>
               <p className="text-lg text-white/45 mt-8 max-w-lg leading-relaxed">
-                GatePass is not another vendor directory. HOA rules already govern who can work in the neighborhood. We make that permission layer digital, searchable, auditable, and eventually revenue-producing for the community.
+                GatePass is not another vendor directory. HOAs already govern approvals, exterior standards, common-area vendors, and community-vouched access paths. GatePass turns those approval and trust workflows into a digital contractor-access layer.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Link to="/demo?view=transition" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-6 py-3.5 rounded-full transition-colors">
@@ -61,6 +61,9 @@ export default function MarketplaceSection() {
                 </Link>
                 <Link to="/contractors" className="inline-flex items-center gap-2 text-sm text-white/55 hover:text-white border border-white/15 hover:border-white/35 px-6 py-3.5 rounded-full transition-colors">
                   Contractor access →
+                </Link>
+                <Link to="/investors" className="inline-flex items-center gap-2 text-sm text-white/55 hover:text-white border border-white/15 hover:border-white/35 px-6 py-3.5 rounded-full transition-colors">
+                  Investor brief →
                 </Link>
               </div>
             </motion.div>

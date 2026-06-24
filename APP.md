@@ -61,6 +61,7 @@ GatePass is the board-owned operating layer and contractor-access gate for HOA c
 ```
 src/
   App.tsx              — root shell (landing, HOA onboard, OS shell)
+  pages/Investors.jsx  — investor brief for $300K SAFE raise
   components/
     tokens.ts          — design system (colors, fonts, CSS)
     ui-kit.tsx         — shared components (Btn, Card, Modal, etc.)
@@ -76,6 +77,8 @@ src/
     AmenityModule.tsx  — reservations
     CommHub.tsx        — announcements + comms
     TransitionMoat.tsx — PMC exit graph + board psychology + moat signal capture
+    MarketplaceProofLoop.tsx — labeled marketplace transaction demo + production record dashboard
+    InvestorProofDashboard.tsx — investor proof metrics / first-pilot checklist
 ```
 
 ## Backend Procedures (44 total)
@@ -109,7 +112,7 @@ src/
 **Transition Moat**: TransitionCase, BoardStakeholder, MoatSignal
 **Compliance Memory**: ComplianceEvent, ComplianceExport
 
-## Backend Procedures (47 total)
+## Backend Procedures (marketplace proof loop added Jun 24, 2026)
 
 **Core**: `health`, `createHOACheckout`, `getHOAStats`, `getHOAList`, `getHOA`
 **Homeowners**: `addHomeowner`, `getHomeowners`
@@ -126,6 +129,36 @@ src/
 **Permits**: `getAustinPermits`
 **Compliance Memory Layer (NEW)**: `logComplianceEvent` (internal), `getComplianceTimeline`, `exportCompliancePack`
 **Transition Intelligence Graph (NEW)**: `createTransitionCase`, `updateTransitionCase`, `addBoardStakeholder`, `addMoatSignal`, `getTransitionMoat`, `exportPilotProofPack`
+**Marketplace Proof Loop (NEW)**: `createContractorProfile`, `promoteWaitlistToContractorProfile`, `openContractorSlot`, `grantContractorCommunityAccess`, `createMarketplaceJobFromWorkOrder`, `createMarketplaceJobFromARC`, `submitContractorQuote`, `approveContractorQuote`, `recordMarketplaceTransaction`, `recordCommunityRevenueShare`, `getMarketplaceDashboard`, `getInvestorProofMetrics`
+
+## Atomic Marketplace Proof Loop
+
+New app surfaces:
+
+- Public investor page: `/investors`
+- Board demo marketplace view: `/demo?view=marketplace`
+- Board demo investor proof view: `/demo?view=investor`
+
+Purpose: show the investor-diligence loop in one screen — **software wedge → contractor access → job → GatePass fee + HOA credit → compliance memory**.
+
+Data boundary:
+
+- `/demo?view=marketplace`, `/demo?view=investor`, and `/demo?view=transition` use explicit static demo fallbacks for the Steiner Ranch demo HOA when production has no real records.
+- Production metrics and non-demo HOA IDs query real SQLite records only.
+- Do not seed fake production HOA records just to inflate traction.
+
+Backend marketplace primitives now support:
+
+- contractor profiles promoted from waitlist records
+- community/trade access slots
+- board-granted contractor community access
+- jobs sourced from WorkOrders or ARC approvals
+- contractor quotes and approvals
+- transaction recording
+- HOA community revenue-share credits
+- marketplace compliance events
+
+Investor-safe core line: **Software wedge. Marketplace business. Transition-memory moat.**
 
 ## Transition Intelligence Graph
 

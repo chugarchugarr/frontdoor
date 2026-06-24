@@ -87,7 +87,7 @@ export default function HeroSection() {
             </AnimatePresence>
           </div>
           <p className="text-lg md:text-xl text-white/50 mt-8 max-w-lg leading-relaxed font-light">
-            Boards use GatePass to exit bad management, own their compliance records, and route contractor access through a system the community controls.
+            Boards use GatePass to exit bad management, own their compliance records, and open verified contractor access through a board-safe system.
           </p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-10">
             <Link to="/onboard" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
@@ -95,6 +95,9 @@ export default function HeroSection() {
             </Link>
             <Link to="/demo" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full">
               View live demo
+            </Link>
+            <Link to="/investors" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full">
+              Investor brief
             </Link>
           </div>
         </motion.div>
@@ -109,7 +112,7 @@ export default function HeroSection() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-white/25 mt-6 tracking-wide">Start with board-owned operations. Expand into contractor access as the network opens.</p>
+          <p className="text-xs text-white/25 mt-6 tracking-wide">Start with board-owned operations. Open Austin contractor access as communities move through transition review.</p>
         </motion.div>
       </div>
     </section>

@@ -6,6 +6,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@adaptive-ai/sdk/client";
 import LandingPage from "./pages/Landing";
 import Pricing from "./pages/Pricing";
+import Investors from "./pages/Investors";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import { T, GLOBAL_CSS } from "./components/tokens";
@@ -27,6 +28,8 @@ import { ContractorPortal } from "./components/ContractorPortal";
 import { LiveFeeds } from "./components/LiveFeeds";
 import { ComplianceTimeline } from "./components/ComplianceTimeline";
 import { TransitionMoat } from "./components/TransitionMoat";
+import { MarketplaceProofLoop } from "./components/MarketplaceProofLoop";
+import { InvestorProofDashboard } from "./components/InvestorProofDashboard";
 import { ErrorBoundary } from "./components/error-boundary";
 
 // ─── Success screens ──────────────────────────────────────────────────
@@ -97,7 +100,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
         <div className="anim-up" style={{ marginBottom: 40 }}>
           <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, fontWeight: 600 }}>HOA OS</div>
           <h1 style={{ fontFamily: T.fontSans, fontSize: 34, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.03em", marginBottom: 10 }}>Enroll Your HOA</h1>
-          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7 }}>Replace PMC-controlled records with a board-owned operating layer for $20/unit/year.</p>
+          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7 }}>Start with a board-safe transition review. Annual platform enrollment is $20/unit/year after approval.</p>
         </div>
         <div style={{ display: "flex", gap: 4, marginBottom: 36 }}>
           {[1, 2].map(s => <div key={s} style={{ flex: 1, height: 3, borderRadius: 2, background: s <= step ? T.forest : "var(--border)", transition: "background 0.3s" }} />)}
@@ -132,13 +135,13 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
               <FDInput label="Email" type="email" placeholder="sarah@hoa.org" value={form.contactEmail} onChange={e => set("contactEmail", e.target.value)} />
               <FDInput label="Phone (optional)" type="tel" value={form.contactPhone} onChange={e => set("contactPhone", e.target.value)} />
               <div style={{ padding: "12px 16px", background: "var(--bg-subtle)", borderRadius: T.radius, marginBottom: 24, display: "flex", justifyContent: "space-between" }}>
-                <div><Label>Total Due Today</Label><div style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700 }}>${totalCost.toLocaleString()}</div></div>
+                  <div><Label>Annual Enrollment</Label><div style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700 }}>${totalCost.toLocaleString()}</div></div>
                 <div style={{ textAlign: "right", fontSize: 12, color: T.inkMid, fontFamily: T.fontSans }}><div>{form.community}</div><div>{form.units} units · {form.plan} plan</div></div>
               </div>
               <div style={{ display: "flex", gap: 10 }}>
                 <Btn variant="ghost" onClick={() => setStep(1)}>Back</Btn>
                 <Btn full onClick={() => mutation.mutate()} disabled={!form.contactName || !form.contactEmail || mutation.isPending}>
-                  {mutation.isPending ? "Redirecting…" : <>Pay & Enroll <Icons.ArrowR /></>}
+                  {mutation.isPending ? "Redirecting…" : <>Enroll annually <Icons.ArrowR /></>}
                 </Btn>
               </div>
               {mutation.isError && <div style={{ marginTop: 14, padding: "10px 14px", background: T.dangerPale, borderRadius: T.radius, fontFamily: T.fontSans, fontSize: 13, color: T.danger }}>Something went wrong. Please try again.</div>}
@@ -367,6 +370,8 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
           {view === "livefeeds"  && <LiveFeeds />}
           {view === "transition" && <TransitionMoat hoaId={demoHoaId} />}
           {view === "compliance" && <ComplianceTimeline hoaId={demoHoaId} />}
+          {view === "marketplace" && <MarketplaceProofLoop hoaId={demoHoaId} demo />}
+          {view === "investor" && <InvestorProofDashboard hoaId={demoHoaId} demo />}
         </main>
       </div>
     </div>
@@ -444,6 +449,8 @@ function HOAOSShell({ hoaId, onExit }: { hoaId: string; onExit: () => void }) {
         {view === "livefeeds"   && <LiveFeeds hoaZip={hoaZip} />}
         {view === "transition"  && <TransitionMoat hoaId={hoaId} />}
         {view === "compliance"  && <ComplianceTimeline hoaId={hoaId} />}
+        {view === "marketplace" && <MarketplaceProofLoop hoaId={hoaId} />}
+        {view === "investor"    && <InvestorProofDashboard hoaId={hoaId} />}
       </main>
     </div>
   );
@@ -511,6 +518,12 @@ function DemoRoute() {
   if (searchParams.get("view") === "transition") {
     return <ErrorBoundary><BoardDemo initialView="transition" onBack={() => navigate('/demo')} /></ErrorBoundary>;
   }
+  if (searchParams.get("view") === "marketplace") {
+    return <ErrorBoundary><BoardDemo initialView="marketplace" onBack={() => navigate('/demo')} /></ErrorBoundary>;
+  }
+  if (searchParams.get("view") === "investor") {
+    return <ErrorBoundary><BoardDemo initialView="investor" onBack={() => navigate('/demo')} /></ErrorBoundary>;
+  }
   return <ErrorBoundary><GatePassDemo onBack={() => navigate('/')} /></ErrorBoundary>;
 }
 
@@ -560,6 +573,7 @@ export default function App() {
       <Route path="/demo/transition" element={<TransitionDemoRoute />} />
       <Route path="/os" element={<OSRoute />} />
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/investors" element={<Investors />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="*" element={<Navigate to="/" replace />} />
