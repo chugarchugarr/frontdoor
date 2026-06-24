@@ -61,14 +61,14 @@ export default function HeroSection() {
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
           <div className="flex items-center gap-3 mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-white/50 tracking-[0.2em] uppercase">Built for HOAs done being ignored by their management company</span>
+            <span className="text-xs text-white/50 tracking-[0.2em] uppercase">HOA-controlled marketplace for home improvement access</span>
           </div>
           <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[6.5rem] font-bold text-white leading-none tracking-tight max-w-4xl">
-            Fire your<br />
-            <span style={{ color: '#B8883A' }}>management company.</span>
+            Your HOA<br />
+            <span style={{ color: '#B8883A' }}>controls the gate.</span>
           </h1>
           <p className="text-2xl sm:text-3xl font-semibold text-white/70 mt-4 max-w-2xl tracking-tight">
-            Run your HOA for $20/unit/year.
+            GatePass turns it into an operating layer and contractor market.
           </p>
           <div className="mt-4 flex items-center gap-2">
             <span className="text-xs text-white/30 tracking-[0.15em] uppercase">Built for</span>
@@ -87,11 +87,11 @@ export default function HeroSection() {
             </AnimatePresence>
           </div>
           <p className="text-lg md:text-xl text-white/50 mt-8 max-w-lg leading-relaxed font-light">
-            If your HOA has left a 1-star review for a management company, you already know the problem. GatePass is the exit — 9 AI modules, full compliance records, $20/unit/year.
+            Boards use GatePass to exit bad management, own their compliance records, and route contractor access through a system the community controls.
           </p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-10">
             <Link to="/onboard" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
-              Switch in 14 days — free <ArrowRight className="w-4 h-4" />
+              Start the HOA transition <ArrowRight className="w-4 h-4" />
             </Link>
             <Link to="/demo" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full">
               View live demo
@@ -102,14 +102,14 @@ export default function HeroSection() {
           className="mt-16 pt-8 border-t border-white/10"
         >
           <div className="flex flex-wrap items-center gap-10">
-            {[['$4k/yr', 'vs $20k+ with a mgmt co.'], ['$20', 'per unit / year'], ['-75%', 'board admin time'], ['14 days', 'avg. time to go live']].map(([val, label]) => (
+            {[['$20', 'per unit / year'], ['9', 'board operating modules'], ['25', 'founding contractor seats'], ['Austin', 'pilot market']].map(([val, label]) => (
               <div key={label}>
                 <div className="text-2xl font-bold text-white">{val}</div>
                 <div className="text-xs text-white/40 mt-0.5 tracking-wide uppercase">{label}</div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-white/25 mt-6 tracking-wide">No contracts. No setup fees. Cancel anytime.</p>
+          <p className="text-xs text-white/25 mt-6 tracking-wide">Start with board-owned operations. Expand into contractor access as the network opens.</p>
         </motion.div>
       </div>
     </section>

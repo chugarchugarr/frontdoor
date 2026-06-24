@@ -50,7 +50,7 @@ const faqs = [
   },
   {
     q: 'What is the expansion path — is $20/unit the only pricing forever?',
-    a: 'The $20/unit flat rate is your community\'s full operating platform. As GatePass grows, we plan to introduce an optional contractor marketplace (GatePass earns a small commission on booked work orders — your HOA pays nothing extra), premium board analytics, and integrations with title/lender workflows for unit resales. These are opt-in additions, not required upgrades. The base platform stays flat-rate.',
+    a: 'The $20/unit flat rate is your community\'s operating platform. As GatePass grows, we plan to introduce an optional contractor marketplace where contractors pay for verified community access and booked work. The goal is for marketplace economics to offset the HOA subscription over time; the base platform stays flat-rate.',
   },
 ];
 
@@ -117,7 +117,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* TAM Math — visible context for anyone doing the numbers */}
+      {/* Pilot economics — visible context for anyone doing the numbers */}
       <section className="bg-[#0d1a12] py-16 px-8">
         <div className="max-w-[900px] mx-auto">
           <motion.div
@@ -127,15 +127,15 @@ export default function Pricing() {
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center gap-4 mb-10">
-              <span className="text-xs text-white/30 tracking-[0.25em] uppercase">The opportunity</span>
+              <span className="text-xs text-white/30 tracking-[0.25em] uppercase">Pilot economics</span>
               <div className="flex-1 h-px bg-white/10" />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { val: '~22,000', label: 'HOAs in Texas' },
-                { val: '~3,000', label: 'Austin metro HOAs' },
-                { val: '$100B+', label: 'US HOA mgmt industry / yr' },
-                { val: '$4,000', label: 'avg ARR per 200-unit community' },
+                { val: '$20', label: 'per unit / year' },
+                { val: '$4,000', label: '200-unit community ARR' },
+                { val: '$99', label: 'founding contractor seat' },
+                { val: 'Austin', label: 'pilot market first' },
               ].map(({ val, label }) => (
                 <div key={label} className="p-5 bg-white/5 border border-white/10 rounded-xl">
                   <div className="text-2xl font-bold text-[#B8883A]">{val}</div>
@@ -144,7 +144,7 @@ export default function Pricing() {
               ))}
             </div>
             <p className="text-xs text-white/20 mt-6">
-              10% penetration of Austin metro = ~300 communities = $1.2–3M ARR. Texas at 5% = category-defining scale.
+              Marketplace upside comes after the board-owned operating layer is installed: contractor access, booked work, and community revenue share.
             </p>
           </motion.div>
         </div>
@@ -174,13 +174,13 @@ export default function Pricing() {
                 {
                   stage: 'Year 2',
                   title: 'Contractor marketplace',
-                  desc: 'GatePass earns commission on work orders booked through the platform. HOAs pay nothing extra. Contractors get qualified leads.',
+                  desc: 'Contractors pay for verified access to HOA-backed demand. Fees and transaction economics can flow back to the community.',
                   color: '#5a9e7a',
                 },
                 {
                   stage: 'Year 3+',
                   title: 'Data & integrations',
-                  desc: 'Premium board analytics. Lender/title integrations for unit resales. The Austin residential dataset becomes the moat.',
+                  desc: 'Premium board analytics. Lender/title integrations for unit resales. Transition memory plus contractor history becomes the moat.',
                   color: '#7b9fd4',
                 },
               ].map((item) => (

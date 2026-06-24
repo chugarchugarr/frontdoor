@@ -1,16 +1,16 @@
-# GatePass — HOA Operating System
+# GatePass — HOA-Controlled Contractor Marketplace
 
-**Purpose**: HOA self-management platform — replaces property management companies. PMC displacement play, not a tools upgrade.
+**Purpose**: HOA-first permission layer between homeowners and contractors. PMC transition workflows and compliance memory get GatePass into communities; contractor access and community revenue share are the marketplace business.
 
 **Type**: app
 
-**Status**: active — Phase 2 complete. GTM pivot underway: targeting HOAs with 1-star PMC reviews.
+**Status**: active — GatePass is the primary summer lane. Current focus: investor-readiness, first paid HOA pilot, Austin contractor marketplace launch path for the Aug. 22–23 Home Show.
 
 **Live URL**: https://frontdoor-userh9akm9bjl1wy8lioze14285.adaptive.ai
 
 ## What It Does
 
-GatePass is the OS for HOAs. Replaces the $50–150/unit/year management company with 9 AI agent modules at $20–22/unit/year.
+GatePass is the board-owned operating layer and contractor-access gate for HOA communities. It starts by helping boards move away from poor PMC control through transition intake, compliance memory, and day-to-day operating modules. The bigger business is the controlled-access marketplace: the HOA is the gatekeeper, GatePass is the gate, contractors pay to pass through, and HOAs/homeowners can earn on transactions.
 
 **Positioning (post stress test):** Lead with Trust/compliance moat, not feature count. The asymmetric advantage is L3 Trust → L8 Memory — every violation, vote, ARC decision, and financial action stored permanently in an immutable, exportable compliance ledger. PMCs cannot match this. No other HOA software owns this layer.
 
@@ -20,9 +20,11 @@ GatePass is the OS for HOAs. Replaces the $50–150/unit/year management company
 - Trajectory: CONSOLIDATES — fragmented PMC market, no dominant self-management alternative
 - Moat: compliance records + vendor history + permit trails with legal/financial consequence
 
-**GTM Wedge:** Target HOAs giving their PMC 1-star Google reviews. These communities are trapped and want out. GatePass is the escape hatch. Offer contract buyout (up to $5K) to close. See `.memory/gatepass/gtm-pmc-displacement-playbook.md`.
+**GTM Wedge:** Target HOAs with PMC dissatisfaction and record/control pain. These communities enter through transition safety, compliance memory, and board-owned operations. Transition credits or recoverable support may be used case-by-case, but do not promise universal contract buyouts or guaranteed cancellation-fee coverage. Current strategic source: `.memory/gatepass/marketplace-fundraise-war-room-2026-06-24.md`.
 
 **Moat posture (May 29/30, 2026):** Public HOA/PMC/review data is **not** the moat; it is the acquisition wedge. The uncopiable layer is the **Transition Intelligence Graph**: private PMC contract facts, board-specific switching fears, stakeholder stances, objection patterns, transition triggers, Exit Pack proof artifacts, and downstream Compliance Memory. Investor-safe line: GatePass turns every PMC exit into structured transition memory.
+
+**Demo data boundary:** Public demo pages may use explicit static “Demo data” fallbacks for the Steiner Ranch board demo when production has no seeded HOA records. Do not seed fake production HOA records just to make the demo look active, because production metrics should remain honest real-record counts.
 
 **Naming note:** "GatePass" risks triggering visitor management / access control mental model. Acknowledged liability — positioning copy leads with compliance/governance, not gate/access.
 
@@ -44,9 +46,8 @@ GatePass is the OS for HOAs. Replaces the $50–150/unit/year management company
 
 | Plan | Price | Modules |
 |---|---|---|
-| Starter | $20/unit/year | Core + CommHub + PayOS |
-| Full OS | $22/unit/year | All 9 modules |
-| Contractor Seat | $99 deposit (max 25) | Founding rate |
+| Full Access | $20/unit/year | All 9 modules + transition memory |
+| Contractor Seat | $99 founding seat (max 25) | Austin contractor access launch |
 
 ## Architecture
 

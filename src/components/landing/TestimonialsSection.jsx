@@ -7,23 +7,23 @@ const useCases = [
   {
     pain: 'Management company taking 3 days to route a work order.',
     outcome: 'GatePass routes work orders automatically. Board meets once a month now instead of every week.',
-    role: 'Board President',
-    community: 'Austin HOA — 220 units',
-    saving: '~$18,000 saved yr 1',
+    role: 'Modeled board case',
+    community: '220-unit Austin scenario',
+    saving: 'Target: lower admin load',
   },
   {
     pain: 'Violations creating constant neighbor-vs-neighbor conflict at every board meeting.',
     outcome: 'Handled automatically and consistently. 80% of residents resolve before the board ever sees it. Board drama down.',
-    role: 'HOA Treasurer',
-    community: 'Central Austin HOA — 180 units',
-    saving: '~$12,000 saved yr 1',
+    role: 'Modeled compliance case',
+    community: '180-unit Austin scenario',
+    saving: 'Target: consistent records',
   },
   {
     pain: 'ARC requests getting lost in email threads for weeks, missing the 45-day compliance clock.',
     outcome: 'Everything tracked, timestamped, and resolved. No more missed deadlines, no more liability.',
-    role: 'ARC Chair',
-    community: 'Northwest Austin HOA — 310 units',
-    saving: '~$24,000 saved yr 1',
+    role: 'Modeled ARC case',
+    community: '310-unit Austin scenario',
+    saving: 'Target: fewer missed deadlines',
   },
 ];
 
@@ -37,7 +37,7 @@ export default function TestimonialsSection() {
         </div>
         {/* Honest pre-launch framing */}
         <p className="text-sm text-[#2A5240]/50 mb-14 italic">
-          Early access community — these are the problems GatePass is purpose-built to solve.
+          Early access community — these are modeled scenarios, not customer testimonials.
         </p>
         <div className="grid md:grid-cols-3 gap-8">
           {useCases.map((t, i) => (

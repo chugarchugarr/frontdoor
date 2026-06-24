@@ -138,7 +138,7 @@ export default function ComplianceMemorySection() {
           <div>
             <p className="text-sm font-semibold text-white">Switching from a management company?</p>
             <p className="text-sm text-white/60 mt-1 max-w-lg">
-              We'll help you export your compliance history, migrate your data, and go live in 14 days — even if you're mid-contract.
+              We'll help you export your compliance history, migrate your data, and map the contract-specific path to a safer transition.
             </p>
           </div>
           <a href="/onboard"

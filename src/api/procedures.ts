@@ -37,7 +37,7 @@ export async function createHOACheckout(input: {
 }) {
   const stripe = getStripe();
   const plan = input.plan || "starter";
-  const pricePerUnit = plan === "full" ? 2200 : plan === "enterprise" ? 3000 : 2000; // cents
+  const pricePerUnit = plan === "enterprise" ? 3000 : 2000; // cents
   const totalCents = input.units * pricePerUnit;
 
   const hoa = await db.hOA.create({
@@ -55,7 +55,7 @@ export async function createHOACheckout(input: {
   });
 
   const baseUrl = env.VITE_BASE_URL;
-  const planLabel = plan === "full" ? "Full OS" : plan === "enterprise" ? "Enterprise" : "Starter";
+  const planLabel = plan === "enterprise" ? "Enterprise" : "Full Access";
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],

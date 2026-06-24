@@ -7,7 +7,7 @@ const points = [
   { num: '01', title: 'Your legal history. Permanently yours.', body: 'Every violation notice, ARC decision, board vote, and dues record is timestamped and stored in a searchable compliance ledger. When you switch from a PMC, your history doesn\'t disappear with them.' },
   { num: '02', title: 'Flat-rate pricing. No PMC games.', body: '$20 per unit per year. That\'s it. A 200-unit HOA pays $4,000/yr — vs. $16,000–$24,000 with a management company that invoices you for every phone call.' },
   { num: '03', title: 'The work happens automatically.', body: 'Nine agents run your day-to-day on autopilot — collecting dues, sending notices, processing ARC requests, and running votes. You approve. The platform executes.' },
-  { num: '04', title: 'Switch in 14 days. We cover the exit fee.', body: 'We migrate your data and train your board. Fully live in under two weeks. If you\'re under a PMC contract, ask us about contract buyout — we\'ll make the switch risk-free.' },
+  { num: '04', title: 'Transition support, not hand-waving.', body: 'We map your current contract, migration risk, board responsibilities, and launch path before you switch. Where it makes sense, we can apply case-by-case transition credit instead of pretending every PMC exit is identical.' },
 ];
 
 export default function WhySection() {
@@ -25,14 +25,14 @@ export default function WhySection() {
               <span className="text-[#2A5240]">Never held hostage again.</span>
             </h2>
             <p className="text-lg text-[#1C1C1A]/50 mt-8 max-w-md leading-relaxed">
-              When you fire a PMC, they take your records with them — or charge you to get them back. GatePass stores every compliance event, financial transaction, and board decision in a permanent, exportable ledger that belongs to your community.
+              When you fire a PMC, they take your records with them — or charge you to get them back. GatePass stores every compliance event, financial transaction, board decision, contractor interaction, and permit signal in a permanent ledger that belongs to your community.
             </p>
 
             {/* TAM context for investors scanning the page */}
             <div className="mt-8 p-5 bg-[#2A5240]/8 border border-[#2A5240]/15 rounded-xl">
               <p className="text-xs text-[#2A5240] tracking-[0.15em] uppercase font-semibold mb-2">The market</p>
               <p className="text-sm text-[#1C1C1A]/60 leading-relaxed">
-                ~22,000 HOAs in Texas. ~3,000 in Austin metro alone. The US HOA management industry is a $100B/year market — almost entirely captured by legacy property management companies charging $80–120/unit/year. GatePass does it for $20.
+                GatePass starts with the board-safe transition layer, then expands into contractor access. The HOA controls the neighborhood rulebook; GatePass makes that permission layer operational and economically useful.
               </p>
             </div>
 

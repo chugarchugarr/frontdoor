@@ -1,0 +1,95 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { ArrowRight, DoorOpen, Hammer, Landmark, ShieldCheck } from 'lucide-react';
+
+const steps = [
+  {
+    icon: ShieldCheck,
+    label: '01',
+    title: 'Boards enter through transition pain',
+    body: 'GatePass starts where the urgency is highest: HOAs trapped by poor PMC service, missing records, contract confusion, and board liability.',
+  },
+  {
+    icon: DoorOpen,
+    label: '02',
+    title: 'GatePass becomes the access layer',
+    body: 'Work orders, ARC requests, vendor history, and permit signals route through one board-owned system instead of disappearing into email and PMC portals.',
+  },
+  {
+    icon: Hammer,
+    label: '03',
+    title: 'Contractors pay for verified access',
+    body: 'Approved trades get access to HOA-backed demand before it becomes a commodity lead. Permit-matched work, board-vouched trust, and territory value compound.',
+  },
+  {
+    icon: Landmark,
+    label: '04',
+    title: 'The community earns from the gate',
+    body: 'Contractor fees and future transaction economics can flow back to the HOA, offsetting the platform cost and making the community an owner of its operating layer.',
+  },
+];
+
+export default function MarketplaceSection() {
+  return (
+    <section className="bg-[#0d1a12] py-32 px-8 border-y border-white/5">
+      <div className="max-w-[1400px] mx-auto">
+        <div className="flex items-start gap-4 mb-16">
+          <span className="text-xs text-white/30 tracking-[0.25em] uppercase mt-1">Marketplace</span>
+          <div className="flex-1 h-px bg-white/10 mt-3" />
+        </div>
+
+        <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-16 items-start">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65 }}
+            >
+              <p className="text-xs text-[#B8883A] tracking-[0.25em] uppercase mb-6">The HOA is the gate</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                The software gets us in.<br />
+                <span style={{ color: '#B8883A' }}>The contractor market makes it compound.</span>
+              </h2>
+              <p className="text-lg text-white/45 mt-8 max-w-lg leading-relaxed">
+                GatePass is not another vendor directory. HOA rules already govern who can work in the neighborhood. We make that permission layer digital, searchable, auditable, and eventually revenue-producing for the community.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <Link to="/demo?view=transition" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-6 py-3.5 rounded-full transition-colors">
+                  See the transition graph <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link to="/contractors" className="inline-flex items-center gap-2 text-sm text-white/55 hover:text-white border border-white/15 hover:border-white/35 px-6 py-3.5 rounded-full transition-colors">
+                  Contractor access →
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-px bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
+            {steps.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <motion.div
+                  key={step.title}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.5 }}
+                  className="bg-[#0a130d] p-7 md:p-8"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <span className="text-xs text-white/20 font-mono tracking-widest">{step.label}</span>
+                    <Icon className="w-4 h-4 text-[#B8883A]/70" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white/85 leading-tight">{step.title}</h3>
+                  <p className="text-sm text-white/35 mt-3 leading-relaxed">{step.body}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -77,7 +77,7 @@ const _MODULE_ICONS: Record<string, React.ReactNode> = {
 function HOAOnboarding({ onBack }: { onBack: () => void }) {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({ community: "", name: "", zip: "", units: "", plan: "full", contactName: "", contactEmail: "", contactPhone: "" });
-  const totalCost = form.units ? Number(form.units) * (form.plan === "full" ? 22 : 20) : 0;
+  const totalCost = form.units ? Number(form.units) * 20 : 0;
   const mutation = useMutation({
     mutationFn: () => rpc.createHOACheckout({ name: form.name || form.community, community: form.community, zip: form.zip, units: Number(form.units), contactName: form.contactName, contactEmail: form.contactEmail, contactPhone: form.contactPhone, plan: form.plan }),
     onSuccess: (data: { url: string | null }) => { if (data.url) window.location.href = data.url; },
@@ -97,7 +97,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
         <div className="anim-up" style={{ marginBottom: 40 }}>
           <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, fontWeight: 600 }}>HOA OS</div>
           <h1 style={{ fontFamily: T.fontSans, fontSize: 34, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.03em", marginBottom: 10 }}>Enroll Your HOA</h1>
-          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7 }}>Replace your management company with 9 AI agents for $20–22/unit/year.</p>
+          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7 }}>Replace PMC-controlled records with a board-owned operating layer for $20/unit/year.</p>
         </div>
         <div style={{ display: "flex", gap: 4, marginBottom: 36 }}>
           {[1, 2].map(s => <div key={s} style={{ flex: 1, height: 3, borderRadius: 2, background: s <= step ? T.forest : "var(--border)", transition: "background 0.3s" }} />)}
@@ -108,8 +108,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
               <h2 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 24, letterSpacing: "-0.025em" }}>Community Details</h2>
               <FDInput label="Community Name" placeholder="Steiner Ranch HOA" value={form.community} onChange={e => set("community", e.target.value)} />
               <FDSelect label="Plan" value={form.plan} onChange={e => set("plan", e.target.value)}>
-                <option value="starter">Starter — $20/unit/yr (Gate access + CommHub + PayOS)</option>
-                <option value="full">Full OS — $22/unit/yr (All 9 modules)</option>
+                  <option value="full">Full Access — $20/unit/yr (all 9 modules + transition memory)</option>
               </FDSelect>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <FDInput label="ZIP Code" placeholder="78732" value={form.zip} onChange={e => set("zip", e.target.value)} />
@@ -119,7 +118,7 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
                 <div style={{ padding: "14px 18px", background: T.forestPale, borderRadius: T.radius, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div><Label>Annual Total</Label><div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: "var(--text)" }}>${totalCost.toLocaleString()}</div></div>
                   <div style={{ textAlign: "right", fontFamily: T.fontSans, fontSize: 12, color: T.inkLight }}>
-                    <div>{form.units} units × ${form.plan === "full" ? 22 : 20}/yr</div>
+                    <div>{form.units} units × $20/yr</div>
                     <div style={{ color: T.success, marginTop: 4 }}>vs. ~${(Number(form.units) * 85).toLocaleString()}/yr management co.</div>
                   </div>
                 </div>
@@ -240,7 +239,7 @@ function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona,
             marginBottom: 24,
           }}>
             <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.forest }} />
-            <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 500, color: T.forest }}>Steiner Ranch HOA · Live Data</span>
+            <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 500, color: T.forest }}>Steiner Ranch HOA · Demo Data</span>
           </div>
           <h1 style={{ fontFamily: T.fontSans, fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 800, color: "#0A0A0A", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: 14 }}>
             Choose your perspective
@@ -328,7 +327,7 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
           <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", letterSpacing: "-0.01em" }}>
-            Board Demo · Steiner Ranch HOA · All 9 agents active
+            Board Demo · Steiner Ranch HOA · All 9 modules active
           </span>
         </div>
         <button

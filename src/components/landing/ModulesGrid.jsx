@@ -22,7 +22,7 @@ export default function ModulesGrid() {
         <div className="flex items-center gap-4 mb-16">
           <span className="text-xs text-white/30 tracking-[0.25em] uppercase">Modules</span>
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-white/30">9 agents. Zero staff needed.</span>
+          <span className="text-xs text-white/30">Board-owned operations before marketplace scale.</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
           {modules.map((mod, i) => {
@@ -43,7 +43,7 @@ export default function ModulesGrid() {
           })}
         </div>
         <div className="text-center mt-10">
-          <span className="text-sm text-white/40">All 9 modules included. </span>
+          <span className="text-sm text-white/40">All 9 modules included — plus the data layer contractors plug into. </span>
           <Link to="/onboard" className="text-sm font-medium" style={{ color: '#B8883A' }}>
             Get started for $20/unit/year →
           </Link>

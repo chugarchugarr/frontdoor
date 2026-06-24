@@ -24,7 +24,7 @@ export default function AustinSection() {
             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">We live here too.</h2>
 
             <p className="text-base text-white/40 mt-8 leading-relaxed max-w-md">
-              Spent years in field sales watching HOA boards get crushed — overcharged by management companies that delivered nothing, trapped by 12-month contracts with no recourse. GatePass is the platform I wish existed. We know what Travis County requires. We know Hill Country deed restrictions. We built this for communities like ours.
+              Spent years in field sales watching HOA boards get crushed — overcharged by management companies, trapped by 12-month contracts, and cut out of the contractor economy moving through their own neighborhoods. GatePass is the platform I wish existed. We know what Travis County requires. We know Hill Country deed restrictions. We built this for communities like ours.
             </p>
 
             <div className="mt-6 flex items-start gap-3 border-l-2 pl-4" style={{ borderColor: '#B8883A' }}>
@@ -37,12 +37,12 @@ export default function AustinSection() {
             <div className="mt-8 p-5 bg-white/5 border border-white/10 rounded-xl">
               <p className="text-xs text-[#B8883A] tracking-[0.15em] uppercase font-semibold mb-2">The platform gets smarter over time</p>
               <p className="text-sm text-white/50 leading-relaxed">
-                Every community that joins feeds GatePass data on Austin violation patterns, contractor performance, payment behavior, and ARC approval history. The platform compounds — more communities means better benchmarks, smarter automation, and a dataset no management company can replicate.
+                Every community that joins feeds GatePass data on transition paths, violation patterns, contractor performance, payment behavior, and ARC approval history. More communities create better benchmarks, stronger contractor access, and a private operating memory no management company can scrape.
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-8 mt-10 pt-8 border-t border-white/10">
-              {[['~3,000', 'HOAs in Austin metro'], ['$100B+', 'US HOA mgmt industry'], ['$0', 'setup or migration fees'], ['9 agents', 'working 24/7 for your HOA']].map(([val, label]) => (
+              {[['Austin', 'pilot market'], ['$20', 'per unit / year'], ['25', 'founding contractor seats'], ['9 agents', 'working 24/7 for your HOA']].map(([val, label]) => (
                 <div key={label}>
                   <div className="text-2xl font-bold text-[#B8883A]">{val}</div>
                   <div className="text-xs text-white/30 mt-1 leading-snug">{label}</div>

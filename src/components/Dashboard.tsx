@@ -5,6 +5,8 @@ import { T } from "./tokens";
 import { Card, Tag, StatusTag, Icons } from "./ui-kit";
 import type { OSView } from "./Sidebar";
 
+const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
+
 function MetricTile({ label, value, color, icon, onClick, badge }: {
   label: string; value: string | number;
   color?: string; icon: React.ReactNode;
@@ -135,15 +137,44 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
   if (!data) return null;
 
   const { hoa, stats, nextMeeting, financial } = data;
+  const isDemoFallback = !hoa && hoaId === DEMO_HOA_ID;
+  const displayHoa = hoa ?? (isDemoFallback ? {
+    community: "Steiner Ranch HOA (Demo)",
+    city: "Austin",
+    state: "TX",
+    zip: "78732",
+    units: 847,
+    plan: "full access",
+    paid: true,
+  } : null);
+  const displayStats = isDemoFallback ? {
+    homeowners: 10,
+    openViolations: 5,
+    openWorkOrders: 6,
+    pendingARC: 3,
+    openVotes: 1,
+  } : stats;
+  const displayFinancial = isDemoFallback ? {
+    totalOutstanding: 18500,
+    delinquentCount: 2,
+    budgetedYTD: 42500000,
+    actualYTD: 41120000,
+    variance: 1380000,
+  } : financial;
+  const locationBits = [
+    displayHoa?.city && displayHoa?.state ? `${displayHoa.city}, ${displayHoa.state}` : null,
+    displayHoa?.units ? `${displayHoa.units} units` : null,
+    displayHoa?.zip ?? null,
+  ].filter(Boolean);
 
   const modules: { id: OSView; label: string; icon: React.ReactNode; badge?: number; color: string; desc: string }[] = [
-    { id: "homeowners", label: "Homeowners",  icon: <Icons.Users />,    badge: stats.homeowners,      color: T.forest,  desc: `${stats.homeowners} residents` },
-    { id: "payos",      label: "PayOS",       icon: <Icons.Dollar />,   badge: 0,                     color: T.gold,    desc: financial ? `$${(financial.totalOutstanding/100).toLocaleString()} outstanding` : "Dues & finances" },
-    { id: "violations", label: "FineBot",     icon: <Icons.Alert />,    badge: stats.openViolations,  color: T.danger,  desc: `${stats.openViolations} open violations` },
-    { id: "arc",        label: "ARC Agent",   icon: <Icons.Pencil />,   badge: stats.pendingARC,      color: T.blue,    desc: `${stats.pendingARC} pending review` },
-    { id: "workorders", label: "WorkOrder",   icon: <Icons.Wrench />,   badge: stats.openWorkOrders,  color: T.purple,  desc: `${stats.openWorkOrders} open orders` },
+    { id: "homeowners", label: "Homeowners",  icon: <Icons.Users />,    badge: displayStats.homeowners,      color: T.forest,  desc: `${displayStats.homeowners} residents` },
+    { id: "payos",      label: "PayOS",       icon: <Icons.Dollar />,   badge: 0,                            color: T.gold,    desc: displayFinancial ? `$${(displayFinancial.totalOutstanding/100).toLocaleString()} outstanding` : "Dues & finances" },
+    { id: "violations", label: "FineBot",     icon: <Icons.Alert />,    badge: displayStats.openViolations,  color: T.danger,  desc: `${displayStats.openViolations} open violations` },
+    { id: "arc",        label: "ARC Agent",   icon: <Icons.Pencil />,   badge: displayStats.pendingARC,      color: T.blue,    desc: `${displayStats.pendingARC} pending review` },
+    { id: "workorders", label: "WorkOrder",   icon: <Icons.Wrench />,   badge: displayStats.openWorkOrders,  color: T.purple,  desc: `${displayStats.openWorkOrders} open orders` },
     { id: "boardroom",  label: "BoardRoom",   icon: <Icons.Calendar />, badge: 0,                     color: T.forest,  desc: nextMeeting ? new Date((nextMeeting as {scheduledAt: Date | string}).scheduledAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "No upcoming" },
-    { id: "votebox",    label: "VoteBox",     icon: <Icons.Vote />,     badge: stats.openVotes,       color: T.gold,    desc: `${stats.openVotes} active votes` },
+    { id: "votebox",    label: "VoteBox",     icon: <Icons.Vote />,     badge: displayStats.openVotes,       color: T.gold,    desc: `${displayStats.openVotes} active votes` },
     { id: "commhub",    label: "CommHub",     icon: <Icons.Bell />,     badge: 0,                     color: T.forest,  desc: "Announcements" },
     { id: "amenity",    label: "Amenity",     icon: <Icons.Star />,     badge: 0,                     color: T.purple,  desc: "Reservations" },
   ];
@@ -154,8 +185,9 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
       {/* Header */}
       <div className="anim-up" style={{ marginBottom: 36 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-          <Tag style={{ fontSize: 9 }}>{hoa?.plan || "starter"} plan</Tag>
-          {hoa?.paid && <Tag color={T.success} bg={T.successPale} style={{ fontSize: 9 }}>Active</Tag>}
+          <Tag style={{ fontSize: 9 }}>{displayHoa?.plan || "starter"} plan</Tag>
+          {isDemoFallback && <Tag color={T.warn} bg={T.warnPale} style={{ fontSize: 9 }}>Demo data</Tag>}
+          {displayHoa?.paid && <Tag color={T.success} bg={T.successPale} style={{ fontSize: 9 }}>Active</Tag>}
         </div>
         <h1 style={{
           fontFamily: T.fontSans,
@@ -166,29 +198,30 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
           lineHeight: 1.1,
           marginBottom: 8,
         }}>
-          {hoa?.community || "Your HOA"}
+          {displayHoa?.community || "Your HOA"}
         </h1>
         <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-          <span>{hoa?.city}, {hoa?.state}</span>
-          <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--border)", display: "inline-block" }} />
-          <span>{hoa?.units} units</span>
-          <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--border)", display: "inline-block" }} />
-          <span>{hoa?.zip}</span>
+          {locationBits.length > 0 ? locationBits.map((bit, i) => (
+            <React.Fragment key={String(bit)}>
+              {i > 0 && <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--border)", display: "inline-block" }} />}
+              <span>{bit}</span>
+            </React.Fragment>
+          )) : <span>Open a community to view operating data.</span>}
         </div>
       </div>
 
       {/* Key metrics */}
       <div className="anim-up-2" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 32 }}>
-        <MetricTile label="Homeowners"    value={stats.homeowners}      icon={<Icons.Users />}    color={T.forest}  onClick={() => onNav("homeowners")} />
-        <MetricTile label="Open Violations" value={stats.openViolations} icon={<Icons.Alert />}   color={stats.openViolations > 0 ? T.danger : T.success} badge={stats.openViolations} onClick={() => onNav("violations")} />
-        <MetricTile label="Work Orders"   value={stats.openWorkOrders}  icon={<Icons.Wrench />}   color={stats.openWorkOrders > 0 ? T.purple : T.success} badge={stats.openWorkOrders} onClick={() => onNav("workorders")} />
-        <MetricTile label="ARC Pending"   value={stats.pendingARC}      icon={<Icons.Pencil />}   color={stats.pendingARC > 0 ? T.blue : T.success} badge={stats.pendingARC} onClick={() => onNav("arc")} />
-        <MetricTile label="Active Votes"  value={stats.openVotes}       icon={<Icons.Vote />}     color={stats.openVotes > 0 ? T.gold : T.success} badge={stats.openVotes} onClick={() => onNav("votebox")} />
+        <MetricTile label="Homeowners"    value={displayStats.homeowners}      icon={<Icons.Users />}    color={T.forest}  onClick={() => onNav("homeowners")} />
+        <MetricTile label="Open Violations" value={displayStats.openViolations} icon={<Icons.Alert />}   color={displayStats.openViolations > 0 ? T.danger : T.success} badge={displayStats.openViolations} onClick={() => onNav("violations")} />
+        <MetricTile label="Work Orders"   value={displayStats.openWorkOrders}  icon={<Icons.Wrench />}   color={displayStats.openWorkOrders > 0 ? T.purple : T.success} badge={displayStats.openWorkOrders} onClick={() => onNav("workorders")} />
+        <MetricTile label="ARC Pending"   value={displayStats.pendingARC}      icon={<Icons.Pencil />}   color={displayStats.pendingARC > 0 ? T.blue : T.success} badge={displayStats.pendingARC} onClick={() => onNav("arc")} />
+        <MetricTile label="Active Votes"  value={displayStats.openVotes}       icon={<Icons.Vote />}     color={displayStats.openVotes > 0 ? T.gold : T.success} badge={displayStats.openVotes} onClick={() => onNav("votebox")} />
       </div>
 
       {/* Financial + Next meeting row */}
-      <div className="anim-up-3" style={{ display: "grid", gridTemplateColumns: financial ? "1fr auto" : "1fr", gap: 12, marginBottom: 32, alignItems: "start" }}>
-        {financial && (
+      <div className="anim-up-3" style={{ display: "grid", gridTemplateColumns: displayFinancial ? "1fr auto" : "1fr", gap: 12, marginBottom: 32, alignItems: "start" }}>
+        {displayFinancial && (
           <Card style={{ padding: "24px 28px", borderRadius: "16px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Financial Snapshot</span>
@@ -201,11 +234,11 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 20 }}>
               {[
-                { label: "Outstanding", value: `$${(financial.totalOutstanding / 100).toLocaleString()}`, color: financial.totalOutstanding > 0 ? T.danger : T.success },
-                { label: "Delinquent",  value: String(financial.delinquentCount), color: financial.delinquentCount > 0 ? T.danger : T.success },
-                { label: "YTD Budget",  value: `$${(financial.budgetedYTD / 100).toLocaleString()}` },
-                { label: "YTD Actual",  value: `$${(financial.actualYTD / 100).toLocaleString()}` },
-                { label: "Variance",    value: `${financial.variance >= 0 ? "+" : "−"}$${(Math.abs(financial.variance) / 100).toLocaleString()}`, color: financial.variance >= 0 ? T.success : T.danger },
+                { label: "Outstanding", value: `$${(displayFinancial.totalOutstanding / 100).toLocaleString()}`, color: displayFinancial.totalOutstanding > 0 ? T.danger : T.success },
+                { label: "Delinquent",  value: String(displayFinancial.delinquentCount), color: displayFinancial.delinquentCount > 0 ? T.danger : T.success },
+                { label: "YTD Budget",  value: `$${(displayFinancial.budgetedYTD / 100).toLocaleString()}` },
+                { label: "YTD Actual",  value: `$${(displayFinancial.actualYTD / 100).toLocaleString()}` },
+                { label: "Variance",    value: `${displayFinancial.variance >= 0 ? "+" : "−"}$${(Math.abs(displayFinancial.variance) / 100).toLocaleString()}`, color: displayFinancial.variance >= 0 ? T.success : T.danger },
               ].map(s => (
                 <div key={s.label}>
                   <div style={{ fontFamily: T.fontSans, fontSize: 10, fontWeight: 500, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>{s.label}</div>
@@ -263,7 +296,7 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
             letterSpacing: "0.04em",
           }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest }} className="ai-ring" />
-            9 AI agents active
+            9 modules active
           </div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>

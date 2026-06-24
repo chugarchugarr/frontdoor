@@ -16,9 +16,9 @@ const CATEGORIES = [
 ];
 
 const TRUST_POINTS = [
-  { icon: "✓", text: "Permit-matched leads — homeowners with active Austin permits pulled from city data, matched to your trade" },
-  { icon: "✓", text: "These are warm leads. A homeowner with a roofing permit is already spending money — you just get there first" },
-  { icon: "✓", text: "Direct integration into GatePass WorkOrder routing for HOA-dispatched jobs" },
+  { icon: "✓", text: "HOA-backed access — get surfaced inside board-managed communities instead of competing for commodity leads" },
+  { icon: "✓", text: "Permit-matched demand — homeowners with active Austin permits pulled from city data, matched to your trade" },
+  { icon: "✓", text: "Direct integration into GatePass WorkOrder routing for HOA-dispatched and board-vouched jobs" },
   { icon: "✓", text: "Full refund if Austin doesn't launch within 6 months" },
 ];
 
@@ -108,11 +108,11 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
             letterSpacing: "-0.025em", lineHeight: 1.1,
             marginBottom: 16,
           }}>
-            Get first access<br />to HOA work orders.
+            Get first access<br />to HOA-controlled work.
           </h1>
 
           <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.75, marginBottom: 28, maxWidth: 380 }}>
-            GatePass cross-references Austin permit data with HOA homeowner records. Every contractor on the platform gets matched to homeowners who are actively spending on their trade — before anyone else even knows the job exists.
+            GatePass cross-references Austin permit data, HOA work orders, and board-approved vendor access. Every contractor on the platform gets a shot at homeowners who are actively spending on their trade — before the job becomes a commodity lead.
           </p>
 
           {/* Benefits list */}

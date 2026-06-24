@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="font-bold text-lg text-white tracking-tight">
             Gate<span style={{ color: '#B8883A' }}>Pass</span>
           </div>
-          <p className="text-xs text-white/30 mt-1.5">The HOA operating system. Built in Austin, TX.</p>
+          <p className="text-xs text-white/30 mt-1.5">HOA-owned operations and contractor access. Built in Austin, TX.</p>
         </div>
         <div className="flex flex-wrap items-center gap-8">
           <Link to="/demo" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Demo</Link>
