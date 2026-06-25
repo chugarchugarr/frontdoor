@@ -160,6 +160,8 @@ Backend marketplace primitives now support:
 
 Investor-safe core line: **Software wedge. Marketplace business. Transition-memory moat.**
 
+Public investor page rule: do **not** publish named investor-specific hooks or outreach targets on `/investors`. Named targeting belongs in private outreach/memory, not the public site.
+
 ## Transition Intelligence Graph
 
 New app surface: **Moat → Transition Graph**.
