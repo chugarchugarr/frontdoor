@@ -121,15 +121,15 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
   });
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
-      <div style={{ maxWidth: 1120, margin: "0 auto" }}>
+    <div className="gp-transition-shell" style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
+      <div className="gp-transition-inner" style={{ maxWidth: 1120, margin: "0 auto" }}>
         <SectionHeader
           title="Transition Graph"
           sub="The uncopiable layer: every PMC exit becomes structured board psychology, contract intelligence, transition proof, and compliance memory."
-          action={<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><Btn variant="outline" onClick={() => setCaseForm(!caseForm)}>PMC Intake</Btn><Btn variant="ghost" onClick={() => setStakeholderForm(!stakeholderForm)} disabled={!primaryCaseId}>Board Map</Btn><Btn variant="gold" onClick={() => setSignalForm(!signalForm)} disabled={!primaryCaseId}>Moat Signal</Btn><Btn onClick={() => exportProof.mutate()} disabled={!primaryCaseId || exportProof.isPending}>Export Proof Pack</Btn></div>}
+          action={<div className="gp-transition-actions" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><Btn variant="outline" onClick={() => setCaseForm(!caseForm)}>PMC Intake</Btn><Btn variant="ghost" onClick={() => setStakeholderForm(!stakeholderForm)} disabled={!primaryCaseId}>Board Map</Btn><Btn variant="gold" onClick={() => setSignalForm(!signalForm)} disabled={!primaryCaseId}>Moat Signal</Btn><Btn onClick={() => exportProof.mutate()} disabled={!primaryCaseId || exportProof.isPending}>Export Proof Pack</Btn></div>}
         />
 
-        <Card style={{ padding: "18px 22px", marginBottom: 18, background: "linear-gradient(135deg, #1C1C1A, #2A5240)", color: "white" }}>
+        <Card className="gp-transition-thesis" style={{ padding: "18px 22px", marginBottom: 18, background: "linear-gradient(135deg, #1C1C1A, #2A5240)", color: "white" }}>
           <div style={{ fontFamily: T.fontMono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.58)", marginBottom: 8 }}>Investor-safe moat thesis</div>
           <div style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 6 }}>Public HOA data is the wedge. Private PMC exit memory is the moat.</div>
           <div style={{ fontFamily: T.fontSans, fontSize: 13, lineHeight: 1.65, color: "rgba(255,255,255,0.78)" }}>Competitors can scrape HOA names and bad PMC reviews. They cannot instantly replicate private contract terms, board-level switching psychology, transition failure modes, compliance timelines, and before/after operating benchmarks from real HOA exits.</div>
@@ -139,7 +139,7 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
 
         {data && (
           <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 18 }}>
+            <div className="gp-transition-summary" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 18 }}>
               <SummaryCard label="Exit cases" value={data.summary.transitionCases} sub="Prospects converted into transition memory" />
               <SummaryCard label="Private signals" value={data.summary.privateSignals} sub="Not publicly scrapeable" />
               <SummaryCard label="Weighted moat" value={data.summary.weightedMoat} sub="Signal weight × private multiplier" />
@@ -192,7 +192,7 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
               </Card>
             )}
 
-            <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.4fr) minmax(300px, 0.8fr)", gap: 18, alignItems: "start" }}>
+            <div className="gp-transition-content-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.4fr) minmax(300px, 0.8fr)", gap: 18, alignItems: "start" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {data.cases.map((c) => <CaseCard key={c.id} transitionCase={c} />)}
                 {data.cases.length === 0 && <Card style={{ padding: 40, textAlign: "center", color: "var(--text-light)", fontFamily: T.fontSans }}>No transition cases yet. Open a PMC Exit Intake to start compounding the moat.</Card>}

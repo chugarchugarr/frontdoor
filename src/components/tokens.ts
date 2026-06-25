@@ -187,6 +187,94 @@ export const GLOBAL_CSS = `
     .gp-section-header { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; margin-bottom: 20px !important; }
     .gp-section-header h2 { font-size: 22px !important; line-height: 1.05 !important; }
     .gp-section-action { align-self: flex-start !important; }
+
+    .gp-demo-banner {
+      padding: 12px 16px !important;
+      gap: 10px !important;
+      align-items: flex-start !important;
+      flex-wrap: nowrap !important;
+    }
+    .gp-demo-banner > div:first-child {
+      min-width: 0 !important;
+      flex: 1 1 auto !important;
+      align-items: flex-start !important;
+    }
+    .gp-demo-banner span {
+      min-width: 0 !important;
+      white-space: normal !important;
+      line-height: 1.45 !important;
+    }
+    .gp-demo-shell {
+      display: block !important;
+      overflow: visible !important;
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+    .gp-demo-main {
+      width: 100% !important;
+      min-width: 0 !important;
+      overflow: visible !important;
+    }
+
+    .gp-transition-shell {
+      padding: 26px 16px 72px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+    .gp-transition-inner {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+    }
+    .gp-transition-actions {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      width: 100% !important;
+      gap: 10px !important;
+    }
+    .gp-transition-actions button {
+      width: 100% !important;
+      min-width: 0 !important;
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+      white-space: normal !important;
+      line-height: 1.15 !important;
+      min-height: 48px !important;
+    }
+    .gp-transition-thesis {
+      padding: 22px 18px !important;
+      border-radius: 18px !important;
+    }
+    .gp-transition-thesis div:nth-child(2) {
+      font-size: 20px !important;
+      line-height: 1.22 !important;
+    }
+    .gp-transition-thesis div:nth-child(3) {
+      font-size: 14px !important;
+      line-height: 1.65 !important;
+    }
+    .gp-transition-summary {
+      grid-template-columns: 1fr !important;
+    }
+    .gp-transition-content-grid {
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+    .gp-transition-content-grid > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+    .gp-transition-content-grid [style*="display: flex"] {
+      min-width: 0 !important;
+    }
+    .gp-transition-content-grid h3,
+    .gp-transition-content-grid strong,
+    .gp-transition-content-grid p {
+      overflow-wrap: anywhere !important;
+    }
   }
 
   /* Focus rings (keyboard accessibility) */

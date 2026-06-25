@@ -315,7 +315,7 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
       <style>{GLOBAL_CSS}</style>
 
       {/* Demo banner */}
-      <div style={{
+      <div className="gp-demo-banner" style={{
         background: "#FFFFFF",
         borderBottom: "1px solid #E5E5E5",
         padding: "10px 20px",
@@ -325,7 +325,7 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
         gap: 12,
         flexShrink: 0,
         position: "sticky",
-        top: 0,
+        top: "var(--guest-top-inset, 0px)",
         zIndex: 200,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -350,13 +350,13 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
       </div>
 
       {/* Full OS shell */}
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+      <div className="gp-demo-shell" style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         <Sidebar
           current={view}
           onNav={(v) => { if (v === "landing") onBack(); else setView(v); }}
           hoaName="Steiner Ranch HOA (Demo)"
         />
-        <main style={{ flex: 1, overflow: "auto", background: "var(--bg)" }}>
+        <main className="gp-demo-main" style={{ flex: 1, overflow: "auto", background: "var(--bg)" }}>
           {view === "dashboard"  && <Dashboard hoaId={demoHoaId} onNav={setView} />}
           {view === "homeowners" && <Homeowners hoaId={demoHoaId} />}
           {view === "payos"      && <PayOS hoaId={demoHoaId} />}
