@@ -54,6 +54,7 @@ GatePass is the board-owned operating layer and contractor-access gate for HOA c
 - **Frontend**: React + TypeScript + Vite (`src/App.tsx` + `src/components/`)
 - **Backend**: Hono + Prisma + SQLite (`src/api/procedures.ts`)
 - **Payments**: Stripe Checkout (test mode)
+- **Webhook ingress**: Adaptive public webhook procedure `stripeWebhook` plus Hono `/webhook/stripe` handler; both use Stripe signature verification when `STRIPE_WEBHOOK_SECRET` is set and `ProcessedStripeEvent` idempotency.
 - **Permit data**: Austin Open Data API
 
 ## Component Structure
@@ -79,6 +80,7 @@ src/
     TransitionMoat.tsx — PMC exit graph + board psychology + moat signal capture
     MarketplaceProofLoop.tsx — labeled marketplace transaction demo + production record dashboard
     InvestorProofDashboard.tsx — investor proof metrics / first-pilot checklist
+    AdminConsole.tsx — private operator console for the real pilot loop
 ```
 
 ## Backend Procedures (44 total)
@@ -129,7 +131,7 @@ src/
 **Permits**: `getAustinPermits`
 **Compliance Memory Layer (NEW)**: `logComplianceEvent` (internal), `getComplianceTimeline`, `exportCompliancePack`
 **Transition Intelligence Graph (NEW)**: `createTransitionCase`, `updateTransitionCase`, `addBoardStakeholder`, `addMoatSignal`, `getTransitionMoat`, `exportPilotProofPack`
-**Marketplace Proof Loop (NEW)**: `createContractorProfile`, `promoteWaitlistToContractorProfile`, `openContractorSlot`, `grantContractorCommunityAccess`, `createMarketplaceJobFromWorkOrder`, `createMarketplaceJobFromARC`, `submitContractorQuote`, `approveContractorQuote`, `recordMarketplaceTransaction`, `recordCommunityRevenueShare`, `getMarketplaceDashboard`, `getInvestorProofMetrics`
+**Marketplace Proof Loop (NEW)**: `createContractorProfile`, `promoteWaitlistToContractorProfile`, `openContractorSlot`, `grantContractorCommunityAccess`, `createMarketplaceJobFromWorkOrder`, `createMarketplaceJobFromARC`, `submitContractorQuote`, `approveContractorQuote`, `settleMarketplaceTransaction`, `recordMarketplaceTransaction` (back-compatible), `recordCompliance`, `refundMarketplaceTransaction`, `recordCommunityRevenueShare`, `getMarketplaceDashboard`, `getInvestorProofMetrics`, `exportMarketplaceProofPack`
 
 ## Atomic Marketplace Proof Loop
 
@@ -166,6 +168,35 @@ Public investor page rule: do **not** publish named investor-specific hooks or o
 
 CTO/GPT handoff brief: `/home/computer/storage/gatepass-marketplace-loop-cto-handoff-v1.md` / CDN `/cdn/gatepass-marketplace-loop-cto-handoff-v1.md`.
 
+## Marketplace Hardening Integration (Jun 24/25, 2026)
+
+Integrated the full CTO handoff hardening pack, adapted to the existing GatePass schema instead of blindly replacing field names that current UI already uses.
+
+What changed:
+
+- Added `ProcessedStripeEvent` ledger for Stripe webhook idempotency.
+- Added `MarketplaceTransaction.idempotencyKey` and `settledAt` for retry-safe settlement.
+- Added transaction-bound compliance memory via `ContractorComplianceRecord.transactionId`.
+- Added state-machine guards and central fee math in `src/api/marketplace.guards.ts`.
+- Hardened `submitContractorQuote`, `approveContractorQuote`, `settleMarketplaceTransaction`, `recordCompliance`, and refund handling.
+- Preserved existing HOA checkout and contractor founding-seat webhook behavior while adding marketplace-job settlement support.
+- Added operator console at `/admin` for the pilot loop: promote contractor → grant access → create job → quote → approve → settle → compliance → export proof pack.
+- Added proof-pack PDF generation via `exportMarketplaceProofPack()` RPC. The raw Hono route exists for local/server use, but the admin UI uses RPC because Adaptive app subdomains route frontend paths through the Vite shell.
+
+Money split remains centralized:
+
+- GatePass fee: 5.00% of gross.
+- HOA credit/share: 2.50% of gross.
+- Demo example remains $18,500 gross → $925 GatePass fee → $462.50 HOA credit.
+
+Verification completed after hardening:
+
+- `npm run check` ✅
+- `npm run lint` ✅
+- `npm run prod:build` ✅ (same existing Vite chunk-size warning)
+- RPC smoke tests: `health`, `getMarketplaceDashboard`, `getInvestorProofMetrics`, `exportMarketplaceProofPack` ✅
+- Browser smoke tests: `/marketplace-loop`, `/investor-proof`, `/admin` ✅
+
 ## Public Website Visual Restoration (Jun 24, 2026)
 
 The public site was restored toward the original FrontDoor/GatePass visual baseline after the marketplace proof-loop implementation drifted too far into generic investor-SaaS styling.
@@ -199,12 +230,13 @@ Strategic rule: do not claim the scraped lead database is proprietary. Claim the
 ## Next Steps
 
 - [ ] Find first HOA with 1-star PMC review → execute PMC displacement play (see GTM playbook)
-- [ ] Wire Stripe webhook → mark paid=true on HOA/Contractor records
+- [x] Wire Stripe webhook → mark paid=true on HOA/Contractor records + idempotent marketplace settlement
 - [ ] Add Resend email on HOA signup, violation notices, ARC decisions
 - [ ] Homeowner CSV import (bulk roster upload)
 - [ ] Register domain (gatepass.io)
 - [ ] Texas LLC filing ($300)
 - [ ] Move to production Stripe keys
+- [ ] Register the Stripe webhook URL in Stripe using Adaptive webhook endpoint format: `https://adaptive.ai/api/webhooks/app/WZY4YQNTzbCPkTT8/stripeWebhook` for platform-routed webhooks, or app route `/webhook/stripe` only if deployment routing confirms direct Hono routes are exposed in the target environment.
 - [ ] Confirm `joseph@gatepass.io` email before sending Touch 1 outreach templates
 
 ## Grant Applications

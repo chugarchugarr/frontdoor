@@ -30,6 +30,7 @@ import { ComplianceTimeline } from "./components/ComplianceTimeline";
 import { TransitionMoat } from "./components/TransitionMoat";
 import { MarketplaceProofLoop } from "./components/MarketplaceProofLoop";
 import { InvestorProofDashboard } from "./components/InvestorProofDashboard";
+import AdminConsole from "./components/AdminConsole";
 import { ErrorBoundary } from "./components/error-boundary";
 
 // ─── Success screens ──────────────────────────────────────────────────
@@ -570,6 +571,22 @@ function OSRoute() {
   );
 }
 
+function AdminRoute() {
+  const auth = useAuth({ required: false });
+  if (auth.status !== 'authenticated') {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <style>{GLOBAL_CSS}</style>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontFamily: T.fontSans, fontSize: 20, color: 'var(--text)', marginBottom: 16 }}>Sign in to access GatePass Admin</div>
+          <Btn onClick={() => auth.signIn()}>Sign In</Btn>
+        </div>
+      </div>
+    );
+  }
+  return <ErrorBoundary><AdminConsole /></ErrorBoundary>;
+}
+
 // ─── App ──────────────────────────────────────────────────────────────
 export default function App() {
   return (
@@ -583,6 +600,7 @@ export default function App() {
       <Route path="/marketplace-loop" element={<MarketplaceLoopRoute />} />
       <Route path="/investor-proof" element={<InvestorProofRoute />} />
       <Route path="/os" element={<OSRoute />} />
+      <Route path="/admin" element={<AdminRoute />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/investors" element={<Investors />} />
       <Route path="/privacy" element={<Privacy />} />

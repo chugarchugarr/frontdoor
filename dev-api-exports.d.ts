@@ -415,6 +415,11 @@ export declare function approveContractorQuote(input: {
 	marketplaceJobId: string;
 	scope: string;
 }>;
+export declare function settleMarketplaceTransaction(input: {
+	quoteId: string;
+	idempotencyKey: string;
+	stripePaymentIntentId?: string;
+}): Promise<unknown>;
 export declare function recordMarketplaceTransaction(input: {
 	jobId: string;
 	quoteId?: string;
@@ -424,20 +429,15 @@ export declare function recordMarketplaceTransaction(input: {
 	hoaShareCents: number;
 	stripePaymentIntentId?: string;
 	status?: string;
-}): Promise<{
-	id: string;
-	createdAt: Date;
-	hoaId: string;
-	updatedAt: Date;
-	status: string;
-	contractorId: string;
-	jobId: string;
-	quoteId: string | null;
-	grossAmountCents: number;
-	gatepassFeeCents: number;
-	hoaShareCents: number;
-	stripePaymentIntentId: string | null;
-}>;
+	idempotencyKey?: string;
+}): Promise<unknown>;
+export declare function recordCompliance(input: {
+	transactionId: string;
+	workSummary: string;
+}): Promise<unknown>;
+export declare function refundMarketplaceTransaction(input: {
+	stripePaymentIntentId: string;
+}): Promise<unknown>;
 export declare function recordCommunityRevenueShare(input: {
 	hoaId: string;
 	transactionId?: string;
@@ -566,8 +566,10 @@ export declare function getMarketplaceDashboard(input: {
 		createdAt: Date;
 		hoaId: string;
 		status: string;
+		completedAt: Date | null;
 		contractorId: string;
 		marketplaceJobId: string | null;
+		transactionId: string | null;
 		complianceEventId: string | null;
 		summary: string;
 	}[];
@@ -614,6 +616,14 @@ export declare function getInvestorProofMetrics(input: {
 		note: string;
 	}[];
 	caution: string[];
+}>;
+export declare function exportMarketplaceProofPack(input?: {
+	hoaId?: string;
+	demo?: boolean;
+}): Promise<{
+	filename: string;
+	mimeType: string;
+	base64: string;
 }>;
 export declare function getAustinPermits(zip?: string): Promise<{
 	id: string;
@@ -1601,6 +1611,7 @@ export declare function stripeWebhook(input: {
 	headers: Record<string, string | string[]>;
 }): Promise<{
 	received: boolean;
+	duplicate?: boolean;
 }>;
 export declare function bulkImportHomeowners(input: {
 	hoaId: string;

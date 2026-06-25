@@ -235,11 +235,14 @@ model MarketplaceTransaction {
   gatepassFeeCents      Int
   hoaShareCents         Int
   stripePaymentIntentId String?
-  status                String   @default("recorded") // pending | recorded | paid | refunded | failed
+  idempotencyKey        String?  @unique
+  status                String   @default("recorded") // pending | recorded | settled | paid | refunded | failed
+  settledAt             DateTime?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
   revenueShares         CommunityRevenueShare[]
+  complianceRecords     ContractorComplianceRecord[]
 
   @@index([hoaId, status])
   @@index([contractorId])
@@ -264,6 +267,8 @@ model CommunityRevenueShare {
 
 model ContractorComplianceRecord {
   id                    String   @id @default(cuid())
+  transactionId         String?
+  transaction           MarketplaceTransaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
   contractorId          String
   contractor            ContractorProfile @relation(fields: [contractorId], references: [id], onDelete: Cascade)
   hoaId                 String
@@ -273,10 +278,18 @@ model ContractorComplianceRecord {
   complianceEventId     String?
   summary               String
   status                String   @default("generated") // generated | reviewed | exported
+  completedAt           DateTime?
   createdAt             DateTime @default(now())
 
+  @@unique([transactionId])
   @@index([hoaId, contractorId])
   @@index([marketplaceJobId])
+}
+
+model ProcessedStripeEvent {
+  id          String   @id
+  type        String
+  processedAt DateTime @default(now())
 }
 
 // ─── PayOS: Dues & Financials ─────────────────────────────────────────

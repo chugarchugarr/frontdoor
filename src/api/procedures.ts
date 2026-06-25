@@ -4,6 +4,7 @@ import Stripe from "stripe";
 import { Resend } from "resend";
 import { queue } from "@/api/queue";
 import { getAuth } from "@adaptive-ai/sdk/server";
+import { assertJobTransition, assertQuoteTransition, computeSplit } from "@/api/marketplace.guards";
 
 const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
 
@@ -392,7 +393,11 @@ export async function openContractorSlot(input: { hoaId: string; trade: string; 
 }
 
 export async function grantContractorCommunityAccess(input: { contractorId: string; hoaId: string; trade: string; status?: string; accessType?: string }) {
-  return db.contractorCommunityAccess.create({ data: { contractorId: input.contractorId, hoaId: input.hoaId, trade: input.trade, status: input.status ?? "active", accessType: input.accessType ?? "founding_slot", activeFrom: new Date() } });
+  return db.contractorCommunityAccess.upsert({
+    where: { contractorId_hoaId_trade: { contractorId: input.contractorId, hoaId: input.hoaId, trade: input.trade } },
+    update: { status: input.status ?? "active", accessType: input.accessType ?? "founding_slot", activeFrom: new Date(), activeUntil: null },
+    create: { contractorId: input.contractorId, hoaId: input.hoaId, trade: input.trade, status: input.status ?? "active", accessType: input.accessType ?? "founding_slot", activeFrom: new Date() },
+  });
 }
 
 export async function createMarketplaceJobFromWorkOrder(input: { workOrderId: string; title?: string }) {
@@ -412,23 +417,96 @@ export async function createMarketplaceJobFromARC(input: { arcRequestId: string;
 }
 
 export async function submitContractorQuote(input: { marketplaceJobId: string; contractorId: string; amountCents: number; scope: string }) {
-  const quote = await db.contractorQuote.create({ data: { marketplaceJobId: input.marketplaceJobId, contractorId: input.contractorId, amountCents: input.amountCents, scope: input.scope } });
-  await db.marketplaceJob.update({ where: { id: input.marketplaceJobId }, data: { status: "quoted" } });
-  return quote;
+  return db.$transaction(async (tx) => {
+    const job = await tx.marketplaceJob.findUniqueOrThrow({ where: { id: input.marketplaceJobId } });
+    const access = await tx.contractorCommunityAccess.findFirst({
+      where: { contractorId: input.contractorId, hoaId: job.hoaId, trade: job.category, status: "active" },
+    });
+    if (!access) throw new Error("Contractor lacks access to this community/trade");
+    const quote = await tx.contractorQuote.create({ data: { marketplaceJobId: input.marketplaceJobId, contractorId: input.contractorId, amountCents: input.amountCents, scope: input.scope, status: "submitted" } });
+    if (job.status === "open") {
+      assertJobTransition(job.status, "quoted");
+      await tx.marketplaceJob.update({ where: { id: input.marketplaceJobId }, data: { status: "quoted" } });
+    }
+    return quote;
+  });
 }
 
 export async function approveContractorQuote(input: { quoteId: string }) {
-  const quote = await db.contractorQuote.update({ where: { id: input.quoteId }, data: { status: "approved" }, include: { marketplaceJob: true } });
-  await db.marketplaceJob.update({ where: { id: quote.marketplaceJobId }, data: { status: "approved" } });
-  return quote;
+  return db.$transaction(async (tx) => {
+    const quote = await tx.contractorQuote.findUniqueOrThrow({ where: { id: input.quoteId }, include: { marketplaceJob: true } });
+    assertQuoteTransition(quote.status, "approved");
+    assertJobTransition(quote.marketplaceJob.status, "approved");
+    const approved = await tx.contractorQuote.update({ where: { id: input.quoteId }, data: { status: "approved" }, include: { marketplaceJob: true } });
+    await tx.contractorQuote.updateMany({ where: { marketplaceJobId: quote.marketplaceJobId, id: { not: quote.id }, status: "submitted" }, data: { status: "declined" } });
+    await tx.marketplaceJob.update({ where: { id: quote.marketplaceJobId }, data: { status: "approved" } });
+    return approved;
+  });
 }
 
-export async function recordMarketplaceTransaction(input: { jobId: string; quoteId?: string; contractorId: string; grossAmountCents: number; gatepassFeeCents: number; hoaShareCents: number; stripePaymentIntentId?: string; status?: string }) {
+export async function settleMarketplaceTransaction(input: { quoteId: string; idempotencyKey: string; stripePaymentIntentId?: string }): Promise<unknown> {
+  return db.$transaction(async (tx) => {
+    const existing = await tx.marketplaceTransaction.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
+    if (existing) return existing;
+    const quote = await tx.contractorQuote.findUniqueOrThrow({ where: { id: input.quoteId }, include: { marketplaceJob: true } });
+    if (quote.status !== "approved") throw new Error("Quote must be approved before settlement");
+    const split = computeSplit(quote.amountCents);
+    const transaction = await tx.marketplaceTransaction.create({
+      data: {
+        jobId: quote.marketplaceJobId,
+        quoteId: quote.id,
+        hoaId: quote.marketplaceJob.hoaId,
+        contractorId: quote.contractorId,
+        grossAmountCents: split.grossCents,
+        gatepassFeeCents: split.gatepassFeeCents,
+        hoaShareCents: split.hoaShareCents,
+        stripePaymentIntentId: input.stripePaymentIntentId,
+        idempotencyKey: input.idempotencyKey,
+        status: "settled",
+        settledAt: new Date(),
+      },
+    });
+    await tx.marketplaceJob.update({ where: { id: quote.marketplaceJobId }, data: { status: "in_progress" } });
+    return transaction;
+  });
+}
+
+export async function recordMarketplaceTransaction(input: { jobId: string; quoteId?: string; contractorId: string; grossAmountCents: number; gatepassFeeCents: number; hoaShareCents: number; stripePaymentIntentId?: string; status?: string; idempotencyKey?: string }): Promise<unknown> {
+  if (input.quoteId && input.idempotencyKey) {
+    return settleMarketplaceTransaction({ quoteId: input.quoteId, idempotencyKey: input.idempotencyKey, stripePaymentIntentId: input.stripePaymentIntentId });
+  }
   const job = await db.marketplaceJob.findUnique({ where: { id: input.jobId } });
   if (!job) throw new Error("Marketplace job not found");
-  const tx = await db.marketplaceTransaction.create({ data: { jobId: input.jobId, quoteId: input.quoteId, hoaId: job.hoaId, contractorId: input.contractorId, grossAmountCents: input.grossAmountCents, gatepassFeeCents: input.gatepassFeeCents, hoaShareCents: input.hoaShareCents, stripePaymentIntentId: input.stripePaymentIntentId, status: input.status ?? "recorded" } });
-  await db.marketplaceJob.update({ where: { id: input.jobId }, data: { status: "completed" } });
+  const tx = await db.marketplaceTransaction.create({ data: { jobId: input.jobId, quoteId: input.quoteId, hoaId: job.hoaId, contractorId: input.contractorId, grossAmountCents: input.grossAmountCents, gatepassFeeCents: input.gatepassFeeCents, hoaShareCents: input.hoaShareCents, stripePaymentIntentId: input.stripePaymentIntentId, idempotencyKey: input.idempotencyKey, status: input.status ?? "recorded", settledAt: input.status === "settled" ? new Date() : undefined } });
+  await db.marketplaceJob.update({ where: { id: input.jobId }, data: { status: input.status === "settled" ? "in_progress" : "completed" } });
   return tx;
+}
+
+export async function recordCompliance(input: { transactionId: string; workSummary: string }): Promise<unknown> {
+  return db.$transaction(async (tx) => {
+    const transaction = await tx.marketplaceTransaction.findUniqueOrThrow({ where: { id: input.transactionId }, include: { job: true } });
+    if (transaction.status !== "settled" && transaction.status !== "paid" && transaction.status !== "recorded") {
+      throw new Error("Cannot write compliance memory for an unsettled transaction");
+    }
+    if (transaction.job.status === "in_progress") assertJobTransition(transaction.job.status, "completed");
+    const record = await tx.contractorComplianceRecord.create({
+      data: {
+        transactionId: transaction.id,
+        contractorId: transaction.contractorId,
+        hoaId: transaction.hoaId,
+        marketplaceJobId: transaction.jobId,
+        summary: input.workSummary,
+        status: "generated",
+        completedAt: new Date(),
+      },
+    });
+    await tx.marketplaceJob.update({ where: { id: transaction.jobId }, data: { status: "completed" } });
+    return record;
+  });
+}
+
+export async function refundMarketplaceTransaction(input: { stripePaymentIntentId: string }): Promise<unknown> {
+  return db.marketplaceTransaction.updateMany({ where: { stripePaymentIntentId: input.stripePaymentIntentId }, data: { status: "refunded" } });
 }
 
 export async function recordCommunityRevenueShare(input: { hoaId: string; transactionId?: string; amountCents: number; type?: string; status?: string; appliedTo?: string; memo?: string }) {
@@ -503,6 +581,19 @@ export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boo
     ],
     proofLinks: demoInvestorProofMetrics().proofLinks,
     caution: ["Production counts only. Demo data is labeled separately.", "Use Austin HOA pipeline until signed/paid commitments exist.", "Transition support remains case-by-case and board-safe."],
+  };
+}
+
+export async function exportMarketplaceProofPack(input?: { hoaId?: string; demo?: boolean }): Promise<{ filename: string; mimeType: string; base64: string }> {
+  if (input?.demo && process.env.GATEPASS_ALLOW_DEMO !== "true" && env.VITE_NODE_ENV === "production") {
+    throw new Error("Demo proof pack disabled in production");
+  }
+  const { buildProofPack } = await import("@/api/proofPack");
+  const pdf = await buildProofPack({ live: !input?.demo, hoaId: input?.hoaId });
+  return {
+    filename: `gatepass-proof-pack${input?.demo ? "-demo" : ""}.pdf`,
+    mimeType: "application/pdf",
+    base64: pdf.toString("base64"),
   };
 }
 
@@ -1679,56 +1770,57 @@ export async function sendContractorWelcomeEmail(contractorId: string) {
 
 // ─── Stripe Webhook Handler ───────────────────────────────────────────
 
-export async function stripeWebhook(input: { body: string; headers: Record<string, string | string[]> }) {
+export async function stripeWebhook(input: { body: string; headers: Record<string, string | string[]> }): Promise<{ received: boolean; duplicate?: boolean }> {
   const stripe = getStripe();
-  const sig = input.headers["stripe-signature"];
-  const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
+  const sig = input.headers["stripe-signature"] ?? input.headers["Stripe-Signature"];
 
   let event: Stripe.Event;
-
-  if (webhookSecret && sig) {
-    try {
-      event = stripe.webhooks.constructEvent(input.body, Array.isArray(sig) ? sig[0] : sig, webhookSecret);
-    } catch (err) {
-      console.error("[stripe-webhook] Signature verification failed:", err);
-      throw new Error("Invalid webhook signature");
+  try {
+    if (env.STRIPE_WEBHOOK_SECRET && sig) {
+      event = stripe.webhooks.constructEvent(input.body, Array.isArray(sig) ? sig[0] : sig, env.STRIPE_WEBHOOK_SECRET);
+    } else if (env.VITE_NODE_ENV !== "production") {
+      event = JSON.parse(input.body) as Stripe.Event;
+    } else {
+      throw new Error("Stripe webhook secret not configured");
     }
-  } else {
-    // Dev mode: no webhook secret configured, parse raw body
-    event = JSON.parse(input.body) as Stripe.Event;
+  } catch (err) {
+    console.error("[stripe-webhook] Signature verification failed:", err);
+    throw new Error("Invalid webhook signature");
   }
+
+  const seen = await db.processedStripeEvent.findUnique({ where: { id: event.id } });
+  if (seen) return { received: true, duplicate: true };
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const meta = session.metadata ?? {};
 
     if (meta.hoaId) {
-      await db.hOA.update({
-        where: { id: meta.hoaId },
-        data: {
-          paid: true,
-          paidAt: new Date(),
-          amountCents: session.amount_total ?? 0,
-        },
-      });
-      // Send welcome email (non-blocking)
-      sendHOAWelcomeEmail(meta.hoaId).catch((e) =>
-        console.error("[stripe-webhook] HOA welcome email failed:", e)
-      );
+      await db.hOA.update({ where: { id: meta.hoaId }, data: { paid: true, paidAt: new Date(), amountCents: session.amount_total ?? 0 } });
+      sendHOAWelcomeEmail(meta.hoaId).catch((e) => console.error("[stripe-webhook] HOA welcome email failed:", e));
     }
 
     if (meta.contractorId) {
-      await db.contractorWaitlist.update({
-        where: { id: meta.contractorId },
-        data: { paid: true },
+      await db.contractorWaitlist.update({ where: { id: meta.contractorId }, data: { paid: true, paidAt: new Date() } });
+      sendContractorWelcomeEmail(meta.contractorId).catch((e) => console.error("[stripe-webhook] Contractor welcome email failed:", e));
+    }
+
+    if (meta.kind === "marketplace_job" && meta.quoteId) {
+      await settleMarketplaceTransaction({
+        quoteId: meta.quoteId,
+        idempotencyKey: event.id,
+        stripePaymentIntentId: typeof session.payment_intent === "string" ? session.payment_intent : undefined,
       });
-      // Send contractor welcome email (non-blocking)
-      sendContractorWelcomeEmail(meta.contractorId).catch((e) =>
-        console.error("[stripe-webhook] Contractor welcome email failed:", e)
-      );
     }
   }
 
+  if (event.type === "charge.refunded") {
+    const charge = event.data.object as Stripe.Charge;
+    const paymentRef = typeof charge.payment_intent === "string" ? charge.payment_intent : undefined;
+    if (paymentRef) await refundMarketplaceTransaction({ stripePaymentIntentId: paymentRef });
+  }
+
+  await db.processedStripeEvent.create({ data: { id: event.id, type: event.type } });
   return { received: true };
 }
 

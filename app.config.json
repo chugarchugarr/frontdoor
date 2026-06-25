@@ -3,7 +3,10 @@
   "events": [],
   "webhooks": [
     {
-      "handler": "stripeWebhook"
+      "handler": "stripeWebhook",
+      "slug": "stripe-webhook",
+      "name": "Stripe Webhook",
+      "description": "Receives Stripe checkout and refund events for GatePass payments and marketplace settlement. Signature verification is handled in the app."
     }
   ]
 }
