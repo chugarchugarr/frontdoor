@@ -61,14 +61,14 @@ export default function HeroSection() {
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
           <div className="flex items-center gap-3 mb-8">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-white/50 tracking-[0.2em] uppercase">HOA-controlled marketplace for home improvement access</span>
+            <span className="text-xs text-white/50 tracking-[0.2em] uppercase">Austin HOA operating system · controlled contractor access</span>
           </div>
-          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[6.5rem] font-bold text-white leading-none tracking-tight max-w-4xl">
+          <h1 className="gp-display text-7xl sm:text-8xl md:text-9xl lg:text-[8.5rem] text-white leading-[0.82] max-w-5xl">
             Your HOA<br />
             <span style={{ color: '#B8883A' }}>controls the gate.</span>
           </h1>
-          <p className="text-2xl sm:text-3xl font-semibold text-white/70 mt-4 max-w-2xl tracking-tight">
-            GatePass turns it into an operating layer and contractor market.
+          <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-white/75 mt-7 max-w-3xl tracking-tight">
+            Software wedge. Marketplace business. Transition-memory moat.
           </p>
           <div className="mt-4 flex items-center gap-2">
             <span className="text-xs text-white/30 tracking-[0.15em] uppercase">Built for</span>
@@ -86,12 +86,12 @@ export default function HeroSection() {
               </motion.span>
             </AnimatePresence>
           </div>
-          <p className="text-lg md:text-xl text-white/50 mt-8 max-w-lg leading-relaxed font-light">
-            Boards use GatePass to exit bad management, own their compliance records, and open verified contractor access through a board-safe system.
+          <p className="text-base md:text-lg text-white/52 mt-8 max-w-xl leading-relaxed font-light">
+            GatePass helps boards exit bad management, keep their records, and turn the approvals they already control into verified contractor access. No hype. Just the operating layer.
           </p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-10">
             <Link to="/onboard" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
-              Start the HOA transition <ArrowRight className="w-4 h-4" />
+              Map the HOA transition <ArrowRight className="w-4 h-4" />
             </Link>
             <Link to="/demo" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full">
               View live demo
@@ -102,17 +102,17 @@ export default function HeroSection() {
           </div>
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 1 }}
-          className="mt-16 pt-8 border-t border-white/10"
+          className="mt-16 pt-8 border-t border-white/10 max-w-5xl"
         >
           <div className="flex flex-wrap items-center gap-10">
-            {[['$20', 'per unit / year'], ['9', 'board operating modules'], ['25', 'founding contractor seats'], ['Austin', 'pilot market']].map(([val, label]) => (
+            {[['$20', 'per unit / year'], ['9', 'board modules'], ['25', 'founding contractor seats'], ['Austin', 'pilot market']].map(([val, label]) => (
               <div key={label}>
                 <div className="text-2xl font-bold text-white">{val}</div>
                 <div className="text-xs text-white/40 mt-0.5 tracking-wide uppercase">{label}</div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-white/25 mt-6 tracking-wide">Start with board-owned operations. Open Austin contractor access as communities move through transition review.</p>
+          <p className="text-xs text-white/25 mt-6 tracking-wide">Start with board-owned operations. Open contractor access only where the community has a clean permission path.</p>
         </motion.div>
       </div>
     </section>

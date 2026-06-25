@@ -48,8 +48,8 @@ export default function ComplianceMemorySection() {
 
           {/* Left: headline + pillars */}
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#1C1C1A] leading-tight">
-              The only HOA platform<br />
+            <h2 className="gp-display text-5xl md:text-6xl text-[#1C1C1A] leading-[0.95]">
+              A board-owned platform<br />
               <span className="text-[#2A5240]">that remembers everything.</span>
             </h2>
             <p className="text-lg text-[#1C1C1A]/50 mt-6 max-w-md leading-relaxed">
@@ -78,17 +78,17 @@ export default function ComplianceMemorySection() {
           <motion.div
             initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.7 }}
-            className="rounded-2xl overflow-hidden border border-[#2A5240]/12 bg-white shadow-sm"
+            className="rounded-[28px] overflow-hidden border border-[#2A5240]/12 bg-white shadow-sm"
           >
             {/* Header bar */}
             <div className="px-6 py-4 border-b border-[#2A5240]/10 flex items-center justify-between">
               <div>
-                <p className="text-xs text-[#1C1C1A]/40 tracking-[0.15em] uppercase">Compliance Timeline</p>
-                <p className="text-sm font-semibold text-[#1C1C1A] mt-0.5">Steiner Ranch HOA</p>
+                <p className="text-xs text-[#1C1C1A]/40 tracking-[0.15em] uppercase">Demo Data · Compliance Timeline</p>
+                <p className="text-sm font-semibold text-[#1C1C1A] mt-0.5">Demo HOA transition file</p>
               </div>
               <div className="flex items-center gap-2 text-xs text-[#2A5240] bg-[#2A5240]/8 px-3 py-1.5 rounded-full font-medium">
                 <Shield className="w-3 h-3" />
-                247 events logged
+                247 sample events
               </div>
             </div>
 
@@ -120,7 +120,7 @@ export default function ComplianceMemorySection() {
 
             {/* Footer */}
             <div className="px-6 py-4 bg-[#f4f1ec]/50 border-t border-[#2A5240]/8 flex items-center justify-between">
-              <span className="text-xs text-[#1C1C1A]/40">Showing last 5 of 247 events</span>
+              <span className="text-xs text-[#1C1C1A]/40">Showing last 5 demo events</span>
               <button className="text-xs font-medium text-[#2A5240] flex items-center gap-1.5 hover:opacity-70 transition-opacity">
                 <Download className="w-3 h-3" /> Export compliance pack
               </button>
@@ -133,7 +133,7 @@ export default function ComplianceMemorySection() {
         <motion.div
           initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.6 }}
-          className="mt-20 p-8 bg-[#2A5240] rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+          className="mt-20 p-8 bg-[#2A5240] rounded-[28px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
         >
           <div>
             <p className="text-sm font-semibold text-white">Switching from a management company?</p>

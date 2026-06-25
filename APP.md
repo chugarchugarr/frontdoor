@@ -162,6 +162,19 @@ Investor-safe core line: **Software wedge. Marketplace business. Transition-memo
 
 Public investor page rule: do **not** publish named investor-specific hooks or outreach targets on `/investors`. Named targeting belongs in private outreach/memory, not the public site.
 
+## Public Website Visual Restoration (Jun 24, 2026)
+
+The public site was restored toward the original FrontDoor/GatePass visual baseline after the marketplace proof-loop implementation drifted too far into generic investor-SaaS styling.
+
+Current public design direction:
+
+- Preserve the original dark Austin photo hero, forest-black surfaces, brass/gold accent, and blunt GatePass voice.
+- Add an elegant editorial layer inspired by Joseph's recent field-guide artifact: sparse, direct, high-contrast, and restrained.
+- Keep the core public line intact: **Software wedge. Marketplace business. Transition-memory moat.**
+- Keep demo/proof data explicitly labeled as demo/sample data on public-facing surfaces.
+- Avoid named investor hooks on public pages.
+- Avoid fake traction, universal buyout promises, or overbroad HOA authority claims.
+
 ## Transition Intelligence Graph
 
 New app surface: **Moat → Transition Graph**.
@@ -202,4 +215,4 @@ Strategic rule: do not claim the scraped lead database is proprietary. Claim the
 ## Design System
 
 - Cream: `#F4F1EC` | Forest: `#2A5240` | Gold: `#B8883A` | Charcoal: `#1C1C1A`
-- Fonts: Playfair Display (headings) + DM Sans (body) + DM Mono (labels)
+- Fonts: Instrument Serif (`gp-display`) for elegant editorial headlines + Geist for body/UI + mono labels for proof/ledger details

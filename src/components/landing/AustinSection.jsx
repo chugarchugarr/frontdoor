@@ -21,7 +21,7 @@ export default function AustinSection() {
         </div>
         <div className="flex flex-col justify-center px-10 md:px-16 py-20 bg-[#0d1a12]">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">We live here too.</h2>
+            <h2 className="gp-display text-5xl md:text-6xl text-white leading-[0.95]">We live here too.</h2>
 
             <p className="text-base text-white/40 mt-8 leading-relaxed max-w-md">
               Spent years in field sales watching HOA boards get crushed — overcharged by management companies, trapped by 12-month contracts, and cut out of the contractor economy moving through their own neighborhoods. GatePass is the platform I wish existed. We know what Travis County requires. We know Hill Country deed restrictions. We built this for communities like ours.
@@ -34,7 +34,7 @@ export default function AustinSection() {
             </div>
 
             {/* Data moat story */}
-            <div className="mt-8 p-5 bg-white/5 border border-white/10 rounded-xl">
+            <div className="mt-8 p-5 bg-white/5 border border-white/10 rounded-[24px]">
               <p className="text-xs text-[#B8883A] tracking-[0.15em] uppercase font-semibold mb-2">The platform gets smarter over time</p>
               <p className="text-sm text-white/50 leading-relaxed">
                 Every community that joins feeds GatePass data on transition paths, violation patterns, contractor performance, payment behavior, and ARC approval history. More communities create better benchmarks, stronger contractor access, and a private operating memory no management company can scrape.

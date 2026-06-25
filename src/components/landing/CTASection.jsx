@@ -12,7 +12,7 @@ export default function CTASection() {
       <div className="relative z-10 max-w-[900px] mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
           <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase mb-6 block">Own the operating layer</span>
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+          <h2 className="gp-display text-6xl md:text-7xl lg:text-8xl text-white leading-[0.88]">
             Turn board control<br /><span style={{ color: '#B8883A' }}>into community leverage.</span>
           </h2>
           <p className="text-lg text-white/40 mt-8 max-w-md mx-auto leading-relaxed">

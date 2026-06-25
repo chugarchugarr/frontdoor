@@ -14,16 +14,16 @@ const loop = [
 
 export default function AtomicLoopSection() {
   return (
-    <section className="bg-[#f4f1ec] py-28 px-8">
+    <section className="bg-[#f4f1ec] py-28 px-8 border-y border-[#2A5240]/10">
       <div className="max-w-[1300px] mx-auto">
         <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-14 items-start">
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65 }}>
             <span className="text-xs text-[#2A5240]/45 tracking-[0.25em] uppercase">How the marketplace works</span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1C1C1A] mt-6 leading-tight">
-              One loop turns HOA pain into contractor revenue.
+            <h2 className="gp-display text-5xl md:text-6xl lg:text-7xl text-[#1C1C1A] mt-6 leading-[0.92]">
+              One clean loop.
             </h2>
             <p className="text-lg text-[#1C1C1A]/55 mt-6 leading-relaxed">
-              Software is the wedge. Marketplace is the business. Transition memory is the moat.
+              HOA pain becomes transition review. Transition review becomes trusted access. Trusted access becomes contractor revenue and permanent community memory.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-9">
               <Link to="/demo?view=marketplace" className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#2A5240] hover:bg-[#214231] px-6 py-3.5 rounded-full transition-colors">
@@ -36,7 +36,7 @@ export default function AtomicLoopSection() {
           </motion.div>
           <div className="grid sm:grid-cols-2 gap-3">
             {loop.map(([title, body], i) => (
-              <motion.div key={title} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.45 }} className="bg-white border border-[#2A5240]/10 rounded-2xl p-6">
+              <motion.div key={title} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.45 }} className="bg-white border border-[#2A5240]/10 rounded-[24px] p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <span className="font-mono text-xs text-[#2A5240]/35">0{i + 1}</span>
                   <span className="w-2 h-2 rounded-full bg-[#B8883A]" />

@@ -32,7 +32,7 @@ const steps = [
 
 export default function MarketplaceSection() {
   return (
-    <section className="bg-[#0d1a12] py-32 px-8 border-y border-white/5">
+    <section className="bg-[#0b150f] py-32 px-8 border-y border-white/5">
       <div className="max-w-[1400px] mx-auto">
         <div className="flex items-start gap-4 mb-16">
           <span className="text-xs text-white/30 tracking-[0.25em] uppercase mt-1">Marketplace</span>
@@ -48,12 +48,12 @@ export default function MarketplaceSection() {
               transition={{ duration: 0.65 }}
             >
               <p className="text-xs text-[#B8883A] tracking-[0.25em] uppercase mb-6">The HOA is the gate</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                The software gets us in.<br />
-                <span style={{ color: '#B8883A' }}>The contractor market makes it compound.</span>
+              <h2 className="gp-display text-5xl md:text-6xl lg:text-7xl text-white leading-[0.92]">
+                Software earns trust.<br />
+                <span style={{ color: '#B8883A' }}>Access creates the market.</span>
               </h2>
-              <p className="text-lg text-white/45 mt-8 max-w-lg leading-relaxed">
-                GatePass is not another vendor directory. HOAs already govern approvals, exterior standards, common-area vendors, and community-vouched access paths. GatePass turns those approval and trust workflows into a digital contractor-access layer.
+              <p className="text-base md:text-lg text-white/45 mt-8 max-w-lg leading-relaxed">
+                GatePass is not a vendor directory. HOAs already govern approvals, exterior standards, common-area vendors, and community-vouched access paths. We make that permission layer operational.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Link to="/demo?view=transition" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-6 py-3.5 rounded-full transition-colors">
@@ -69,7 +69,7 @@ export default function MarketplaceSection() {
             </motion.div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-px bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
+          <div className="grid sm:grid-cols-2 gap-px bg-white/5 border border-white/5 rounded-[28px] overflow-hidden">
             {steps.map((step, i) => {
               const Icon = step.icon;
               return (
@@ -79,7 +79,7 @@ export default function MarketplaceSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.5 }}
-                  className="bg-[#0a130d] p-7 md:p-8"
+                  className="bg-[#0a130d] p-7 md:p-8 hover:bg-[#101d14] transition-colors"
                 >
                   <div className="flex items-center justify-between mb-8">
                     <span className="text-xs text-white/20 font-mono tracking-widest">{step.label}</span>
