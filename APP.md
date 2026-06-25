@@ -197,6 +197,12 @@ Verification completed after hardening:
 - RPC smoke tests: `health`, `getMarketplaceDashboard`, `getInvestorProofMetrics`, `exportMarketplaceProofPack` ✅
 - Browser smoke tests: `/marketplace-loop`, `/investor-proof`, `/admin` ✅
 
+Mobile follow-up:
+
+- Fixed mobile stacking/overlap risk on `/marketplace-loop`, `/investor-proof`, and `/admin`.
+- Added responsive one-column grids below mobile breakpoints, safer card header wrapping, full-width mobile actions, 16px admin inputs, and horizontal-scroll step navigation for the operator console.
+- Verified at 390px viewport: no horizontal overflow on `/marketplace-loop`, `/investor-proof`, or `/admin`.
+
 ## Public Website Visual Restoration (Jun 24, 2026)
 
 The public site was restored toward the original FrontDoor/GatePass visual baseline after the marketplace proof-loop implementation drifted too far into generic investor-SaaS styling.

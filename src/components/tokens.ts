@@ -184,6 +184,9 @@ export const GLOBAL_CSS = `
     .gp-hide-mobile { display: none !important; }
     .gp-full-mobile { width: 100% !important; max-width: 100% !important; }
     .gp-pad-mobile { padding-left: 16px !important; padding-right: 16px !important; }
+    .gp-section-header { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; margin-bottom: 20px !important; }
+    .gp-section-header h2 { font-size: 22px !important; line-height: 1.05 !important; }
+    .gp-section-action { align-self: flex-start !important; }
   }
 
   /* Focus rings (keyboard accessibility) */

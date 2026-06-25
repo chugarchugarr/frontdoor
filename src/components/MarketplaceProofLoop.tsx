@@ -26,7 +26,7 @@ function LoopNode({ index, label, detail, value }: { index: number; label: strin
         {index + 1}
       </div>
       <Card style={{ padding: "14px 16px" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
+        <div className="gp-loop-node-head" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
           <div>
             <div style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>{label}</div>
             <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", marginTop: 4, lineHeight: 1.45 }}>{detail}</div>
@@ -47,8 +47,22 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
   const dashboard = data;
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
-      <style>{GLOBAL_CSS}</style>
+    <div className="gp-proof-shell" style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
+      <style>{GLOBAL_CSS}{`
+        @media (max-width: 720px) {
+          .gp-proof-shell { padding: 16px !important; }
+          .gp-proof-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+          .gp-proof-main { grid-template-columns: 1fr !important; gap: 14px !important; }
+          .gp-card-title-row { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
+          .gp-card-title-row button { width: 100% !important; min-height: 44px !important; justify-content: center !important; }
+          .gp-money-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .gp-loop-node-head { flex-direction: column !important; }
+          .gp-loop-node-head > span { align-self: flex-start !important; }
+        }
+        @media (max-width: 390px) {
+          .gp-proof-stats { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
       <div style={{ maxWidth: 1180, margin: "0 auto" }}>
         <SectionHeader
           title="Marketplace Proof Loop"
@@ -60,7 +74,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
 
         {dashboard && (
           <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 22 }}>
+            <div className="gp-proof-stats" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 22 }}>
               {[
                 ["Contractor slots", dashboard.slots.length],
                 ["Marketplace jobs", dashboard.jobs.length],
@@ -75,9 +89,9 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
               ))}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 0.75fr)", gap: 18, alignItems: "start" }}>
+            <div className="gp-proof-main" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 0.75fr)", gap: 18, alignItems: "start" }}>
               <Card style={{ padding: 22 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+                <div className="gp-card-title-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
                   <div>
                     <Label>Atomic transaction</Label>
                     <h3 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>HOA transition → job → money → memory</h3>
@@ -95,7 +109,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                   {dashboard.transactions.map((tx) => (
                     <div key={tx.id} style={{ display: "grid", gap: 10 }}>
                       <div style={{ fontFamily: T.fontSans, fontSize: 15, fontWeight: 700, color: "var(--text)" }}>{tx.contractor}</div>
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+                      <div className="gp-money-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                         <div><Label>Gross job</Label><strong>{fmtMoney(tx.grossAmountCents)}</strong></div>
                         <div><Label>GatePass fee</Label><strong>{fmtMoney(tx.gatepassFeeCents)}</strong></div>
                         <div><Label>HOA credit</Label><strong>{fmtMoney(tx.hoaShareCents)}</strong></div>

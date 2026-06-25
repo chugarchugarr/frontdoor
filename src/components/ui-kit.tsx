@@ -170,12 +170,12 @@ export function StatCard({ label, value, sub, color, icon }: { label: string; va
 // ─── Section header ───────────────────────────────────────────────────
 export function SectionHeader({ title, sub, action }: { title: string; sub?: string; action?: React.ReactNode }) {
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28, gap: 16 }}>
+    <div className="gp-section-header" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28, gap: 16 }}>
       <div>
         <h2 style={{ fontFamily: T.fontSans, fontSize: 24, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.025em", lineHeight: 1.2 }}>{title}</h2>
         {sub && <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)", marginTop: 5, lineHeight: 1.5 }}>{sub}</p>}
       </div>
-      {action && <div style={{ flexShrink: 0 }}>{action}</div>}
+      {action && <div className="gp-section-action" style={{ flexShrink: 0 }}>{action}</div>}
     </div>
   );
 }
