@@ -532,6 +532,14 @@ function TransitionDemoRoute() {
   return <ErrorBoundary><BoardDemo initialView="transition" onBack={() => navigate('/demo')} /></ErrorBoundary>;
 }
 
+function MarketplaceLoopRoute() {
+  return <ErrorBoundary><MarketplaceProofLoop hoaId={DEMO_HOA_ID} demo /></ErrorBoundary>;
+}
+
+function InvestorProofRoute() {
+  return <ErrorBoundary><InvestorProofDashboard hoaId={DEMO_HOA_ID} demo /></ErrorBoundary>;
+}
+
 function OSRoute() {
   const auth = useAuth({ required: false });
   const navigate = useNavigate();
@@ -571,6 +579,9 @@ export default function App() {
       <Route path="/contractors" element={<ContractorRoute />} />
       <Route path="/demo" element={<DemoRoute />} />
       <Route path="/demo/transition" element={<TransitionDemoRoute />} />
+      <Route path="/demo/marketplace" element={<MarketplaceLoopRoute />} />
+      <Route path="/marketplace-loop" element={<MarketplaceLoopRoute />} />
+      <Route path="/investor-proof" element={<InvestorProofRoute />} />
       <Route path="/os" element={<OSRoute />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/investors" element={<Investors />} />

@@ -100,7 +100,7 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
             </div>
 
             <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-              <Btn variant="gold" onClick={() => window.location.href = "/demo?view=marketplace"}>View marketplace loop</Btn>
+              <Btn variant="gold" onClick={() => window.location.href = "/marketplace-loop"}>View marketplace loop</Btn>
               <Btn variant="ghost" onClick={() => window.location.href = "/demo?view=transition"}>View transition graph</Btn>
             </div>
           </>

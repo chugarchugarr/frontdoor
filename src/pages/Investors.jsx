@@ -41,7 +41,7 @@ export default function Investors() {
               GatePass starts where boards already hurt: management transition, missing records, and compliance risk. Then it turns community permission into verified contractor access.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-10">
-              <Link to="/demo?view=marketplace" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
+              <Link to="/marketplace-loop" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
                 View marketplace proof loop <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/demo?view=transition" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full transition-colors">
@@ -125,7 +125,7 @@ export default function Investors() {
               ))}
             </div>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <Link to="/demo?view=investor" className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
+              <Link to="/investor-proof" className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
                 Open proof dashboard <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/contractors" className="inline-flex items-center justify-center gap-2 text-sm text-white/60 hover:text-white border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full transition-colors">
@@ -149,7 +149,7 @@ export default function Investors() {
               <div className="text-white text-2xl md:text-3xl font-bold tracking-tight">The open question is simple.</div>
               <p className="text-white/45 mt-3 leading-relaxed">Can GatePass turn one board transition into one contractor transaction and one defensible memory record?</p>
             </div>
-            <Link to="/demo?view=marketplace" className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
+            <Link to="/marketplace-loop" className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
               View the loop <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

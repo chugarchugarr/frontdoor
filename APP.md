@@ -136,6 +136,8 @@ src/
 New app surfaces:
 
 - Public investor page: `/investors`
+- Standalone CTO/investor proof loop: `/marketplace-loop`
+- Standalone investor proof dashboard: `/investor-proof`
 - Board demo marketplace view: `/demo?view=marketplace`
 - Board demo investor proof view: `/demo?view=investor`
 
@@ -161,6 +163,8 @@ Backend marketplace primitives now support:
 Investor-safe core line: **Software wedge. Marketplace business. Transition-memory moat.**
 
 Public investor page rule: do **not** publish named investor-specific hooks or outreach targets on `/investors`. Named targeting belongs in private outreach/memory, not the public site.
+
+CTO/GPT handoff brief: `/home/computer/storage/gatepass-marketplace-loop-cto-handoff-v1.md` / CDN `/cdn/gatepass-marketplace-loop-cto-handoff-v1.md`.
 
 ## Public Website Visual Restoration (Jun 24, 2026)
 

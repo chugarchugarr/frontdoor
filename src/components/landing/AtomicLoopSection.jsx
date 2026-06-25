@@ -26,7 +26,7 @@ export default function AtomicLoopSection() {
               HOA pain becomes transition review. Transition review becomes trusted access. Trusted access becomes contractor revenue and permanent community memory.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-9">
-              <Link to="/demo?view=marketplace" className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#2A5240] hover:bg-[#214231] px-6 py-3.5 rounded-full transition-colors">
+              <Link to="/marketplace-loop" className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#2A5240] hover:bg-[#214231] px-6 py-3.5 rounded-full transition-colors">
                 See the proof loop <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/investors" className="inline-flex items-center gap-2 text-sm text-[#2A5240] hover:text-[#1C1C1A] border border-[#2A5240]/20 hover:border-[#2A5240]/40 px-6 py-3.5 rounded-full transition-colors">

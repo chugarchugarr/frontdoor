@@ -82,7 +82,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                     <Label>Atomic transaction</Label>
                     <h3 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>HOA transition → job → money → memory</h3>
                   </div>
-                  <Btn variant="ghost" onClick={() => window.location.href = "/demo?view=investor"}>Investor view</Btn>
+                  <Btn variant="ghost" onClick={() => window.location.href = "/investor-proof"}>Investor view</Btn>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {dashboard.proofLoop.map((node, index) => <LoopNode key={node.label} index={index} {...node} />)}
