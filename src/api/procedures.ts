@@ -229,17 +229,17 @@ function demoMarketplaceDashboard() {
       { id: "demo-tx-1", grossAmountCents: 1850000, gatepassFeeCents: 92500, hoaShareCents: 46250, status: "recorded", contractor: "Hill Country Roofing Co." },
     ],
     credits: [
-      { id: "demo-credit-1", amountCents: 46250, status: "earned", memo: "HOA share from ARC-approved roof job; eligible to offset platform or transition support." },
+      { id: "demo-credit-1", amountCents: 46250, status: "modeled", memo: "Internal ledger entry from ARC-approved roof job." },
     ],
     complianceRecords: [
-      { id: "demo-compliance-1", summary: "Roof replacement transaction linked to ARC approval, contractor status, quote, payment record, and HOA revenue-share credit.", status: "generated" },
+      { id: "demo-compliance-1", summary: "Roof replacement transaction linked to ARC approval, contractor status, quote, payment record, and internal ledger entry.", status: "generated" },
     ],
     proofLoop: [
       { label: "PMC transition case opened", detail: "Board enters through RealManage exit pain and compliance-risk mapping.", value: "Transition" },
       { label: "Contractor access slot opened", detail: "GatePass opens roofing access for Steiner Ranch after board-safe workflow review.", value: "$99 seat" },
       { label: "Homeowner job routed", detail: "ARC-approved roof replacement becomes a marketplace job instead of a dead lead.", value: "$18.5K job" },
       { label: "Contractor quote approved", detail: "Verified contractor submits scope through GatePass and the board/homeowner approves.", value: "Approved" },
-      { label: "Fee + HOA credit recorded", detail: "Transaction creates GatePass fee and community revenue-share credit.", value: "$462 HOA" },
+      { label: "Fee + ledger entry recorded", detail: "Transaction creates GatePass fee and an internal ledger entry.", value: "$462 modeled" },
       { label: "Compliance memory generated", detail: "The completed job becomes permanent board-owned operating memory.", value: "Moat" },
     ],
   };
@@ -269,10 +269,10 @@ function demoInvestorProofMetrics() {
       { label: "Real proof pack from production HOA", status: "missing" as const },
     ],
     proofLinks: [
-      { label: "Marketplace proof loop", href: "/demo?view=marketplace", note: "Atomic contractor transaction with HOA credit + compliance record." },
+      { label: "Marketplace proof loop", href: "/demo?view=marketplace", note: "Atomic contractor transaction with fee capture + compliance record." },
       { label: "Transition graph", href: "/demo?view=transition", note: "Private PMC exit memory and board psychology map." },
       { label: "Contractor access", href: "/contractors", note: "Austin founding-contractor supply path." },
-      { label: "Investor brief", href: "/investors", note: "$300K SAFE at $4M cap and verified market proof." },
+      { label: "Investor brief", href: "/investors", note: "$500K SAFE at $6M post-money and verified market proof." },
     ],
     caution: [
       "Demo marketplace GMV is not production revenue.",
@@ -538,7 +538,7 @@ export async function getMarketplaceDashboard(input: { hoaId: string; demo?: boo
       { label: "Contractor access", detail: "Open slots for verified contractors by community/trade.", value: `${slots.length} slots` },
       { label: "Marketplace job", detail: "Route ARC/work-order demand into a job.", value: `${jobs.length} jobs` },
       { label: "Quote", detail: "Verified contractor submits scope and price.", value: `${quotes.length} quotes` },
-      { label: "Transaction", detail: "Record fee capture and HOA revenue share.", value: `${transactions.length} tx` },
+      { label: "Transaction", detail: "Record fee capture and internal ledger entry.", value: `${transactions.length} tx` },
       { label: "Compliance memory", detail: "Link completed work back into board-owned records.", value: `${complianceRecords.length} records` },
     ],
   };

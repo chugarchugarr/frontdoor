@@ -1,16 +1,18 @@
 # GatePass — HOA-Controlled Contractor Marketplace
 
-**Purpose**: HOA-first permission layer between homeowners and contractors. PMC transition workflows and compliance memory get GatePass into communities; contractor access and community revenue share are the marketplace business.
+**Purpose**: HOA sovereignty layer and association-owned operating infrastructure. PMC transition workflows and compliance memory get GatePass into communities; contractor access is the marketplace path, with any community-benefit economics counsel-gated until legal clearance.
 
 **Type**: app
 
-**Status**: active — GatePass is the primary summer lane. Current focus: investor-readiness, first paid HOA pilot, Austin contractor marketplace launch path for the Aug. 22–23 Home Show.
+**Status**: active — GatePass is the primary summer lane. Current focus: investor-readiness, first paid HOA pilot, and Founding Community LOI motion. Austin Home Show Aug. 22–23 is tickets-only/no booth and functions as an internal LOI deadline.
 
 **Live URL**: https://frontdoor-userh9akm9bjl1wy8lioze14285.adaptive.ai
 
 ## What It Does
 
-GatePass is the board-owned operating layer and contractor-access gate for HOA communities. It starts by helping boards move away from poor PMC control through transition intake, compliance memory, and day-to-day operating modules. The bigger business is the controlled-access marketplace: the HOA is the gatekeeper, GatePass is the gate, contractors pay to pass through, and HOAs/homeowners can earn on transactions.
+GatePass is association-owned operating infrastructure: the board owns its records, approvals, vendor compliance, and community memory. PMCs, independent managers, and volunteer boards can all operate inside GatePass, but the association owns the record. It starts by helping boards move through transition intake, compliance memory, and day-to-day operating modules. The bigger business is the controlled-access contractor marketplace, with community-benefit economics kept internal until counsel clears the structure.
+
+**Current doctrine (Jul 14 restore):** GatePass is PMC-compatible, association-owned. Anti-PMC combat framing is retired. PMC transition is an entry event, not the company identity. The export button is the hero: one click, full export, no ransom on exit.
 
 **Positioning (post stress test):** Lead with Trust/compliance moat, not feature count. The asymmetric advantage is L3 Trust → L8 Memory — every violation, vote, ARC decision, and financial action stored permanently in an immutable, exportable compliance ledger. PMCs cannot match this. No other HOA software owns this layer.
 
@@ -62,7 +64,7 @@ GatePass is the board-owned operating layer and contractor-access gate for HOA c
 ```
 src/
   App.tsx              — root shell (landing, HOA onboard, OS shell)
-  pages/Investors.jsx  — investor brief for $300K SAFE raise
+  pages/Investors.jsx  — investor brief for $500K SAFE / $6M post-money raise
   components/
     tokens.ts          — design system (colors, fonts, CSS)
     ui-kit.tsx         — shared components (Btn, Card, Modal, etc.)
@@ -143,7 +145,7 @@ New app surfaces:
 - Board demo marketplace view: `/demo?view=marketplace`
 - Board demo investor proof view: `/demo?view=investor`
 
-Purpose: show the investor-diligence loop in one screen — **software wedge → contractor access → job → GatePass fee + HOA credit → compliance memory**.
+Purpose: show the investor-diligence loop in one screen — **software wedge → contractor access → job → GatePass fee + internal ledger → compliance memory**.
 
 Data boundary:
 
@@ -159,7 +161,7 @@ Backend marketplace primitives now support:
 - jobs sourced from WorkOrders or ARC approvals
 - contractor quotes and approvals
 - transaction recording
-- HOA community revenue-share credits
+- internal counsel-gated community-benefit ledger entries
 - marketplace compliance events
 
 Investor-safe core line: **Software wedge. Marketplace business. Transition-memory moat.**
@@ -186,8 +188,8 @@ What changed:
 Money split remains centralized:
 
 - GatePass fee: 5.00% of gross.
-- HOA credit/share: 2.50% of gross.
-- Demo example remains $18,500 gross → $925 GatePass fee → $462.50 HOA credit.
+- Internal ledger model: 2.50% of gross, counsel-gated and not customer-facing until legal clearance.
+- Demo example remains $18,500 gross → $925 GatePass fee → $462.50 internal ledger entry.
 
 Verification completed after hardening:
 

@@ -44,7 +44,7 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
       <div style={{ maxWidth: 1160, margin: "0 auto" }}>
         <SectionHeader
           title="Investor Proof Dashboard"
-          sub="One screen for the $300K SAFE question: what proof exists, what is demo-only, and what the first paid pilot must finish."
+          sub="One screen for the $500K SAFE / $6M post-money question: what proof exists, what is demo-only, and what the first paid pilot must finish."
           action={<Tag color={T.gold} bg={T.goldLight}>{data?.demo || demo ? "Demo + real boundary" : "Live records"}</Tag>}
         />
 
@@ -55,7 +55,7 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
             <Card className="gp-investor-hero" style={{ padding: 26, marginBottom: 18, background: T.ink, color: T.white }}>
               <Label style={{ color: "rgba(255,255,255,0.45)" }}>Core investor line</Label>
               <h2 style={{ fontFamily: T.fontSans, fontSize: "clamp(28px, 4vw, 44px)", lineHeight: 1, letterSpacing: "-0.055em", marginBottom: 10 }}>{data.headline}</h2>
-              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "rgba(255,255,255,0.58)", lineHeight: 1.65, maxWidth: 740 }}>GatePass starts with board-safe transition and compliance memory, then opens verified contractor access so HOA transactions become revenue share and proprietary operating records.</p>
+              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "rgba(255,255,255,0.58)", lineHeight: 1.65, maxWidth: 740 }}>GatePass starts with board-safe transition and compliance memory, then opens verified contractor access so transactions become proprietary operating records. The export button is the proof: the association owns the record.</p>
             </Card>
 
             <div className="gp-investor-stats" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 18 }}>
@@ -73,7 +73,7 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
                 <div className="gp-investor-money" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 14 }}>
                   <div><Label>Demo GMV</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.demoGmvCents)}</strong></div>
                   <div><Label>GatePass fee</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.gatepassFeeCents)}</strong></div>
-                  <div><Label>HOA credits</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.hoaCreditsCents)}</strong></div>
+                  <div><Label>Internal ledger</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.hoaCreditsCents)}</strong></div>
                 </div>
                 <p style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", lineHeight: 1.55, marginTop: 14 }}>These are demo economics until real contractor transactions are processed. Production counts remain honest.</p>
               </Card>

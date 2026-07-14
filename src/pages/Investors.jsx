@@ -8,7 +8,7 @@ import Footer from '../components/landing/Footer';
 const funds = [
   'First paid HOA pilot',
   'CTO/product completion',
-  'Austin Home Show contractor launch',
+  'Founding Community LOI deadline',
   'Board-safe transition-support reserve',
   'Contractor supply activation',
 ];
@@ -52,8 +52,8 @@ export default function Investors() {
 
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12, duration: 0.7 }} className="gp-panel rounded-[32px] p-6 md:p-8 shadow-2xl shadow-black/20">
             <div className="text-xs text-white/35 uppercase tracking-[0.25em] mb-5">Current raise</div>
-            <div className="text-4xl md:text-5xl font-bold text-white tracking-tight">$300K SAFE</div>
-            <div className="text-[#B8883A] font-semibold mt-2">$4M cap · pre-seed</div>
+            <div className="text-4xl md:text-5xl font-bold text-white tracking-tight">$500K SAFE</div>
+            <div className="text-[#B8883A] font-semibold mt-2">$6M post-money · pre-seed</div>
             <div className="h-px bg-white/10 my-7" />
             <p className="text-sm text-white/45 leading-relaxed">
               The round is for one diligence target: convert the demo loop into one paid HOA, one contractor transaction, and one exportable proof pack.
@@ -113,7 +113,7 @@ export default function Investors() {
           <div>
             <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase">Use of funds</span>
             <h2 className="gp-display text-5xl md:text-6xl text-white mt-5 leading-[0.94]">Capital goes into proof, not theater.</h2>
-            <p className="text-white/45 mt-5 leading-relaxed">The next investor-facing asset is not more copy. It is a real paid HOA record, a real contractor transaction, and a proof pack that cleanly separates production from demo data.</p>
+            <p className="text-white/45 mt-5 leading-relaxed">The next investor-facing asset is not more copy. It is a real paid HOA record, a real contractor transaction, and a proof pack that cleanly separates production from demo data. Austin Home Show weekend is an internal Founding Community LOI deadline.</p>
           </div>
           <div className="gp-panel rounded-[28px] p-6 md:p-8">
             <div className="grid gap-3">

@@ -17,7 +17,7 @@ const STEPS: { key: StepKey; n: string; label: string; verb: string }[] = [
   { key: "job", n: "03", label: "Create job", verb: "Create job from work order / ARC" },
   { key: "quote", n: "04", label: "Submit quote", verb: "Contractor submits quote" },
   { key: "approve", n: "05", label: "Approve quote", verb: "Board approves quote" },
-  { key: "settle", n: "06", label: "Settle transaction", verb: "Record fee + HOA credit" },
+  { key: "settle", n: "06", label: "Settle transaction", verb: "Record fee + internal ledger entry" },
   { key: "compliance", n: "07", label: "Write memory", verb: "Write compliance record" },
   { key: "export", n: "08", label: "Export proof pack", verb: "Generate investor PDF" },
 ];

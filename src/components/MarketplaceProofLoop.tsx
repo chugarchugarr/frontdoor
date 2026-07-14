@@ -66,7 +66,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
       <div style={{ maxWidth: 1180, margin: "0 auto" }}>
         <SectionHeader
           title="Marketplace Proof Loop"
-          sub="Demo of the atomic GatePass transaction: transition memory creates contractor access; contractor work creates HOA credit and compliance memory."
+          sub="Demo of the atomic GatePass transaction: transition memory creates contractor access; contractor work creates fee capture and compliance memory."
           action={<Tag color={T.gold} bg={T.goldLight}>{dashboard?.demo || demo ? "Demo data" : "Live records"}</Tag>}
         />
 
@@ -80,7 +80,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                 ["Marketplace jobs", dashboard.jobs.length],
                 ["Quotes", dashboard.quotes.length],
                 ["Transactions", dashboard.transactions.length],
-                ["HOA credits", fmtMoney(dashboard.credits.reduce((s, c) => s + c.amountCents, 0))],
+                ["Internal ledger", fmtMoney(dashboard.credits.reduce((s, c) => s + c.amountCents, 0))],
               ].map(([label, value]) => (
                 <Card key={label} style={{ padding: 18 }}>
                   <Label>{label}</Label>
@@ -112,7 +112,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                       <div className="gp-money-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                         <div><Label>Gross job</Label><strong>{fmtMoney(tx.grossAmountCents)}</strong></div>
                         <div><Label>GatePass fee</Label><strong>{fmtMoney(tx.gatepassFeeCents)}</strong></div>
-                        <div><Label>HOA credit</Label><strong>{fmtMoney(tx.hoaShareCents)}</strong></div>
+                        <div><Label>Internal ledger</Label><strong>{fmtMoney(tx.hoaShareCents)}</strong></div>
                       </div>
                     </div>
                   ))}

@@ -30,7 +30,7 @@ export async function buildProofPack(opts: {
 
   const gmv = txns.reduce((s, t) => s + t.grossAmountCents, 0);
   const fees = txns.reduce((s, t) => s + t.gatepassFeeCents, 0);
-  const credit = txns.reduce((s, t) => s + t.hoaShareCents, 0);
+  const internalLedger = txns.reduce((s, t) => s + t.hoaShareCents, 0);
 
   const doc = new PDFDocument({ size: "LETTER", margin: 54 });
   const chunks: Buffer[] = [];
@@ -56,7 +56,7 @@ export async function buildProofPack(opts: {
   const col = (W - M * 2) / 3;
   stat("Settled GMV", usd(gmv), M);
   stat("GatePass fees", usd(fees), M + col);
-  stat("HOA credit", usd(credit), M + col * 2);
+  stat("Internal ledger", usd(internalLedger), M + col * 2);
   y += 60;
   stat("Jobs", String(jobs.length), M);
   stat("Quotes", String(quotes), M + col);
@@ -70,7 +70,7 @@ export async function buildProofPack(opts: {
     "Contractor access slot opens by trade + community",
     "Job routes through GatePass (work order / ARC)",
     "Contractor quote — board approval",
-    "Transaction settles: GatePass fee + HOA credit",
+    "Transaction settles: GatePass fee + internal ledger entry",
     "Completed work becomes compliance memory",
   ];
   doc.fontSize(10).fill(COLORS.charcoal);
@@ -88,7 +88,7 @@ export async function buildProofPack(opts: {
   doc.text("JOB", M + 130, y, { width: 150 });
   doc.text("GROSS", M + 285, y, { width: 70, align: "right" });
   doc.text("FEE", M + 360, y, { width: 60, align: "right" });
-  doc.text("HOA", M + 425, y, { width: 60, align: "right" });
+  doc.text("LEDGER", M + 425, y, { width: 60, align: "right" });
   y += 14;
   doc.fill(COLORS.charcoal).fontSize(9);
   if (txns.length === 0) {

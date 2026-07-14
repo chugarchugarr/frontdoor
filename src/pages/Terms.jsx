@@ -32,7 +32,7 @@ export default function Terms() {
             <h2 className="text-white font-semibold text-lg mb-3">Contact</h2>
             <p>Questions? Email <a href="mailto:info@gatepasshoa.com" className="text-[#B8883A] hover:underline">info@gatepasshoa.com</a>.</p>
           </div>
-          <p className="text-white/30 text-sm pt-8 border-t border-white/10">Full legal terms of service coming soon. This page represents our current service commitments.</p>
+          <p className="text-white/30 text-sm pt-8 border-t border-white/10">This page summarizes current GatePass service commitments and may be updated as formal legal review progresses.</p>
         </div>
       </div>
       <Footer />

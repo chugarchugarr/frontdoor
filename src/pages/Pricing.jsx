@@ -144,7 +144,7 @@ export default function Pricing() {
               ))}
             </div>
             <p className="text-xs text-white/20 mt-6">
-              Marketplace upside comes after the board-owned operating layer is installed: contractor access, booked work, and community revenue share.
+              Marketplace upside comes after the board-owned operating layer is installed: contractor access, booked work, and export-safe operating memory.
             </p>
           </motion.div>
         </div>

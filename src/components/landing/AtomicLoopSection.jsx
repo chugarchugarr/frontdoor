@@ -8,7 +8,7 @@ const loop = [
   ['Contractor slot', 'GatePass opens verified access by trade and community — not commodity leads.'],
   ['Homeowner job', 'ARC approvals and work orders become routed marketplace demand.'],
   ['Quote + fee', 'Contractor quote and transaction records capture the value GatePass controls.'],
-  ['HOA credit', 'A share flows back to the community as a credit against platform or transition support.'],
+  ['Record boundary', 'Financial fields stay separated from live traction until production records and legal review are complete.'],
   ['Compliance memory', 'The finished work becomes permanent operating memory that makes the community harder to churn.'],
 ];
 

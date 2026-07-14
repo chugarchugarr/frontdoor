@@ -28,7 +28,7 @@ export default function Privacy() {
             <h2 className="text-white font-semibold text-lg mb-3">Contact</h2>
             <p>Questions about this policy? Email us at <a href="mailto:info@gatepasshoa.com" className="text-[#B8883A] hover:underline">info@gatepasshoa.com</a>.</p>
           </div>
-          <p className="text-white/30 text-sm pt-8 border-t border-white/10">Full legal privacy policy coming soon. This page represents our current data practices.</p>
+          <p className="text-white/30 text-sm pt-8 border-t border-white/10">This page summarizes current GatePass data practices and may be updated as formal legal review progresses.</p>
         </div>
       </div>
       <Footer />
