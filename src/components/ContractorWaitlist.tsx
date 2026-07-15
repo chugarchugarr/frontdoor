@@ -20,7 +20,7 @@ const TRUST_POINTS = [
   { icon: "✓", text: "Founding-access application — be reviewed for permissioned HOA channels before broad launch" },
   { icon: "✓", text: "Prelaunch permit intelligence — Austin permit signals matched to your trade as communities enroll" },
   { icon: "✓", text: "Prepared WorkOrder routing for HOA-approved jobs once live communities activate access" },
-  { icon: "✓", text: "Full refund if Austin doesn't launch within 6 months" },
+  { icon: "✓", text: "Launch terms and access status confirmed before broad HOA rollout" },
 ];
 
 export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
@@ -230,7 +230,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginTop: 14, flexWrap: "wrap" }}>
               {[
                 { icon: "🔒", text: "Secure checkout" },
-                { icon: "↩️", text: "Refundable" },
+                { icon: "📄", text: "Terms shown at checkout" },
                 { icon: "⚡", text: "Instant confirmation" },
               ].map(t => (
                 <span key={t.text} style={{ fontFamily: T.fontSans, fontSize: 11, color: "var(--text-light)", display: "flex", alignItems: "center", gap: 4 }}>

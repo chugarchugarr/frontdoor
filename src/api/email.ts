@@ -157,7 +157,7 @@ export async function sendContractorConfirmation(input: {
             </td></tr>
           </table>
           <p style="margin:0 0 20px;color:#4A4A44;font-size:15px;line-height:1.7;">
-            Your $99 deposit is fully refundable if GatePass doesn't launch within 6 months. You'll be among the first contacted when homeowner leads are live.
+            Your $99 founding-seat checkout is recorded. You'll be among the first contacted as HOA access reviews move toward live contractor routing.
           </p>
           <p style="margin:0;color:#4A4A44;font-size:15px;line-height:1.7;">— The GatePass Team</p>
         </td></tr>

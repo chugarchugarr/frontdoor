@@ -42,7 +42,7 @@ export default function AustinSection() {
             </div>
 
             <div className="grid grid-cols-2 gap-8 mt-10 pt-8 border-t border-white/10">
-              {[['Austin', 'pilot market'], ['$20', 'per unit / year'], ['25', 'founding contractor seats'], ['9 modules', 'working 24/7 for your HOA']].map(([val, label]) => (
+              {[['Austin', 'pilot market'], ['$20', 'per unit / year'], ['25', 'founding contractor seats'], ['9 modules', 'board-owned operating record']].map(([val, label]) => (
                 <div key={label}>
                   <div className="text-2xl font-bold text-[#B8883A]">{val}</div>
                   <div className="text-xs text-white/30 mt-1 leading-snug">{label}</div>

@@ -319,17 +319,17 @@ function demoInvestorProofMetrics() {
     money: { demoGmvCents: 1850000, gatepassFeeCents: 92500, hoaCreditsCents: 0 },
     checklist: [
       { label: "Board-safe transition graph live", status: "done" as const },
-      { label: "Compliance memory export live", status: "done" as const },
-      { label: "Marketplace transaction loop visible", status: "demo" as const },
+      { label: "Compliance memory export observable", status: "done" as const },
+      { label: "Marketplace transaction loop modeled", status: "demo" as const },
       { label: "First paid HOA record", status: "missing" as const },
       { label: "Real contractor payment + webhook", status: "missing" as const },
       { label: "Real proof pack from production HOA", status: "missing" as const },
     ],
     proofLinks: [
-      { label: "Marketplace proof loop", href: "/demo?view=marketplace", note: "Atomic contractor transaction with fee capture + compliance record." },
-      { label: "Transition graph", href: "/demo?view=transition", note: "Private PMC exit memory and board psychology map." },
+      { label: "Marketplace proof loop", href: "/demo?view=marketplace", note: "Modeled contractor transaction path with fee and compliance boundaries labeled." },
+      { label: "Transition graph", href: "/demo?view=transition", note: "Redacted transition memory and board-continuity map." },
       { label: "Contractor access", href: "/contractors", note: "Austin founding-contractor supply path." },
-      { label: "Investor brief", href: "/investors", note: "$500K SAFE at $6M post-money and verified market proof." },
+      { label: "Investor brief", href: "/investors", note: "$500K SAFE at $6M post-money with demo/real boundaries labeled." },
     ],
     caution: [
       "Demo marketplace GMV is not production revenue.",
@@ -2262,6 +2262,29 @@ export async function getTransitionMoat(hoaId: string) {
 
   if (hoaId === DEMO_HOA_ID && cases.length === 0) return demoTransitionMoat();
 
+  const redactStakeholder = (s: (typeof stakeholders)[number]) => ({
+    ...s,
+    contact: null,
+    notes: s.notes ? "Redacted from public/demo view." : null,
+  });
+  const redactSignal = (s: (typeof signals)[number]) => ({
+    ...s,
+    evidence: s.isPubliclyReplicable ? s.evidence : "Private transition signal captured; evidence redacted from public/demo view.",
+  });
+  const redactCase = (c: (typeof cases)[number]) => ({
+    ...c,
+    stakeholders: [],
+    moatSignals: [],
+    complaintThemes: parseJsonArray(c.complaintThemes),
+    sourceUrl: null,
+    noticeWindowDays: null,
+    terminationFeeCents: null,
+    buyoutOfferedCents: null,
+    boardFear: c.boardFear ? "Private board concern captured; redacted from public/demo view." : null,
+    decidingProof: c.decidingProof ? "Redacted proof artifact available in board-approved pack." : null,
+    counterMove: c.counterMove ? "Provider response scenario captured; redacted from public/demo view." : null,
+  });
+
   return {
     summary: {
       transitionCases: cases.length,
@@ -2274,9 +2297,9 @@ export async function getTransitionMoat(hoaId: string) {
       legalComplianceEvents: legalComplianceCount,
       investorLine: "Public HOA data is the wedge. GatePass's moat is private PMC exit memory plus compliance history.",
     },
-    cases: cases.map((c) => ({ ...c, complaintThemes: parseJsonArray(c.complaintThemes) })),
-    stakeholders,
-    signals,
+    cases: cases.map(redactCase),
+    stakeholders: stakeholders.map(redactStakeholder),
+    signals: signals.map(redactSignal),
   };
 }
 
@@ -2360,8 +2383,8 @@ export async function exportPilotProofPack(input: {
     community: { id: hoa.id, name: hoa.name, community: hoa.community, units: hoa.units, plan: hoa.plan },
     selectedCase,
     moatSummary: moat.summary,
-    topSignals: moat.signals.slice(0, 12),
-    boardMap: moat.stakeholders,
+      topSignals: moat.signals.slice(0, 12).map((s) => ({ label: s.label, category: s.category, evidence: s.evidence, confidence: s.confidence, moatWeight: s.moatWeight })),
+      boardMap: moat.stakeholders.map((s) => ({ role: s.role, stance: s.stance, primaryConcern: s.primaryConcern })),
     complianceSummary: compliance.summary,
     legalHighlights: compliance.legalHighlights,
     firstPilotProofChecklist: [

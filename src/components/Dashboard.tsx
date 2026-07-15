@@ -150,7 +150,7 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
   const displayStats = isDemoFallback ? {
     homeowners: 10,
     openViolations: 5,
-    openWorkOrders: 6,
+    openWorkOrders: 3,
     pendingARC: 3,
     openVotes: 1,
   } : stats;

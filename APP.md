@@ -231,13 +231,13 @@ What it captures:
 - **Board Psychology Map** — stakeholder role, stance, primary concern, persuasion angle.
 - **Moat Signals** — board objections, private contract facts, PMC failures, switching triggers, compliance risks, proof artifacts, and case-study metrics.
 - **Scoring** — exit readiness, data completeness, and hard-to-copy / replicability score.
-- **Pilot Proof Pack** — JSON export combining transition memory + compliance summary + first-pilot proof checklist.
+- **Pilot Proof Pack** — redacted export combining transition memory, compliance summary, and first-pilot proof checklist without raw stakeholder contacts, internal IDs, notes, or contract terms.
 
 Strategic rule: do not claim the scraped lead database is proprietary. Claim the transition graph becomes proprietary only after GatePass engages boards and captures private transition facts competitors cannot scrape.
 
 ## Next Steps
 
-- [ ] Find first HOA with 1-star PMC review → execute PMC displacement play (see GTM playbook)
+- [ ] Find first board-safe HOA pilot candidate → run transition-review / association-owned-record motion
 - [x] Wire Stripe webhook → mark paid=true on HOA/Contractor records + idempotent marketplace settlement
 - [ ] Add Resend email on HOA signup, violation notices, ARC decisions
 - [ ] Homeowner CSV import (bulk roster upload)

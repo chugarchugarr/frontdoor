@@ -84,7 +84,7 @@ function ExportModal({ hoaId, onClose }: { hoaId: string; onClose: () => void })
           Export Compliance Pack
         </h2>
         <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", marginBottom: 24, lineHeight: 1.6 }}>
-          Generates a structured JSON record of all compliance events for the selected period. Suitable for attorneys, insurance claims, and PMC transitions.
+          Generates a downloadable compliance record for the selected period. Use only as a board review aid unless counsel approves external/legal use.
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div>
