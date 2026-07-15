@@ -768,7 +768,33 @@ export declare function addHomeowner(input: {
 	moveInDate: Date | null;
 	active: boolean;
 }>;
-export declare function getHomeowners(hoaId: string): Promise<({
+export declare function getHomeowners(hoaId: string): Promise<{
+	id: string;
+	hoaId: string;
+	name: string;
+	email: string;
+	phone: null;
+	address: string;
+	unit: null;
+	role: string;
+	active: boolean;
+	createdAt: string;
+	updatedAt: string;
+	duesAccount: {
+		id: string;
+		homeownerId: string;
+		balanceCents: number;
+		monthlyDueCents: number;
+		stripeCustomerId: null;
+		autopayEnabled: boolean;
+		createdAt: string;
+		updatedAt: string;
+	};
+	_count: {
+		violations: number;
+		workOrders: number;
+	};
+}[] | ({
 	duesAccount: {
 		id: string;
 		createdAt: Date;
@@ -923,6 +949,147 @@ export declare function createViolation(input: {
 	notes: string | null;
 }>;
 export declare function getViolations(hoaId: string): Promise<({
+	id: string;
+	hoaId: string;
+	homeownerId: string;
+	address: string;
+	category: string;
+	description: string;
+	severity: string;
+	status: string;
+	noticeCount: number;
+	fineCents: null;
+	reportedBy: string;
+	latestNoticeAt: string;
+	nextNoticeAt: string;
+	resolvedAt: null;
+	notes: null;
+	aiAnalysis: null;
+	createdAt: string;
+	updatedAt: string;
+	homeowner: {
+		id: string;
+		hoaId: string;
+		name: string;
+		email: string;
+		phone: null;
+		address: string;
+		unit: null;
+		role: string;
+		active: boolean;
+		createdAt: string;
+		updatedAt: string;
+		duesAccount: {
+			id: string;
+			homeownerId: string;
+			balanceCents: number;
+			monthlyDueCents: number;
+			stripeCustomerId: null;
+			autopayEnabled: boolean;
+			createdAt: string;
+			updatedAt: string;
+		};
+		_count: {
+			violations: number;
+			workOrders: number;
+		};
+	};
+	notices: never[];
+} | {
+	id: string;
+	hoaId: string;
+	homeownerId: string;
+	address: string;
+	category: string;
+	description: string;
+	severity: string;
+	status: string;
+	noticeCount: number;
+	fineCents: null;
+	reportedBy: string;
+	latestNoticeAt: null;
+	nextNoticeAt: null;
+	resolvedAt: null;
+	notes: null;
+	aiAnalysis: null;
+	createdAt: string;
+	updatedAt: string;
+	homeowner: {
+		id: string;
+		hoaId: string;
+		name: string;
+		email: string;
+		phone: null;
+		address: string;
+		unit: null;
+		role: string;
+		active: boolean;
+		createdAt: string;
+		updatedAt: string;
+		duesAccount: {
+			id: string;
+			homeownerId: string;
+			balanceCents: number;
+			monthlyDueCents: number;
+			stripeCustomerId: null;
+			autopayEnabled: boolean;
+			createdAt: string;
+			updatedAt: string;
+		};
+		_count: {
+			violations: number;
+			workOrders: number;
+		};
+	};
+	notices: never[];
+} | {
+	id: string;
+	hoaId: string;
+	homeownerId: string;
+	address: string;
+	category: string;
+	description: string;
+	severity: string;
+	status: string;
+	noticeCount: number;
+	fineCents: number;
+	reportedBy: string;
+	latestNoticeAt: string;
+	nextNoticeAt: string;
+	resolvedAt: null;
+	notes: null;
+	aiAnalysis: null;
+	createdAt: string;
+	updatedAt: string;
+	homeowner: {
+		id: string;
+		hoaId: string;
+		name: string;
+		email: string;
+		phone: null;
+		address: string;
+		unit: null;
+		role: string;
+		active: boolean;
+		createdAt: string;
+		updatedAt: string;
+		duesAccount: {
+			id: string;
+			homeownerId: string;
+			balanceCents: number;
+			monthlyDueCents: number;
+			stripeCustomerId: null;
+			autopayEnabled: boolean;
+			createdAt: string;
+			updatedAt: string;
+		};
+		_count: {
+			violations: number;
+			workOrders: number;
+		};
+	};
+	notices: never[];
+})[] | ({
 	homeowner: {
 		email: string;
 		name: string;
@@ -1029,7 +1196,52 @@ export declare function submitARCRequest(input: {
 	submittedAt: Date;
 	decidedAt: Date | null;
 }>;
-export declare function getARCRequests(hoaId: string): Promise<({
+export declare function getARCRequests(hoaId: string): Promise<{
+	id: string;
+	hoaId: string;
+	homeownerId: string;
+	address: string;
+	projectType: string;
+	description: string;
+	status: string;
+	estimatedCost: number;
+	startDate: null;
+	documentUrls: null;
+	reviewDeadline: string;
+	submittedAt: string;
+	reviewedBy: null;
+	reviewNotes: null;
+	conditions: null;
+	decidedAt: null;
+	aiAnalysis: null;
+	homeowner: {
+		id: string;
+		hoaId: string;
+		name: string;
+		email: string;
+		phone: null;
+		address: string;
+		unit: null;
+		role: string;
+		active: boolean;
+		createdAt: string;
+		updatedAt: string;
+		duesAccount: {
+			id: string;
+			homeownerId: string;
+			balanceCents: number;
+			monthlyDueCents: number;
+			stripeCustomerId: null;
+			autopayEnabled: boolean;
+			createdAt: string;
+			updatedAt: string;
+		};
+		_count: {
+			violations: number;
+			workOrders: number;
+		};
+	};
+}[] | ({
 	homeowner: {
 		email: string;
 		name: string;
@@ -1221,7 +1433,27 @@ export declare function createVote(input: {
 	resultSummary: string | null;
 	certifiedAt: Date | null;
 }>;
-export declare function getVotes(hoaId: string): Promise<({
+export declare function getVotes(hoaId: string): Promise<{
+	id: string;
+	hoaId: string;
+	meetingId: null;
+	title: string;
+	description: string;
+	type: string;
+	status: string;
+	options: string;
+	allowMultiple: boolean;
+	requiresQuorum: boolean;
+	quorumCount: number;
+	closesAt: string;
+	resultSummary: null;
+	certifiedAt: null;
+	aiAnalysis: null;
+	createdAt: string;
+	updatedAt: string;
+	casts: never[];
+	meeting: null;
+}[] | ({
 	meeting: {
 		title: string;
 		scheduledAt: Date;
@@ -1331,6 +1563,102 @@ export declare function createWorkOrder(input: {
 	completedAt: Date | null;
 }>;
 export declare function getWorkOrders(hoaId: string): Promise<({
+	id: string;
+	hoaId: string;
+	homeownerId: string;
+	title: string;
+	description: string;
+	category: string;
+	location: string;
+	priority: string;
+	status: string;
+	assignedTo: null;
+	assignedAt: null;
+	estimatedCost: number;
+	actualCost: null;
+	completionNotes: null;
+	boardApproved: boolean;
+	boardApprovedAt: null;
+	dueDate: string;
+	aiAnalysis: null;
+	createdAt: string;
+	updatedAt: string;
+	homeowner: {
+		id: string;
+		hoaId: string;
+		name: string;
+		email: string;
+		phone: null;
+		address: string;
+		unit: null;
+		role: string;
+		active: boolean;
+		createdAt: string;
+		updatedAt: string;
+		duesAccount: {
+			id: string;
+			homeownerId: string;
+			balanceCents: number;
+			monthlyDueCents: number;
+			stripeCustomerId: null;
+			autopayEnabled: boolean;
+			createdAt: string;
+			updatedAt: string;
+		};
+		_count: {
+			violations: number;
+			workOrders: number;
+		};
+	};
+} | {
+	id: string;
+	hoaId: string;
+	homeownerId: string;
+	title: string;
+	description: string;
+	category: string;
+	location: string;
+	priority: string;
+	status: string;
+	assignedTo: string;
+	assignedAt: string;
+	estimatedCost: number;
+	actualCost: null;
+	completionNotes: null;
+	boardApproved: boolean;
+	boardApprovedAt: string;
+	dueDate: string;
+	aiAnalysis: null;
+	createdAt: string;
+	updatedAt: string;
+	homeowner: {
+		id: string;
+		hoaId: string;
+		name: string;
+		email: string;
+		phone: null;
+		address: string;
+		unit: null;
+		role: string;
+		active: boolean;
+		createdAt: string;
+		updatedAt: string;
+		duesAccount: {
+			id: string;
+			homeownerId: string;
+			balanceCents: number;
+			monthlyDueCents: number;
+			stripeCustomerId: null;
+			autopayEnabled: boolean;
+			createdAt: string;
+			updatedAt: string;
+		};
+		_count: {
+			violations: number;
+			workOrders: number;
+		};
+	};
+})[] | ({
 	homeowner: {
 		name: string;
 		address: string;
@@ -1802,7 +2130,7 @@ export declare function getTransitionMoat(hoaId: string): Promise<{
 			transitionCaseId: string;
 			name: string;
 			role: string;
-			contact: string;
+			contact: null;
 			stance: string;
 			primaryConcern: string;
 			persuasionAngle: string;
@@ -1830,13 +2158,13 @@ export declare function getTransitionMoat(hoaId: string): Promise<{
 		currentPmc: string;
 		priorPmc: null;
 		sourceSignal: string;
-		sourceUrl: string;
+		sourceUrl: null;
 		signalSummary: string;
 		complaintThemes: string[];
 		contractStatus: string;
 		renewalDate: string;
-		noticeWindowDays: number;
-		terminationFeeCents: number;
+		noticeWindowDays: null;
+		terminationFeeCents: null;
 		buyoutOfferedCents: null;
 		boardFear: string;
 		decidingProof: string;
@@ -1855,7 +2183,7 @@ export declare function getTransitionMoat(hoaId: string): Promise<{
 		transitionCaseId: string;
 		name: string;
 		role: string;
-		contact: string;
+		contact: null;
 		stance: string;
 		primaryConcern: string;
 		persuasionAngle: string;
@@ -1997,59 +2325,17 @@ export declare function exportPilotProofPack(input: {
 		plan: string;
 	};
 	selectedCase: {
-		stakeholders: {
-			id: string;
-			hoaId: string;
-			transitionCaseId: string;
-			name: string;
-			role: string;
-			contact: string;
-			stance: string;
-			primaryConcern: string;
-			persuasionAngle: string;
-			lastInteractionAt: string;
-			notes: string;
-			createdAt: string;
-			updatedAt: string;
-		}[];
-		moatSignals: {
-			id: string;
-			hoaId: string;
-			transitionCaseId: string;
-			category: string;
-			label: string;
-			evidence: string;
-			source: string;
-			confidence: string;
-			isPubliclyReplicable: boolean;
-			moatWeight: number;
-			capturedBy: string;
-			createdAt: string;
-		}[];
 		id: string;
-		hoaId: string;
 		currentPmc: string;
-		priorPmc: null;
 		sourceSignal: string;
-		sourceUrl: string;
 		signalSummary: string;
 		complaintThemes: string[];
 		contractStatus: string;
-		renewalDate: string;
-		noticeWindowDays: number;
-		terminationFeeCents: number;
-		buyoutOfferedCents: null;
 		boardFear: string;
 		decidingProof: string;
-		counterMove: string;
 		nextStep: string;
 		status: string;
-		transitionScore: number;
-		replicabilityScore: number;
-		dataCompleteness: number;
-		createdAt: string;
-		updatedAt: string;
-	} | undefined;
+	} | null;
 	moatSummary: {
 		transitionCases: number;
 		boardStakeholders: number;
@@ -2062,33 +2348,16 @@ export declare function exportPilotProofPack(input: {
 		investorLine: string;
 	};
 	topSignals: {
-		id: string;
-		hoaId: string;
-		transitionCaseId: string;
-		category: string;
 		label: string;
+		category: string;
 		evidence: string;
-		source: string;
 		confidence: string;
-		isPubliclyReplicable: boolean;
 		moatWeight: number;
-		capturedBy: string;
-		createdAt: string;
 	}[];
 	boardMap: {
-		id: string;
-		hoaId: string;
-		transitionCaseId: string;
-		name: string;
 		role: string;
-		contact: string;
 		stance: string;
 		primaryConcern: string;
-		persuasionAngle: string;
-		lastInteractionAt: string;
-		notes: string;
-		createdAt: string;
-		updatedAt: string;
 	}[];
 	complianceSummary: {
 		totalEvents: number;
@@ -2131,7 +2400,7 @@ export declare function exportPilotProofPack(input: {
 			transitionCaseId: string;
 			name: string;
 			role: string;
-			contact: string;
+			contact: null;
 			stance: string;
 			primaryConcern: string;
 			persuasionAngle: string;
@@ -2159,13 +2428,13 @@ export declare function exportPilotProofPack(input: {
 		currentPmc: string;
 		priorPmc: null;
 		sourceSignal: string;
-		sourceUrl: string;
+		sourceUrl: null;
 		signalSummary: string;
 		complaintThemes: string[];
 		contractStatus: string;
 		renewalDate: string;
-		noticeWindowDays: number;
-		terminationFeeCents: number;
+		noticeWindowDays: null;
+		terminationFeeCents: null;
 		buyoutOfferedCents: null;
 		boardFear: string;
 		decidingProof: string;
@@ -2285,7 +2554,7 @@ export declare function exportPilotProofPack(input: {
 		transitionCaseId: string;
 		name: string;
 		role: string;
-		contact: string;
+		contact: null;
 		stance: string;
 		primaryConcern: string;
 		persuasionAngle: string;
@@ -2312,6 +2581,16 @@ export declare function exportPilotProofPack(input: {
 		totalEvents: number;
 		legalEvents: number;
 		moduleBreakdown: Record<string, number>;
+	} | {
+		totalEvents: number;
+		legalEvents: number;
+		moduleBreakdown: {
+			finebot: number;
+			arc: number;
+			votebox: number;
+			payos: number;
+			boardroom: number;
+		};
 	};
 	legalHighlights: {
 		date: Date;
@@ -2320,11 +2599,49 @@ export declare function exportPilotProofPack(input: {
 		summary: string;
 		actor: string;
 		legalCategory: string | null;
+	}[] | {
+		date: string;
+		module: string;
+		eventType: string;
+		summary: string;
+		actor: string;
+		legalCategory: string;
 	}[];
 	firstPilotProofChecklist: string[];
 	demo?: undefined;
 }>;
 export declare function getOSDashboard(hoaId: string): Promise<{
+	hoa: {
+		id: string;
+		name: string;
+		community: string;
+		city: string;
+		state: string;
+		zip: string;
+		units: number;
+		plan: string;
+		paid: boolean;
+	};
+	stats: {
+		homeowners: number;
+		openViolations: number;
+		openWorkOrders: number;
+		pendingARC: number;
+		openVotes: number;
+	};
+	nextMeeting: {
+		id: string;
+		scheduledAt: string;
+		title: string;
+	};
+	financial: {
+		totalOutstanding: number;
+		delinquentCount: number;
+		budgetedYTD: number;
+		actualYTD: number;
+		variance: number;
+	};
+} | {
 	hoa: ({
 		homeowners: {
 			id: string;
@@ -2551,6 +2868,49 @@ export declare function exportCompliancePack(input: {
 		target: string | null;
 		legalFlag: boolean;
 		legalCategory: string | null;
+	}[];
+} | {
+	exportMeta: {
+		generatedAt: string;
+		requestedBy: string;
+		purpose: string;
+		hoaId: string;
+		hoaName: string;
+		community: string;
+		dateRangeStart: string;
+		dateRangeEnd: string;
+		demo: boolean;
+	};
+	summary: {
+		totalEvents: number;
+		legalEvents: number;
+		moduleBreakdown: {
+			finebot: number;
+			arc: number;
+			votebox: number;
+			payos: number;
+			boardroom: number;
+		};
+	};
+	legalHighlights: {
+		date: string;
+		module: string;
+		eventType: string;
+		summary: string;
+		actor: string;
+		legalCategory: string;
+	}[];
+	fullTimeline: {
+		id: string;
+		date: string;
+		module: string;
+		eventType: string;
+		summary: string;
+		detail: null;
+		actor: string;
+		target: string;
+		legalFlag: boolean;
+		legalCategory: string;
 	}[];
 }>;
 

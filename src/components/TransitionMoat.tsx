@@ -49,13 +49,15 @@ function SummaryCard({ label, value, sub }: { label: string; value: string | num
 }
 
 function CaseCard({ transitionCase }: { transitionCase: TransitionCase }) {
+  const isSynthetic = transitionCase.sourceSignal === "synthetic_demo";
   return (
     <Card style={{ padding: 22 }}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 16, marginBottom: 18 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
-            <h3 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 800, letterSpacing: "-0.03em", color: "var(--text)" }}>{transitionCase.currentPmc} exit case</h3>
+            <h3 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 800, letterSpacing: "-0.03em", color: "var(--text)" }}>{transitionCase.currentPmc} transition case</h3>
             <StatusTag status={transitionCase.status} />
+            {isSynthetic && <Tag color={T.warn} bg={T.warnPale}>Synthetic demo</Tag>}
           </div>
           <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.55, margin: 0 }}>{transitionCase.signalSummary}</p>
         </div>
@@ -69,10 +71,10 @@ function CaseCard({ transitionCase }: { transitionCase: TransitionCase }) {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 18 }}>
-        <div><Label>Contract</Label><StatusTag status={transitionCase.contractStatus} /></div>
+        <div><Label>Contract</Label><StatusTag status={isSynthetic ? "redacted" : transitionCase.contractStatus} /></div>
         <div><Label>Renewal</Label><div style={{ fontFamily: T.fontMono, fontSize: 12, color: "var(--text-mid)" }}>{formatDate(transitionCase.renewalDate)}</div></div>
-        <div><Label>Notice window</Label><div style={{ fontFamily: T.fontMono, fontSize: 12, color: "var(--text-mid)" }}>{transitionCase.noticeWindowDays ?? "—"} days</div></div>
-        <div><Label>Exit fee</Label><div style={{ fontFamily: T.fontMono, fontSize: 12, color: "var(--text-mid)" }}>{money(transitionCase.terminationFeeCents)}</div></div>
+        <div><Label>Notice window</Label><div style={{ fontFamily: T.fontMono, fontSize: 12, color: "var(--text-mid)" }}>{transitionCase.noticeWindowDays ? `${transitionCase.noticeWindowDays} days` : "Redacted / TBD"}</div></div>
+        <div><Label>Exit fee</Label><div style={{ fontFamily: T.fontMono, fontSize: 12, color: "var(--text-mid)" }}>{transitionCase.terminationFeeCents ? money(transitionCase.terminationFeeCents) : "Redacted / TBD"}</div></div>
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 18 }}>
@@ -125,14 +127,14 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
       <div className="gp-transition-inner" style={{ maxWidth: 1120, margin: "0 auto" }}>
         <SectionHeader
           title="Transition Graph"
-          sub="The uncopiable layer: every PMC exit becomes structured board psychology, contract intelligence, transition proof, and compliance memory."
+          sub="Synthetic demo of how board-approved transition notes, continuity checklists, and compliance memory become association-owned records."
           action={<div className="gp-transition-actions" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><Btn variant="outline" onClick={() => setCaseForm(!caseForm)}>PMC Intake</Btn><Btn variant="ghost" onClick={() => setStakeholderForm(!stakeholderForm)} disabled={!primaryCaseId}>Board Map</Btn><Btn variant="gold" onClick={() => setSignalForm(!signalForm)} disabled={!primaryCaseId}>Moat Signal</Btn><Btn onClick={() => exportProof.mutate()} disabled={!primaryCaseId || exportProof.isPending}>Export Proof Pack</Btn></div>}
         />
 
         <Card className="gp-transition-thesis" style={{ padding: "18px 22px", marginBottom: 18, background: "linear-gradient(135deg, #1C1C1A, #2A5240)", color: "white" }}>
           <div style={{ fontFamily: T.fontMono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.58)", marginBottom: 8 }}>Investor-safe moat thesis</div>
-          <div style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 6 }}>Public HOA data is the wedge. Private PMC exit memory is the moat.</div>
-          <div style={{ fontFamily: T.fontSans, fontSize: 13, lineHeight: 1.65, color: "rgba(255,255,255,0.78)" }}>Competitors can scrape HOA names and bad PMC reviews. They cannot instantly replicate private contract terms, board-level switching psychology, transition failure modes, compliance timelines, and before/after operating benchmarks from real HOA exits.</div>
+          <div style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 6 }}>Association-owned continuity memory is the moat.</div>
+          <div style={{ fontFamily: T.fontSans, fontSize: 13, lineHeight: 1.65, color: "rgba(255,255,255,0.78)" }}>This public demo uses redacted synthetic data. Production transition packs should expose only board-approved, share-safe summaries externally.</div>
         </Card>
 
         {isLoading && <div style={{ padding: 48, textAlign: "center", fontFamily: T.fontSans, color: "var(--text-light)" }}>Loading transition memory…</div>}
@@ -150,7 +152,7 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
               <Card style={{ padding: 22, marginBottom: 18 }}>
                 <h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 800, marginBottom: 18 }}>PMC Exit Intake</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
-                  <FDInput label="Current PMC" value={newCase.currentPmc} onChange={(e) => setNewCase({ ...newCase, currentPmc: e.target.value })} placeholder="RealManage" />
+                  <FDInput label="Current PMC" value={newCase.currentPmc} onChange={(e) => setNewCase({ ...newCase, currentPmc: e.target.value })} placeholder="Current management provider" />
                   <FDSelect label="Source" value={newCase.sourceSignal} onChange={(e) => setNewCase({ ...newCase, sourceSignal: e.target.value })}><option value="google_review">Google review</option><option value="board_conversation">Board conversation</option><option value="referral">Referral</option><option value="public_meeting">Public meeting</option><option value="inbound">Inbound</option><option value="other">Other</option></FDSelect>
                   <FDSelect label="Contract status" value={newCase.contractStatus} onChange={(e) => setNewCase({ ...newCase, contractStatus: e.target.value })}><option value="unknown">Unknown</option><option value="in_window">In notice window</option><option value="auto_renewed">Auto-renewed</option><option value="locked">Locked</option><option value="month_to_month">Month-to-month</option><option value="expired">Expired</option></FDSelect>
                 </div>
@@ -205,8 +207,19 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
 
             {proofPack !== null && (
               <Card style={{ padding: 22, marginTop: 18 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}><h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 800 }}>Pilot Proof Pack JSON</h3><Btn variant="ghost" onClick={() => setProofPack(null)}>Close</Btn></div>
-                <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", maxHeight: 520, overflow: "auto", background: "#111", color: "#E7F6EC", padding: 16, borderRadius: 12, fontSize: 11, lineHeight: 1.55 }}>{JSON.stringify(proofPack, null, 2)}</pre>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}><h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 800 }}>Redacted Proof Pack</h3><Btn variant="ghost" onClick={() => setProofPack(null)}>Close</Btn></div>
+                <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.6, marginBottom: 16 }}>Public demo export is summarized instead of exposing raw JSON, stakeholder contacts, internal IDs, notes, or contract terms.</p>
+                {(() => {
+                  const pack = proofPack as { title?: string; generatedAt?: string; complianceSummary?: { totalEvents?: number; legalEvents?: number }; firstPilotProofChecklist?: string[]; topSignals?: { label: string; evidence: string }[] };
+                  return (
+                    <div style={{ display: "grid", gap: 12 }}>
+                      <Card style={{ padding: 16 }}><Label>Title</Label><div style={{ fontFamily: T.fontSans, fontWeight: 700 }}>{pack.title}</div><div style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)", marginTop: 6 }}>{pack.generatedAt}</div></Card>
+                      <Card style={{ padding: 16 }}><Label>Compliance summary</Label><div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)" }}>{pack.complianceSummary?.totalEvents ?? 0} demo events · {pack.complianceSummary?.legalEvents ?? 0} governance/legal highlights</div></Card>
+                      <Card style={{ padding: 16 }}><Label>Top redacted signals</Label><ul style={{ margin: "8px 0 0", paddingLeft: 18 }}>{(pack.topSignals ?? []).slice(0, 4).map((s) => <li key={s.label} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", marginBottom: 6 }}><strong>{s.label}:</strong> {s.evidence}</li>)}</ul></Card>
+                      <Card style={{ padding: 16 }}><Label>First pilot proof checklist</Label><ul style={{ margin: "8px 0 0", paddingLeft: 18 }}>{(pack.firstPilotProofChecklist ?? []).map((item) => <li key={item} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", marginBottom: 5 }}>{item}</li>)}</ul></Card>
+                    </div>
+                  );
+                })()}
               </Card>
             )}
           </>

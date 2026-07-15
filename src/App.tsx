@@ -307,8 +307,7 @@ function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona,
 
 function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; initialView?: OSView }) {
   const [view, setView] = useState<OSView>(initialView);
-  const { data: demoHoas = [] } = useQuery({ queryKey: ["hoa-list", "demo"], queryFn: () => rpc.getHOAList() });
-  const demoHoaId = ((demoHoas as { id: string; community: string }[]).find((h) => h.community === "Steiner Ranch HOA (Demo)")?.id) ?? DEMO_HOA_ID;
+  const demoHoaId = DEMO_HOA_ID;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -524,6 +523,9 @@ function DemoRoute() {
   }
   if (searchParams.get("view") === "investor") {
     return <ErrorBoundary><BoardDemo initialView="investor" onBack={() => navigate('/demo')} /></ErrorBoundary>;
+  }
+  if (searchParams.get("view") === "compliance") {
+    return <ErrorBoundary><BoardDemo initialView="compliance" onBack={() => navigate('/demo')} /></ErrorBoundary>;
   }
   return <ErrorBoundary><GatePassDemo onBack={() => navigate('/')} /></ErrorBoundary>;
 }

@@ -121,9 +121,9 @@ export default function ComplianceMemorySection() {
             {/* Footer */}
             <div className="px-6 py-4 bg-[#f4f1ec]/50 border-t border-[#2A5240]/8 flex items-center justify-between">
               <span className="text-xs text-[#1C1C1A]/40">Showing last 5 demo events</span>
-              <button className="text-xs font-medium text-[#2A5240] flex items-center gap-1.5 hover:opacity-70 transition-opacity">
+              <a href="/demo?view=compliance" className="text-xs font-medium text-[#2A5240] flex items-center gap-1.5 hover:opacity-70 transition-opacity">
                 <Download className="w-3 h-3" /> Export compliance pack
-              </button>
+              </a>
             </div>
           </motion.div>
 

@@ -11,8 +11,8 @@ const features = [
   'Unlimited homeowners',
   'Data migration from your current system — free',
   'Board training included — free',
-  'Live in 14 days or less',
-  '24/7 automated operations',
+  'Onboarding timeline scoped during transition review',
+  'Automation support where board-approved workflows are configured',
   'Austin-based support',
   'Your data — exportable anytime',
 ];
@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     q: 'What does migration involve?',
-    a: 'We pull your homeowner data, dues history, and open violations from your current system. Typically takes 3–5 business days. You pay nothing until you\'re live.',
+    a: 'Migration scope depends on what your current provider can export and what your board approves importing. GatePass starts with a transition review so timeline and record availability are clear before enrollment.',
   },
   {
     q: "What if our HOA doesn't have a physical gate?",
@@ -41,7 +41,7 @@ const faqs = [
   },
   {
     q: 'Is GatePass a licensed property management company?',
-    a: 'No — intentionally. GatePass is a software tool, not a licensed property management company under Texas law. We are not subject to TREC licensing requirements and we hold no fiduciary responsibility for HOA funds. Payments are processed directly through your HOA\'s Stripe account. GatePass is designed to create auditable, timestamped records for board decisions.',
+    a: 'GatePass is software for association-owned records and board workflows, not a property-management firm. Licensing and fiduciary responsibilities depend on the activities performed by the board, manager, vendors, and service providers. GatePass does not provide legal advice or hold itself out as counsel or a licensed property manager.',
   },
   {
     q: 'Who handles support?',

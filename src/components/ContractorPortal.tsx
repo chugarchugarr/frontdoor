@@ -4,7 +4,7 @@ import { client as rpc } from "@/lib/client";
 import { T, GLOBAL_CSS } from "./tokens";
 import { Btn, Card, Tag, StatusTag, EmptyState } from "./ui-kit";
 
-const DEMO_HOA_ID = "cmn5kapjd0000jitlk3ehms51";
+const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
 
 type Tab = "jobs" | "permits" | "profile";
 
@@ -286,10 +286,10 @@ function PermitsTab() {
 // ─── Tab: My Profile ──────────────────────────────────────────────────
 function ProfileTab() {
   const TRUST_BADGES = [
-    { label: "Licensed", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
-    { label: "Insured", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> },
-    { label: "Background Checked", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> },
-    { label: "Permit Verified", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> },
+    { label: "License info pending", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+    { label: "Insurance info pending", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> },
+    { label: "Screening not started", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> },
+    { label: "Permit history preview", icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> },
   ];
 
   const SPECIALTIES = ["Roofing", "Storm Damage", "Shingle Replacement", "Gutter Systems", "Skylight Install"];
@@ -318,16 +318,16 @@ function ProfileTab() {
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <Tag color={T.forest} bg={T.forestPale}>Founding Contractor</Tag>
-              <Tag color={T.gold} bg={T.goldLight}>Seat #3 of 25</Tag>
+              <Tag color={T.gold} bg={T.goldLight}>Preview profile</Tag>
             </div>
           </div>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 1, background: "#F0F0F0", borderRadius: 12, overflow: "hidden", marginTop: 22 }}>
           {[
-            { label: "Jobs Completed",  value: "47" },
-            { label: "Response Rate",   value: "98%" },
-            { label: "Avg Rating",      value: "4.9" },
+            { label: "Jobs Completed",  value: "—" },
+            { label: "Response Rate",   value: "—" },
+            { label: "Avg Rating",      value: "—" },
           ].map(stat => (
             <div key={stat.label} style={{ background: "#FFFFFF", padding: "14px 16px", textAlign: "center" }}>
               <div style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.03em" }}>{stat.value}</div>
@@ -340,7 +340,7 @@ function ProfileTab() {
       {/* Trust badges */}
       <Card style={{ padding: "22px 24px", borderRadius: 16, marginBottom: 16 }}>
         <div style={{ fontFamily: T.fontMono, fontSize: 10, color: "#A3A3A3", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 14 }}>
-          Verifications
+          Profile status
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
           {TRUST_BADGES.map(b => (
@@ -375,7 +375,7 @@ function ProfileTab() {
         </div>
         {[
           { label: "Service Area", value: "Austin metro · Travis & Williamson counties" },
-          { label: "License #",    value: "RCL-2024-TX-88341" },
+          { label: "License #",    value: "Not collected in demo" },
           { label: "Founded",      value: "2011 · 13 years in business" },
           { label: "Phone",        value: "(512) 555-0192" },
         ].map(row => (

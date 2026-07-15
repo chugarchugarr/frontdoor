@@ -4,7 +4,7 @@ import { client as rpc } from "@/lib/client";
 import { T, GLOBAL_CSS } from "./tokens";
 import { Btn, Card, Tag, FDInput, FDTextarea, FDSelect, Label, StatusTag, EmptyState } from "./ui-kit";
 
-const DEMO_HOA_ID = "cmn5kapjd0000jitlk3ehms51";
+const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
 const DEMO_HOMEOWNER_NAME = "Jennifer Park";
 const DEMO_HOMEOWNER_ADDRESS = "4521 Comanche Trail";
 
