@@ -22,7 +22,7 @@ export default function Privacy() {
           </div>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">Data ownership</h2>
-            <p>Your HOA owns its data. You can export a full copy of your community's data at any time. If you cancel, your data is returned to you and deleted from our systems within 30 days.</p>
+            <p>Your association owns its data. Records are exportable at any time and retained for the life of the subscription. If the association cancels, GatePass will provide a full export and delete the data from active systems 30 days later.</p>
           </div>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">Contact</h2>

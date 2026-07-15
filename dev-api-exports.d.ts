@@ -232,8 +232,10 @@ export declare function createContractorCheckout(input: {
 	position: number;
 }>;
 export declare function getContractorStats(): Promise<{
+	capacity: number;
 	total: number;
 	paid: number;
+	reserved: number;
 	remaining: number;
 	spotsLeft: number;
 }>;

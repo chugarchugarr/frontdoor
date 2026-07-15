@@ -13,18 +13,18 @@ const EVENTS = [
 const pillars = [
   {
     icon: Shield,
-    title: 'Legally defensible records',
-    body: 'Every compliance action is timestamped, actor-attributed, and immutable. Holds up in small claims court, insurance disputes, and HOA audits.',
+    title: 'Timestamped, attributable records',
+    body: 'Every compliance action is designed to be timestamped, actor-attributed, and tied to the relevant board or homeowner record.',
   },
   {
     icon: Clock,
-    title: '5-year rolling history',
-    body: 'Nothing gets lost when board members rotate or resign. New boards inherit the full institutional memory of the community.',
+    title: 'Subscription-life retention',
+    body: 'Records are retained for the life of the subscription. If the association cancels, it receives a full export before deletion 30 days later.',
   },
   {
     icon: Download,
-    title: 'One-click PMC transition pack',
-    body: 'Switching from a management company? Export your complete compliance history as a structured report — ready for your attorney or new manager.',
+    title: 'One-click continuity export',
+    body: 'Export the association’s compliance history as a structured report when board members rotate or management changes.',
   },
   {
     icon: Lock,
@@ -53,7 +53,7 @@ export default function ComplianceMemorySection() {
               <span className="text-[#2A5240]">that remembers everything.</span>
             </h2>
             <p className="text-lg text-[#1C1C1A]/50 mt-6 max-w-md leading-relaxed">
-              PMCs lose your records when you fire them. Spreadsheets lose context when board members rotate. GatePass builds a permanent, searchable compliance ledger — every action, every decision, every dollar — that belongs to your community forever.
+              Vendor portals can lose context when boards or managers change. GatePass is designed to create timestamped, attributable records — every action, decision, and dollar — that belong to the association and remain exportable at any time.
             </p>
             <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8">
               {pillars.map((p, i) => {
@@ -136,14 +136,14 @@ export default function ComplianceMemorySection() {
           className="mt-20 p-8 bg-[#2A5240] rounded-[28px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
         >
           <div>
-            <p className="text-sm font-semibold text-white">Switching from a management company?</p>
+            <p className="text-sm font-semibold text-white">Changing management or staying put?</p>
             <p className="text-sm text-white/60 mt-1 max-w-lg">
-              We'll help you export your compliance history, migrate your data, and map the contract-specific path to a safer transition.
+              GatePass works alongside the current PMC and gives the association an exportable continuity layer if management changes later.
             </p>
           </div>
           <a href="/onboard"
             className="shrink-0 inline-flex items-center gap-2 text-sm font-semibold text-[#2A5240] bg-white hover:bg-[#f4f1ec] px-6 py-3 rounded-full transition-colors whitespace-nowrap">
-            Start the switch →
+            Start continuity review →
           </a>
         </motion.div>
 

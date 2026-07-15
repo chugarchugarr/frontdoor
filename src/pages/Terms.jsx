@@ -14,7 +14,7 @@ export default function Terms() {
           <p>By using GatePass, your HOA agrees to these terms. GatePass provides HOA operating software on a subscription basis.</p>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">Service</h2>
-            <p>GatePass provides software tools for HOA management including dues collection, violation tracking, ARC review, voting, work orders, amenity booking, and communications. Service is month-to-month with 30 days notice to cancel.</p>
+            <p>GatePass provides software tools for HOA operations including dues collection, violation tracking, ARC review, voting, work orders, amenity booking, and communications. Platform enrollment is annual unless a separate written agreement says otherwise.</p>
           </div>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">Pricing</h2>
@@ -26,7 +26,11 @@ export default function Terms() {
           </div>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">Limitation of liability</h2>
-            <p>GatePass is not liable for decisions made by your board using the platform. Software is provided as-is with a 99.9% uptime SLA.</p>
+            <p>GatePass is not liable for decisions made by your board using the platform. Software is provided as-is unless a separate written service agreement says otherwise.</p>
+          </div>
+          <div>
+            <h2 className="text-white font-semibold text-lg mb-3">Data retention</h2>
+            <p>Your association owns its data. Records are exportable at any time and retained for the life of the subscription. If the association cancels, GatePass will provide a full export and delete the data from active systems 30 days later.</p>
           </div>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">Contact</h2>

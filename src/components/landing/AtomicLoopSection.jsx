@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 const loop = [
-  ['Transition review', 'The board enters through PMC pain, contract timing, missing records, and compliance risk.'],
-  ['Contractor slot', 'GatePass opens verified access by trade and community — not commodity leads.'],
-  ['Homeowner job', 'ARC approvals and work orders become routed marketplace demand.'],
-  ['Quote + fee', 'Contractor quote and transaction records capture the value GatePass controls.'],
+  ['Exterior observation', 'A contractor sees a visible condition that may indicate an expensive homeowner problem.'],
+  ['HOA permission path', 'GatePass routes the observation through association-controlled access instead of door-to-door solicitation.'],
+  ['Homeowner work path', 'Relevant observations, ARC context, and approved next steps become a clean work path for the homeowner.'],
+  ['Quote + fee', 'Contractor quote and transaction records capture value only after live work is actually processed.'],
   ['Record boundary', 'Financial fields stay separated from live traction until production records and legal review are complete.'],
-  ['Compliance memory', 'The finished work becomes permanent operating memory that makes the community harder to churn.'],
+  ['Compliance memory', 'The finished work becomes exportable operating memory owned by the association.'],
 ];
 
 export default function AtomicLoopSection() {
@@ -23,7 +23,7 @@ export default function AtomicLoopSection() {
               One clean loop.
             </h2>
             <p className="text-lg text-[#1C1C1A]/55 mt-6 leading-relaxed">
-              HOA pain becomes transition review. Transition review becomes trusted access. Trusted access becomes contractor revenue and permanent community memory.
+              Exterior observation becomes HOA-controlled review. Controlled review becomes trusted access. Trusted access becomes contractor work only after production transactions exist.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-9">
               <Link to="/marketplace-loop" className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#2A5240] hover:bg-[#214231] px-6 py-3.5 rounded-full transition-colors">

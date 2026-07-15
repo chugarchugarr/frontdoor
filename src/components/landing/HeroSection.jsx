@@ -68,7 +68,7 @@ export default function HeroSection() {
             <span style={{ color: '#B8883A' }}>controls the gate.</span>
           </h1>
           <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-white/75 mt-7 max-w-3xl tracking-tight">
-            Software wedge. Marketplace business. Transition-memory moat.
+            Permissioned contractor access, controlled by the HOA.
           </p>
           <div className="mt-4 flex items-center gap-2">
             <span className="text-xs text-white/30 tracking-[0.15em] uppercase">Built for</span>
@@ -87,11 +87,14 @@ export default function HeroSection() {
             </AnimatePresence>
           </div>
           <p className="text-base md:text-lg text-white/52 mt-8 max-w-xl leading-relaxed font-light">
-            GatePass helps boards exit bad management, keep their records, and turn the approvals they already control into verified contractor access. No hype. Just the operating layer.
+            Exterior conditions can reveal expensive problems before homeowners know what they mean. GatePass gives contractors a permissioned way to surface those observations through the HOA instead of going around the community's boundaries.
+          </p>
+          <p className="text-sm md:text-base text-white/42 mt-4 max-w-2xl leading-relaxed font-light">
+            GatePass works with the current PMC, keeps access under association control regardless of who manages accounting, and protects continuity when management changes.
           </p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-10">
             <Link to="/onboard" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">
-              Map the HOA transition <ArrowRight className="w-4 h-4" />
+              Map controlled access <ArrowRight className="w-4 h-4" />
             </Link>
             <Link to="/demo" className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full">
               View live demo
@@ -112,7 +115,7 @@ export default function HeroSection() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-white/25 mt-6 tracking-wide">Start with board-owned operations. Open contractor access only where the community has a clean permission path.</p>
+          <p className="text-xs text-white/25 mt-6 tracking-wide">Contractors pay for verified, permissioned access. Homeowners receive relevant observations and approved work paths without door-to-door solicitation.</p>
         </motion.div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
+import { CONTRACTOR_FOUNDING_SEAT_CAPACITY } from "@/lib/contractorInventory";
 import { T, GLOBAL_CSS } from "./tokens";
 import { Btn, Card, Tag, FDInput, FDSelect, Icons, Label } from "./ui-kit";
 
@@ -16,9 +17,9 @@ const CATEGORIES = [
 ];
 
 const TRUST_POINTS = [
-  { icon: "✓", text: "HOA-backed access — get surfaced inside board-managed communities instead of competing for commodity leads" },
-  { icon: "✓", text: "Permit-matched demand — homeowners with active Austin permits pulled from city data, matched to your trade" },
-  { icon: "✓", text: "Direct integration into GatePass WorkOrder routing for HOA-dispatched and board-vouched jobs" },
+  { icon: "✓", text: "Founding-access application — be reviewed for permissioned HOA channels before broad launch" },
+  { icon: "✓", text: "Prelaunch permit intelligence — Austin permit signals matched to your trade as communities enroll" },
+  { icon: "✓", text: "Prepared WorkOrder routing for HOA-approved jobs once live communities activate access" },
   { icon: "✓", text: "Full refund if Austin doesn't launch within 6 months" },
 ];
 
@@ -46,9 +47,10 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
     },
   });
 
-  const spotsLeft = stats?.spotsLeft ?? 25;
-  const spotsTaken = 25 - spotsLeft;
-  const pct = Math.round((spotsTaken / 25) * 100);
+  const capacity = stats?.capacity ?? CONTRACTOR_FOUNDING_SEAT_CAPACITY;
+  const spotsLeft = stats?.spotsLeft ?? capacity;
+  const spotsTaken = stats?.reserved ?? capacity - spotsLeft;
+  const pct = Math.round((spotsTaken / capacity) * 100);
   const isUrgent = spotsLeft <= 8;
   const canSubmit = form.company && form.contactName && form.email && form.category && form.zip && !mutation.isPending;
 
@@ -108,11 +110,11 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
             letterSpacing: "-0.025em", lineHeight: 1.1,
             marginBottom: 16,
           }}>
-            Get first access<br />to HOA-controlled work.
+            Apply for founding access<br />to HOA-controlled work.
           </h1>
 
           <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.75, marginBottom: 28, maxWidth: 380 }}>
-            GatePass cross-references Austin permit data, HOA work orders, and board-approved vendor access. Every contractor on the platform gets a shot at homeowners who are actively spending on their trade — before the job becomes a commodity lead.
+            GatePass is building a permissioned channel where exterior-condition observations, Austin permit signals, and board-approved work paths can route through the HOA instead of door-to-door solicitation. This is founding access, not a promise of live transaction volume.
           </p>
 
           {/* Benefits list */}
@@ -167,7 +169,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
                 <Label style={{ margin: 0 }}>Founding Contractor Seats</Label>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
                   <span style={{ fontFamily: T.fontSans, fontSize: 28, fontWeight: 700, color: isUrgent ? T.danger : "var(--text)", letterSpacing: "-0.02em" }}>{spotsLeft}</span>
-                  <span style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>of 25 remaining</span>
+                  <span style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>of {capacity} remaining</span>
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>

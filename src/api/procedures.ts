@@ -5,6 +5,7 @@ import { Resend } from "resend";
 import { queue } from "@/api/queue";
 import { getAuth } from "@adaptive-ai/sdk/server";
 import { assertJobTransition, assertQuoteTransition, computeSplit } from "@/api/marketplace.guards";
+import { CONTRACTOR_FOUNDING_SEAT_CAPACITY } from "@/lib/contractorInventory";
 
 const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
 
@@ -151,7 +152,7 @@ export async function createContractorCheckout(input: {
 }) {
   const stripe = getStripe();
   const count = await db.contractorWaitlist.count();
-  if (count >= 25) throw new Error("All 25 founding contractor seats are filled.");
+  if (count >= CONTRACTOR_FOUNDING_SEAT_CAPACITY) throw new Error(`All ${CONTRACTOR_FOUNDING_SEAT_CAPACITY} founding contractor seats are filled.`);
   const position = count + 1;
 
   const contractor = await db.contractorWaitlist.create({
@@ -176,7 +177,7 @@ export async function createContractorCheckout(input: {
           currency: "usd",
           product_data: {
             name: "GatePass — Founding Contractor Seat",
-            description: `${input.category} · Austin Metro · Seat #${position} of 25`,
+            description: `${input.category} · Austin Metro · Seat #${position} of ${CONTRACTOR_FOUNDING_SEAT_CAPACITY}`,
           },
           unit_amount: 9900,
         },
@@ -201,8 +202,9 @@ export async function createContractorCheckout(input: {
 export async function getContractorStats() {
   const total = await db.contractorWaitlist.count();
   const paid = await db.contractorWaitlist.count({ where: { paid: true } });
-  const remaining = Math.max(0, 25 - paid);
-  return { total, paid, remaining, spotsLeft: remaining };
+  const capacity = CONTRACTOR_FOUNDING_SEAT_CAPACITY;
+  const remaining = Math.max(0, capacity - total);
+  return { capacity, total, paid, reserved: total, remaining, spotsLeft: remaining };
 }
 
 export async function getWaitlistPosition(id: string) {
@@ -253,7 +255,7 @@ function demoInvestorProofMetrics() {
       hoaPipeline: 5,
       transitionCases: 1,
       privateMoatSignals: 4,
-      contractorSlotsOpen: 5,
+      contractorSlotsOpen: 24,
       contractorSignups: 1,
       marketplaceJobs: 2,
       quotesSubmitted: 1,
@@ -560,7 +562,7 @@ export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boo
       hoaPipeline: await db.hOA.count(),
       transitionCases: moat.summary.transitionCases,
       privateMoatSignals: moat.summary.privateSignals,
-      contractorSlotsOpen: marketplace.slots.length,
+      contractorSlotsOpen: Math.max(0, CONTRACTOR_FOUNDING_SEAT_CAPACITY - waitlistCount),
       contractorSignups: waitlistCount,
       marketplaceJobs: marketplace.jobs.length,
       quotesSubmitted: marketplace.quotes.length,

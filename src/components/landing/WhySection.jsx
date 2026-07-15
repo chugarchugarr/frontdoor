@@ -4,10 +4,10 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const points = [
-  { num: '01', title: 'Your legal history. Permanently yours.', body: 'Every violation notice, ARC decision, board vote, and dues record is timestamped and stored in a searchable compliance ledger. When you switch from a PMC, your history doesn\'t disappear with them.' },
-  { num: '02', title: 'Flat-rate pricing. No PMC games.', body: '$20 per unit per year. That\'s it. A 200-unit HOA pays $4,000/yr — vs. $16,000–$24,000 with a management company that invoices you for every phone call.' },
+  { num: '01', title: 'Your operating history stays with the association.', body: 'Every violation notice, ARC decision, board vote, and dues record is designed to be timestamped, attributable, searchable, and exportable. When management changes, your history does not disappear with a vendor portal.' },
+  { num: '02', title: 'Flat-rate software pricing.', body: '$20 per unit per year for the GatePass software layer. GatePass works alongside current management and carries no PMC responsibility.' },
   { num: '03', title: 'The work gets routed.', body: 'Nine board modules handle dues, notices, ARC requests, votes, and work orders through one operating layer. You approve. GatePass keeps the record.' },
-  { num: '04', title: 'Transition support, not hand-waving.', body: 'We map your current contract, migration risk, board responsibilities, and launch path before you switch. Where it makes sense, we can apply case-by-case transition credit instead of pretending every PMC exit is identical.' },
+  { num: '04', title: 'Continuity when management changes.', body: 'GatePass maps the current operating record, migration risk, board responsibilities, and launch path so the association keeps continuity whether it stays with a PMC or changes providers.' },
 ];
 
 export default function WhySection() {
@@ -25,19 +25,19 @@ export default function WhySection() {
               <span className="text-[#2A5240]">Never held hostage again.</span>
             </h2>
             <p className="text-lg text-[#1C1C1A]/50 mt-8 max-w-md leading-relaxed">
-              When you fire a PMC, they take your records with them — or charge you to get them back. GatePass stores every compliance event, financial transaction, board decision, contractor interaction, and permit signal in a permanent ledger that belongs to your community.
+              GatePass gives the association a durable operating record: compliance events, financial transactions, board decisions, contractor interactions, and permit signals in one exportable layer owned by the community.
             </p>
 
             {/* TAM context for investors scanning the page */}
             <div className="mt-8 p-5 bg-[#2A5240]/8 border border-[#2A5240]/15 rounded-[24px]">
               <p className="text-xs text-[#2A5240] tracking-[0.15em] uppercase font-semibold mb-2">The market</p>
               <p className="text-sm text-[#1C1C1A]/60 leading-relaxed">
-                GatePass starts with the board-safe transition layer, then expands into contractor access. The HOA controls the neighborhood rulebook; GatePass makes that permission layer operational and economically useful.
+                GatePass starts with the contractor-access mechanism: exterior observations surface through the HOA, not around it. The transition layer protects continuity when management changes.
               </p>
             </div>
 
             <Link to="/pricing" className="inline-flex items-center gap-2 mt-8 text-sm font-semibold text-white bg-[#2A5240] hover:bg-[#1e3d2f] px-6 py-3 rounded-full transition-colors">
-              Calculate your savings <ArrowRight className="w-4 h-4" />
+              View pricing <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
           <div className="space-y-10">

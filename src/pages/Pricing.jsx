@@ -18,13 +18,12 @@ const features = [
 ];
 
 const comparisonRows = [
-  { label: 'Annual cost (200 units)', mgmt: '$16,000–$24,000/yr', gp: '$4,000/yr' },
   { label: 'Setup fee', mgmt: '$500–$2,000', gp: '$0' },
   { label: 'Per-module pricing', mgmt: 'Yes', gp: 'No' },
-  { label: 'Response time', mgmt: 'Days to weeks', gp: 'Instant' },
-  { label: 'Data ownership', mgmt: 'Theirs', gp: 'Yours' },
+  { label: 'Board record access', mgmt: 'Vendor-dependent', gp: 'Exportable anytime' },
+  { label: 'Contractor access controls', mgmt: 'Varies by provider', gp: 'Association-controlled' },
   { label: 'Contract term', mgmt: '12-mo minimum', gp: 'Annual platform enrollment' },
-  { label: 'Transition review', mgmt: 'Slow / opaque', gp: 'Starts before payment' },
+  { label: 'Management continuity', mgmt: 'Portal changes can break history', gp: 'Designed to preserve operating records' },
 ];
 
 const faqs = [
@@ -42,7 +41,7 @@ const faqs = [
   },
   {
     q: 'Is GatePass a licensed property management company?',
-    a: 'No — intentionally. GatePass is a software tool, not a licensed property management company under Texas law. We are not subject to TREC licensing requirements and we hold no fiduciary responsibility for HOA funds. Payments are processed directly through your HOA\'s Stripe account. This distinction also reduces your board\'s liability by creating auditable, timestamped records for every decision.',
+    a: 'No — intentionally. GatePass is a software tool, not a licensed property management company under Texas law. We are not subject to TREC licensing requirements and we hold no fiduciary responsibility for HOA funds. Payments are processed directly through your HOA\'s Stripe account. GatePass is designed to create auditable, timestamped records for board decisions.',
   },
   {
     q: 'Who handles support?',
@@ -50,7 +49,7 @@ const faqs = [
   },
   {
     q: 'What is the expansion path — is $20/unit the only pricing forever?',
-    a: 'The $20/unit flat rate is your community\'s operating platform. GatePass is opening founding contractor access in Austin as communities move through transition review. Contractor fees and transaction economics are designed to offset the HOA subscription over time; the base platform stays flat-rate.',
+    a: 'The $20/unit flat rate is your community\'s operating platform. GatePass is opening founding contractor access in Austin as communities move through access review. Contractor fees and transaction economics are planned, but community revenue sharing depends on actual transaction volume and legal structure.',
   },
 ];
 
@@ -72,7 +71,7 @@ export default function Pricing() {
               One plan.<br />Everything included.
             </h1>
             <p className="text-lg text-white/40 mt-6 max-w-lg leading-relaxed">
-              No tiers. No add-ons. No management company markups. Just $20 per unit, per year.
+              No tiers. No add-ons. Just $20 per unit, per year for the GatePass software layer. GatePass works alongside your current management provider.
             </p>
           </motion.div>
         </div>
@@ -144,7 +143,7 @@ export default function Pricing() {
               ))}
             </div>
             <p className="text-xs text-white/20 mt-6">
-              Marketplace upside comes after the board-owned operating layer is installed: contractor access, booked work, and export-safe operating memory.
+              Marketplace upside comes after the board-owned operating layer is installed and real contractor transactions exist. Revenue sharing remains subject to legal structure.
             </p>
           </motion.div>
         </div>
@@ -168,13 +167,13 @@ export default function Pricing() {
                 {
                   stage: 'Year 1',
                   title: 'Platform subscription',
-                  desc: '$20/unit/yr. Displace the management company. Build community density in Austin.',
+                  desc: '$20/unit/yr software enrollment. Work alongside current management while preserving association-owned continuity.',
                   color: '#B8883A',
                 },
                 {
                   stage: 'Austin Launch',
                   title: 'Founding contractor marketplace',
-                  desc: 'Contractors pay for verified access as communities move through transition review. Fees and transaction economics can flow back to the community.',
+                  desc: 'Contractors pay for verified access as communities move through access review. Fees and transaction economics can flow back only after real transactions and legal structure support it.',
                   color: '#5a9e7a',
                 },
                 {
@@ -209,13 +208,13 @@ export default function Pricing() {
               <div className="flex-1 h-px bg-[#2A5240]/10" />
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-[#1C1C1A] mb-12">
-              What you're paying now vs. GatePass
+              What GatePass controls
             </h2>
 
             {/* Header row */}
             <div className="grid grid-cols-3 gap-4 mb-3 px-4">
               <div />
-              <div className="text-xs text-[#1C1C1A]/40 font-semibold uppercase tracking-widest text-center">Management Co.</div>
+              <div className="text-xs text-[#1C1C1A]/40 font-semibold uppercase tracking-widest text-center">Typical PMC stack</div>
               <div className="text-xs text-[#2A5240] font-semibold uppercase tracking-widest text-center">GatePass</div>
             </div>
 
@@ -234,7 +233,7 @@ export default function Pricing() {
             </div>
 
             <p className="text-xs text-[#1C1C1A]/40 mt-4">
-              Based on average Austin-area HOA management company pricing for a 200-unit community.
+              GatePass is software. It does not replace licensed management responsibilities or fiduciary duties.
             </p>
           </motion.div>
         </div>

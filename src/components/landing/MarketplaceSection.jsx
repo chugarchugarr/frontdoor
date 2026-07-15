@@ -7,26 +7,26 @@ const steps = [
   {
     icon: ShieldCheck,
     label: '01',
-    title: 'Boards enter through transition pain',
-    body: 'GatePass starts where the urgency is highest: HOAs trapped by poor PMC service, missing records, contract confusion, and board liability.',
+    title: 'Contractors see exterior signals',
+    body: 'Roofs, fences, drainage, paint, and visible conditions can indicate expensive problems before homeowners know what they mean.',
   },
   {
     icon: DoorOpen,
     label: '02',
-    title: 'GatePass becomes the access layer',
-    body: 'Work orders, ARC requests, vendor history, and permit signals route through one board-owned system instead of disappearing into email and PMC portals.',
+    title: 'The HOA controls the path',
+    body: 'Observations route through the association’s permission layer — not door-to-door solicitation, cold calls, or unmanaged vendor pressure.',
   },
   {
     icon: Hammer,
     label: '03',
     title: 'Contractors pay for verified access',
-    body: 'Approved trades get access to HOA-backed demand before it becomes a commodity lead. Permit-matched work, board-vouched trust, and territory value compound.',
+    body: 'Approved trades pay for founding, permissioned access as communities enroll. Real transaction volume will be reported only after live work is processed.',
   },
   {
     icon: Landmark,
     label: '04',
-    title: 'The community earns from the gate',
-    body: 'Contractor fees and future transaction economics can flow back to the HOA, offsetting the platform cost and making the community an owner of its operating layer.',
+    title: 'Revenue share is counsel-gated',
+    body: 'Marketplace revenue sharing is planned, but subject to actual transaction volume and legal structure before it becomes a community-facing promise.',
   },
 ];
 
@@ -53,7 +53,7 @@ export default function MarketplaceSection() {
                 <span style={{ color: '#B8883A' }}>Access creates the market.</span>
               </h2>
               <p className="text-base md:text-lg text-white/45 mt-8 max-w-lg leading-relaxed">
-                GatePass is not a vendor directory. HOAs already govern approvals, exterior standards, common-area vendors, and community-vouched access paths. We make that permission layer operational.
+                GatePass is not a vendor directory. It gives contractors a permissioned way to surface exterior observations through the HOA, while homeowners receive relevant work paths without solicitation at the door.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Link to="/demo?view=transition" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-6 py-3.5 rounded-full transition-colors">

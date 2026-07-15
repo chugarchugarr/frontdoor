@@ -24,7 +24,7 @@ export default function AustinSection() {
             <h2 className="gp-display text-5xl md:text-6xl text-white leading-[0.95]">We live here too.</h2>
 
             <p className="text-base text-white/40 mt-8 leading-relaxed max-w-md">
-              Spent years in field sales watching HOA boards get crushed — overcharged by management companies, trapped by 12-month contracts, and cut out of the contractor economy moving through their own neighborhoods. GatePass is the platform I wish existed. We know what Travis County requires. We know Hill Country deed restrictions. We built this for communities like ours.
+              Spent years in field sales watching exterior conditions signal expensive homeowner problems before anyone had a clean, permissioned way to route the observation. GatePass is the platform I wish existed: contractors surface relevant conditions through the HOA, homeowners avoid door-to-door pressure, and the association keeps control of access.
             </p>
 
             <div className="mt-6 flex items-start gap-3 border-l-2 pl-4" style={{ borderColor: '#B8883A' }}>
@@ -35,9 +35,9 @@ export default function AustinSection() {
 
             {/* Data moat story */}
             <div className="mt-8 p-5 bg-white/5 border border-white/10 rounded-[24px]">
-              <p className="text-xs text-[#B8883A] tracking-[0.15em] uppercase font-semibold mb-2">The platform gets smarter over time</p>
+              <p className="text-xs text-[#B8883A] tracking-[0.15em] uppercase font-semibold mb-2">The association controls the access layer</p>
               <p className="text-sm text-white/50 leading-relaxed">
-                Every community that joins feeds GatePass data on transition paths, violation patterns, contractor performance, payment behavior, and ARC approval history. More communities create better benchmarks, stronger contractor access, and a private operating memory no management company can scrape.
+                GatePass records the local permission path: who approved access, what condition was observed, which work path was offered, and what record belongs to the association. Marketplace revenue sharing is planned and subject to real transaction volume and legal structure.
               </p>
             </div>
 
@@ -51,7 +51,7 @@ export default function AustinSection() {
             </div>
 
             <Link to="/onboard" className="inline-flex items-center gap-2 mt-10 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-6 py-3 rounded-full transition-colors">
-              Start transition review <ArrowRight className="w-4 h-4" />
+              Start access review <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
         </div>

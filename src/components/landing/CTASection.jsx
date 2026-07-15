@@ -16,11 +16,11 @@ export default function CTASection() {
             Turn board control<br /><span style={{ color: '#B8883A' }}>into community leverage.</span>
           </h2>
           <p className="text-lg text-white/40 mt-8 max-w-md mx-auto leading-relaxed">
-            Tell us your PMC situation, your board risk, and your contractor needs. GatePass maps the transition path, preserves the compliance record, and opens the access layer your community already controls.
+            Tell us how your community handles exterior observations, ARC approvals, vendor access, and management continuity. GatePass maps the access path and preserves the association-owned record.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
             <Link to="/onboard" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-8 py-4 rounded-full transition-colors">
-              Map the transition <ArrowRight className="w-4 h-4" />
+              Map the access path <ArrowRight className="w-4 h-4" />
             </Link>
             <Link to="/demo" className="text-sm text-white/50 hover:text-white transition-colors">
               See it live first →
