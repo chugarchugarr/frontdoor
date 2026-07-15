@@ -21,8 +21,8 @@ const marketProof = [
 
 const diligence = [
   ['Wedge', 'A board-safe transition review creates the first trusted relationship with an HOA.'],
-  ['Marketplace', 'Verified contractor access turns HOA-approved work into transaction flow.'],
-  ['Moat', 'Every transition, approval, quote, payment, and credit becomes board-owned operating memory.'],
+  ['Marketplace', 'Permissioned contractor access turns HOA-approved work into transaction flow.'],
+  ['Moat', 'Every transition, approval, quote, and payment record becomes board-owned operating memory.'],
 ];
 
 export default function Investors() {
@@ -38,7 +38,7 @@ export default function Investors() {
               Software wedge.<br />Marketplace business.<br /><span className="text-[#B8883A]">Transition-memory moat.</span>
             </h1>
             <p className="text-base md:text-lg text-white/50 mt-8 max-w-2xl leading-relaxed">
-              GatePass starts where boards already hurt: management transition, missing records, and compliance risk. Then it turns community permission into verified contractor access.
+              GatePass starts where boards already hurt: management transition, missing records, and compliance risk. Then it turns community permission into contractor access.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-10">
               <Link to="/marketplace-loop" className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">

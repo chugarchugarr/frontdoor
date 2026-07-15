@@ -37,7 +37,7 @@ export default function AustinSection() {
             <div className="mt-8 p-5 bg-white/5 border border-white/10 rounded-[24px]">
               <p className="text-xs text-[#B8883A] tracking-[0.15em] uppercase font-semibold mb-2">The association controls the access layer</p>
               <p className="text-sm text-white/50 leading-relaxed">
-                GatePass records the local permission path: who approved access, what condition was observed, which work path was offered, and what record belongs to the association. Marketplace revenue sharing is planned and subject to real transaction volume and legal structure.
+                GatePass records the local permission path: who approved access, what condition was observed, which work path was offered, and what record belongs to the association.
               </p>
             </div>
 

@@ -19,14 +19,14 @@ const steps = [
   {
     icon: Hammer,
     label: '03',
-    title: 'Contractors pay for verified access',
-    body: 'Approved trades pay for founding, permissioned access as communities enroll. Real transaction volume will be reported only after live work is processed.',
+    title: 'Contractors apply for permissioned access',
+    body: 'Trades can reserve founding access while communities enroll. Live work volume will be reported only after real jobs are processed.',
   },
   {
     icon: Landmark,
     label: '04',
-    title: 'Revenue share is counsel-gated',
-    body: 'Marketplace revenue sharing is planned, but subject to actual transaction volume and legal structure before it becomes a community-facing promise.',
+    title: 'The record compounds',
+    body: 'Each approved observation, work path, and contractor interaction becomes part of the association-owned operating record.',
   },
 ];
 

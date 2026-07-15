@@ -49,7 +49,7 @@ const faqs = [
   },
   {
     q: 'What is the expansion path — is $20/unit the only pricing forever?',
-    a: 'The $20/unit flat rate is your community\'s operating platform. GatePass is opening founding contractor access in Austin as communities move through access review. Contractor fees and transaction economics are planned, but community revenue sharing depends on actual transaction volume and legal structure.',
+    a: 'The $20/unit flat rate is your community\'s operating platform. GatePass is opening founding contractor access in Austin as communities move through access review. Any future marketplace economics will be introduced only after live work, legal structure, and board-facing terms support it.',
   },
 ];
 
@@ -143,7 +143,7 @@ export default function Pricing() {
               ))}
             </div>
             <p className="text-xs text-white/20 mt-6">
-              Marketplace upside comes after the board-owned operating layer is installed and real contractor transactions exist. Revenue sharing remains subject to legal structure.
+              Marketplace upside comes after the board-owned operating layer is installed and real contractor transactions exist. No community-facing marketplace economics are promised before legal structure and live activity support them.
             </p>
           </motion.div>
         </div>
@@ -173,7 +173,7 @@ export default function Pricing() {
                 {
                   stage: 'Austin Launch',
                   title: 'Founding contractor marketplace',
-                  desc: 'Contractors pay for verified access as communities move through access review. Fees and transaction economics can flow back only after real transactions and legal structure support it.',
+                  desc: 'Contractors apply for founding access as communities move through access review. Fees and marketplace economics come later, after real transactions and legal structure support them.',
                   color: '#5a9e7a',
                 },
                 {

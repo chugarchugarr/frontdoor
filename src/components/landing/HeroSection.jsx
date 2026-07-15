@@ -115,7 +115,7 @@ export default function HeroSection() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-white/25 mt-6 tracking-wide">Contractors pay for verified, permissioned access. Homeowners receive relevant observations and approved work paths without door-to-door solicitation.</p>
+          <p className="text-xs text-white/25 mt-6 tracking-wide">Contractors apply for permissioned access. Homeowners receive relevant observations and approved work paths through the HOA, not unmanaged door-to-door pressure.</p>
         </motion.div>
       </div>
     </section>

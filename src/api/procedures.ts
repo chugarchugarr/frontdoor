@@ -240,9 +240,9 @@ function demoMarketplaceDashboard() {
       { label: "PMC transition case opened", detail: "Board enters through RealManage exit pain and compliance-risk mapping.", value: "Transition" },
       { label: "Contractor access slot opened", detail: "GatePass opens roofing access for Steiner Ranch after board-safe workflow review.", value: "$99 seat" },
       { label: "Homeowner job routed", detail: "ARC-approved roof replacement becomes a marketplace job instead of a dead lead.", value: "$18.5K job" },
-      { label: "Contractor quote approved", detail: "Verified contractor submits scope through GatePass and the board/homeowner approves.", value: "Approved" },
+      { label: "Contractor quote approved", detail: "Permissioned contractor submits scope through GatePass and the board/homeowner approves.", value: "Approved" },
       { label: "Fee + ledger entry recorded", detail: "Transaction creates GatePass fee and an internal ledger entry.", value: "$462 modeled" },
-      { label: "Compliance memory generated", detail: "The completed job becomes permanent board-owned operating memory.", value: "Moat" },
+      { label: "Compliance memory generated", detail: "The completed job becomes durable board-owned operating memory.", value: "Moat" },
     ],
   };
 }
@@ -513,7 +513,7 @@ export async function refundMarketplaceTransaction(input: { stripePaymentIntentI
 
 export async function recordCommunityRevenueShare(input: { hoaId: string; transactionId?: string; amountCents: number; type?: string; status?: string; appliedTo?: string; memo?: string }) {
   const credit = await db.communityRevenueShare.create({ data: { hoaId: input.hoaId, transactionId: input.transactionId, amountCents: input.amountCents, type: input.type ?? "transaction_share", status: input.status ?? "earned", appliedTo: input.appliedTo, memo: input.memo } });
-  await logComplianceEvent({ hoaId: input.hoaId, module: "marketplace", eventType: "marketplace.community_revenue_share", actorType: "system", actorName: "GatePass", targetType: "community_revenue_share", targetId: credit.id, targetLabel: input.memo ?? "HOA marketplace credit", summary: `HOA marketplace credit recorded: $${(input.amountCents / 100).toLocaleString()}`, legalFlag: true, legalCategory: "financial", dataSnapshot: input });
+  await logComplianceEvent({ hoaId: input.hoaId, module: "marketplace", eventType: "marketplace.community_revenue_share", actorType: "system", actorName: "GatePass", targetType: "community_revenue_share", targetId: credit.id, targetLabel: input.memo ?? "Internal marketplace ledger entry", summary: `Internal marketplace ledger entry recorded: $${(input.amountCents / 100).toLocaleString()}`, legalFlag: true, legalCategory: "financial", dataSnapshot: input });
   return credit;
 }
 
@@ -537,9 +537,9 @@ export async function getMarketplaceDashboard(input: { hoaId: string; demo?: boo
     complianceRecords,
     proofLoop: [
       { label: "Transition case", detail: "Open or import a PMC transition case.", value: "Wedge" },
-      { label: "Contractor access", detail: "Open slots for verified contractors by community/trade.", value: `${slots.length} slots` },
+      { label: "Contractor access", detail: "Open permissioned slots by community/trade.", value: `${slots.length} slots` },
       { label: "Marketplace job", detail: "Route ARC/work-order demand into a job.", value: `${jobs.length} jobs` },
-      { label: "Quote", detail: "Verified contractor submits scope and price.", value: `${quotes.length} quotes` },
+      { label: "Quote", detail: "Permissioned contractor submits scope and price.", value: `${quotes.length} quotes` },
       { label: "Transaction", detail: "Record fee capture and internal ledger entry.", value: `${transactions.length} tx` },
       { label: "Compliance memory", detail: "Link completed work back into board-owned records.", value: `${complianceRecords.length} records` },
     ],
@@ -2860,7 +2860,7 @@ export async function seedDemoData() {
 
 // ─── Compliance Memory Layer ──────────────────────────────────────────
 // L3 Trust → L8 Memory moat. Every legally/financially significant
-// action is timestamped and stored permanently in an immutable ledger.
+// action is timestamped and stored in the durable compliance ledger.
 
 /**
  * Internal utility — called by other procedures after the triggering DB write.

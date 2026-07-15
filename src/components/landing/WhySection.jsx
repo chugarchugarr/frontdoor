@@ -25,14 +25,14 @@ export default function WhySection() {
               <span className="text-[#2A5240]">Never held hostage again.</span>
             </h2>
             <p className="text-lg text-[#1C1C1A]/50 mt-8 max-w-md leading-relaxed">
-              GatePass gives the association a durable operating record: compliance events, financial transactions, board decisions, contractor interactions, and permit signals in one exportable layer owned by the community.
+              GatePass gives the association a durable operating record: compliance events, dues records, board decisions, contractor interactions, and permit signals in one exportable layer owned by the community.
             </p>
 
-            {/* TAM context for investors scanning the page */}
+            {/* Operating-layer context */}
             <div className="mt-8 p-5 bg-[#2A5240]/8 border border-[#2A5240]/15 rounded-[24px]">
-              <p className="text-xs text-[#2A5240] tracking-[0.15em] uppercase font-semibold mb-2">The market</p>
+              <p className="text-xs text-[#2A5240] tracking-[0.15em] uppercase font-semibold mb-2">How GatePass compounds</p>
               <p className="text-sm text-[#1C1C1A]/60 leading-relaxed">
-                GatePass starts with the contractor-access mechanism: exterior observations surface through the HOA, not around it. The transition layer protects continuity when management changes.
+                Every permissioned contractor interaction creates part of the community’s operating history. GatePass keeps contractor activity, compliance events, ARC decisions, board actions, dues records, and permit signals in one durable, exportable record owned by the association.
               </p>
             </div>
 

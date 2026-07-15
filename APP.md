@@ -14,7 +14,7 @@ GatePass is association-owned operating infrastructure: the board owns its recor
 
 **Current doctrine (Jul 14 restore):** GatePass is PMC-compatible, association-owned. Anti-PMC combat framing is retired. PMC transition is an entry event, not the company identity. The export button is the hero: one click, full export, no ransom on exit.
 
-**Positioning (post stress test):** Lead with Trust/compliance moat, not feature count. The asymmetric advantage is L3 Trust → L8 Memory — every violation, vote, ARC decision, and financial action stored permanently in an immutable, exportable compliance ledger. PMCs cannot match this. No other HOA software owns this layer.
+**Positioning (Jul 14 truth pass):** Lead with association-owned continuity and controlled contractor access, not feature count. The asymmetric advantage is L3 Trust → L8 Memory — every violation, vote, ARC decision, financial activity record, permit signal, and contractor interaction stored in a durable, exportable operating record owned by the association. Avoid unsupported legal guarantees like “immutable,” “legally defensible,” or “holds up in court.”
 
 **Strategic layer (Supply Chain of Intelligence):**
 - Primary today: L5 Workflows
@@ -213,7 +213,7 @@ Current public design direction:
 
 - Preserve the original dark Austin photo hero, forest-black surfaces, brass/gold accent, and blunt GatePass voice.
 - Add an elegant editorial layer inspired by Joseph's recent field-guide artifact: sparse, direct, high-contrast, and restrained.
-- Keep the core public line intact: **Software wedge. Marketplace business. Transition-memory moat.**
+- Keep **Software wedge. Marketplace business. Transition-memory moat.** on investor/proof surfaces only. Public homepage language should lead with association-owned records, controlled contractor access, PMC-compatible operation, and exportability.
 - Keep demo/proof data explicitly labeled as demo/sample data on public-facing surfaces.
 - Avoid named investor hooks on public pages.
 - Avoid fake traction, universal buyout promises, or overbroad HOA authority claims.
