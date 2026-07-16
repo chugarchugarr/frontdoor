@@ -1,6 +1,6 @@
 import { useState } from "react";
 import React from "react";
-import { Routes, Route, useNavigate, Navigate, useSearchParams } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate, useSearchParams, useLocation } from "react-router-dom";
 import { client as rpc } from "@/lib/client";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@adaptive-ai/sdk/client";
@@ -10,7 +10,7 @@ import Investors from "./pages/Investors";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import { T, GLOBAL_CSS } from "./components/tokens";
-import { Btn, FDInput, FDSelect, Tag, Icons, Card, Label, EmptyState } from "./components/ui-kit";
+import { Btn, FDInput, FDSelect, FDTextarea, Tag, Icons, Card, Label, EmptyState } from "./components/ui-kit";
 import { Sidebar, type OSView } from "./components/Sidebar";
 import { Dashboard } from "./components/Dashboard";
 import { Homeowners } from "./components/Homeowners";
@@ -32,6 +32,7 @@ import { MarketplaceProofLoop } from "./components/MarketplaceProofLoop";
 import { InvestorProofDashboard } from "./components/InvestorProofDashboard";
 import AdminConsole from "./components/AdminConsole";
 import { ErrorBoundary } from "./components/error-boundary";
+import { DEMO_HOA_ID, MODELED_DEMO_BANNER, modeledDemoData } from "./lib/modeledDemoData";
 
 // ─── Success screens ──────────────────────────────────────────────────
 function _SuccessScreen({ type, position }: { type: "hoa" | "contractor"; position?: number }) {
@@ -79,14 +80,15 @@ const _MODULE_ICONS: Record<string, React.ReactNode> = {
 
 // ─── HOA Onboarding ───────────────────────────────────────────────────
 function HOAOnboarding({ onBack }: { onBack: () => void }) {
-  const [step, setStep] = useState(1);
-  const [form, setForm] = useState({ community: "", name: "", zip: "", units: "", plan: "full", contactName: "", contactEmail: "", contactPhone: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ community: "", zip: "", units: "", contactName: "", contactEmail: "", contactPhone: "", role: "", managementSetup: "", needsHelpWith: "" });
   const totalCost = form.units ? Number(form.units) * 20 : 0;
   const mutation = useMutation({
-    mutationFn: () => rpc.createHOACheckout({ name: form.name || form.community, community: form.community, zip: form.zip, units: Number(form.units), contactName: form.contactName, contactEmail: form.contactEmail, contactPhone: form.contactPhone, plan: form.plan }),
-    onSuccess: (data: { url: string | null }) => { if (data.url) window.location.href = data.url; },
+    mutationFn: () => rpc.createHOAAccessReview({ community: form.community, zip: form.zip, units: Number(form.units), contactName: form.contactName, contactEmail: form.contactEmail, contactPhone: form.contactPhone, role: form.role, managementSetup: form.managementSetup, needsHelpWith: form.needsHelpWith }),
+    onSuccess: () => setSubmitted(true),
   });
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
+  const canSubmit = form.community && form.zip && form.units && form.contactName && form.contactEmail && form.role && form.managementSetup && form.needsHelpWith && !mutation.isPending;
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
@@ -95,56 +97,51 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
         <button onClick={onBack} style={{ background: "none", border: "none", color: "var(--text-light)", display: "flex", alignItems: "center", gap: 6, fontFamily: T.fontSans, fontSize: 13, cursor: "pointer", letterSpacing: "-0.01em" }}><Icons.Back /> Back</button>
         <div style={{ width: 1, height: 18, background: "var(--border)" }} />
         <span style={{ fontFamily: T.fontSans, fontSize: 15, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>GatePass</span>
-        <Tag>HOA Enrollment</Tag>
+        <Tag>HOA Access Review</Tag>
       </header>
       <div style={{ maxWidth: 560, margin: "0 auto", padding: "64px 32px" }}>
         <div className="anim-up" style={{ marginBottom: 40 }}>
-          <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, fontWeight: 600 }}>HOA OS</div>
-          <h1 style={{ fontFamily: T.fontSans, fontSize: 34, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.03em", marginBottom: 10 }}>Enroll Your HOA</h1>
-          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7 }}>Start with a board-safe transition review. Annual platform enrollment is $20/unit/year after approval.</p>
-        </div>
-        <div style={{ display: "flex", gap: 4, marginBottom: 36 }}>
-          {[1, 2].map(s => <div key={s} style={{ flex: 1, height: 3, borderRadius: 2, background: s <= step ? T.forest : "var(--border)", transition: "background 0.3s" }} />)}
+          <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, fontWeight: 600 }}>For HOA boards</div>
+          <h1 style={{ fontFamily: T.fontSans, fontSize: 34, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.03em", marginBottom: 10 }}>Show us how your HOA handles contractor access.</h1>
+          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7 }}>GatePass reviews the association workflow before any agreement or payment. The HOA software is $20 per unit per year after approval.</p>
         </div>
         <Card style={{ padding: 32 }}>
-          {step === 1 ? (
+          {submitted ? (
             <>
-              <h2 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 24, letterSpacing: "-0.025em" }}>Community Details</h2>
-              <FDInput label="Community Name" placeholder="Steiner Ranch HOA" value={form.community} onChange={e => set("community", e.target.value)} />
-              <FDSelect label="Plan" value={form.plan} onChange={e => set("plan", e.target.value)}>
-                  <option value="full">Full Access — $20/unit/yr (all 9 modules + transition memory)</option>
-              </FDSelect>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <FDInput label="ZIP Code" placeholder="78732" value={form.zip} onChange={e => set("zip", e.target.value)} />
-                <FDInput label="Number of Units" type="number" placeholder="500" value={form.units} onChange={e => set("units", e.target.value)} />
-              </div>
-              {totalCost > 0 && (
-                <div style={{ padding: "14px 18px", background: T.forestPale, borderRadius: T.radius, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div><Label>Annual Total</Label><div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: "var(--text)" }}>${totalCost.toLocaleString()}</div></div>
-                  <div style={{ textAlign: "right", fontFamily: T.fontSans, fontSize: 12, color: T.inkLight }}>
-                    <div>{form.units} units × $20/yr</div>
-                    <div style={{ color: T.success, marginTop: 4 }}>vs. ~${(Number(form.units) * 85).toLocaleString()}/yr management co.</div>
-                  </div>
-                </div>
-              )}
-              <Btn full onClick={() => setStep(2)} disabled={!form.community || !form.zip || !form.units}>Continue <Icons.ArrowR /></Btn>
+              <h2 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>Access review received.</h2>
+              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7, marginBottom: 24 }}>No enrollment or payment was created. GatePass will follow up to review the association's workflow.</p>
+              <Btn onClick={onBack}>Back to GatePass</Btn>
             </>
           ) : (
             <>
-              <h2 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 24, letterSpacing: "-0.025em" }}>Board Contact</h2>
-              <FDInput label="Your Name" placeholder="Sarah Mitchell" value={form.contactName} onChange={e => set("contactName", e.target.value)} />
-              <FDInput label="Email" type="email" placeholder="sarah@hoa.org" value={form.contactEmail} onChange={e => set("contactEmail", e.target.value)} />
-              <FDInput label="Phone (optional)" type="tel" value={form.contactPhone} onChange={e => set("contactPhone", e.target.value)} />
-              <div style={{ padding: "12px 16px", background: "var(--bg-subtle)", borderRadius: T.radius, marginBottom: 24, display: "flex", justifyContent: "space-between" }}>
-                  <div><Label>Annual Enrollment</Label><div style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700 }}>${totalCost.toLocaleString()}</div></div>
-                <div style={{ textAlign: "right", fontSize: 12, color: T.inkMid, fontFamily: T.fontSans }}><div>{form.community}</div><div>{form.units} units · {form.plan} plan</div></div>
+              <h2 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 24, letterSpacing: "-0.025em" }}>Access review request</h2>
+              <FDInput label="Contact name" required placeholder="Your name" value={form.contactName} onChange={e => set("contactName", e.target.value)} />
+              <FDInput label="Email" required type="email" placeholder="you@example.com" value={form.contactEmail} onChange={e => set("contactEmail", e.target.value)} />
+              <FDInput label="Phone" type="tel" placeholder="512-555-0100" value={form.contactPhone} onChange={e => set("contactPhone", e.target.value)} />
+              <FDInput label="Board or management role" required placeholder="Board member, president, manager, etc." value={form.role} onChange={e => set("role", e.target.value)} />
+              <FDInput label="Community name" required placeholder="Sample Austin HOA" value={form.community} onChange={e => set("community", e.target.value)} />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <FDInput label="ZIP code" required placeholder="78732" value={form.zip} onChange={e => set("zip", e.target.value)} />
+                <FDInput label="Number of units" required type="number" placeholder="200" value={form.units} onChange={e => set("units", e.target.value)} />
               </div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <Btn variant="ghost" onClick={() => setStep(1)}>Back</Btn>
-                <Btn full onClick={() => mutation.mutate()} disabled={!form.contactName || !form.contactEmail || mutation.isPending}>
-                  {mutation.isPending ? "Redirecting…" : <>Enroll annually <Icons.ArrowR /></>}
-                </Btn>
-              </div>
+              <FDSelect label="Current management setup" required value={form.managementSetup} onChange={e => set("managementSetup", e.target.value)}>
+                <option value="">Select setup…</option>
+                <option value="management_company">Management company</option>
+                <option value="self_managed">Self-managed board</option>
+                <option value="hybrid">Hybrid / part-time manager</option>
+                <option value="unknown">Not sure</option>
+              </FDSelect>
+              <FDTextarea label="What the board needs help with" required placeholder="Tell us where contractor access, approvals, records, or exports break down today." value={form.needsHelpWith} onChange={e => set("needsHelpWith", e.target.value)} />
+              {totalCost > 0 && (
+                <div style={{ padding: "14px 18px", background: T.forestPale, borderRadius: T.radius, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div><Label>Estimated annual software price</Label><div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: "var(--text)" }}>${totalCost.toLocaleString()}</div></div>
+                  <div style={{ textAlign: "right", fontFamily: T.fontSans, fontSize: 12, color: T.inkLight }}>
+                    <div>{form.units} units × $20/yr</div>
+                    <div style={{ color: T.success, marginTop: 4 }}>No setup fee</div>
+                  </div>
+                </div>
+              )}
+              <Btn full onClick={() => mutation.mutate()} disabled={!canSubmit}>{mutation.isPending ? "Submitting…" : <>Request an access review <Icons.ArrowR /></>}</Btn>
               {mutation.isError && <div style={{ marginTop: 14, padding: "10px 14px", background: T.dangerPale, borderRadius: T.radius, fontFamily: T.fontSans, fontSize: 13, color: T.danger }}>Something went wrong. Please try again.</div>}
             </>
           )}
@@ -158,8 +155,6 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
 const ContractorWaitlist = ContractorWaitlistPanel;
 
 // ─── Live Demo — 3-persona selector + OS shell ───────────────────────
-const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
-
 type DemoPersona = "select" | "board" | "homeowner" | "contractor";
 
 function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona, "select">) => void; onBack: () => void }) {
@@ -243,7 +238,7 @@ function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona,
             marginBottom: 24,
           }}>
             <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.forest }} />
-            <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 500, color: T.forest }}>Steiner Ranch HOA · Demo Data</span>
+            <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 500, color: T.forest }}>{MODELED_DEMO_BANNER}</span>
           </div>
           <h1 style={{ fontFamily: T.fontSans, fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 800, color: "#0A0A0A", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: 14 }}>
             Choose your perspective
@@ -329,8 +324,8 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
-          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", letterSpacing: "-0.01em" }}>
-            Board Demo · Steiner Ranch HOA · All 9 modules active
+            <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", letterSpacing: "-0.01em" }}>
+              {MODELED_DEMO_BANNER}
           </span>
         </div>
         <button
@@ -353,7 +348,7 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
         <Sidebar
           current={view}
           onNav={(v) => { if (v === "landing") onBack(); else setView(v); }}
-          hoaName="Steiner Ranch HOA (Demo)"
+          hoaName={`${modeledDemoData.hoa.community} (Modeled)`}
         />
         <main className="gp-demo-main" style={{ flex: 1, overflow: "auto", background: "var(--bg)" }}>
           {view === "dashboard"  && <Dashboard hoaId={demoHoaId} onNav={setView} />}
@@ -396,7 +391,7 @@ function PermitFeedView() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
           <div>
             <h2 style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.025em", marginBottom: 4 }}>Austin Permit Feed</h2>
-            <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>Real-time contractor activity near your community.</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>Citywide Austin permit activity from Austin Open Data.</div>
           </div>
           <Tag bg="rgba(90,158,122,0.12)" color="#7EC99A">Live · Open Data</Tag>
         </div>
@@ -540,7 +535,58 @@ function MarketplaceLoopRoute() {
 }
 
 function InvestorProofRoute() {
-  return <ErrorBoundary><InvestorProofDashboard hoaId={DEMO_HOA_ID} demo /></ErrorBoundary>;
+  return <Navigate to="/investors#current-status" replace />;
+}
+
+const ROUTE_META: Record<string, { title: string; description: string; noindex?: boolean }> = {
+  "/": { title: "GatePass | HOA-Controlled Contractor Access", description: "GatePass is a contractor marketplace the HOA controls, built in Austin for association-approved contractor access." },
+  "/investors": { title: "GatePass Pre-Seed | HOA-Controlled Contractor Marketplace", description: "GatePass is raising $500,000 to finish the production system for HOA-controlled contractor access." },
+  "/pricing": { title: "GatePass Pricing | $20 Per Unit Per Year", description: "GatePass HOA software is $20 per unit per year. Core board tools are included and there is no setup fee." },
+  "/contractors": { title: "GatePass for Contractors | Apply for HOA Access", description: "Apply for founding contractor access through GatePass. Approval happens before payment and lead volume is not guaranteed." },
+  "/onboard": { title: "GatePass for HOA Boards", description: "Request an access review for your HOA board and show GatePass how contractor access works today." },
+  "/demo": { title: "GatePass Product Demo", description: "Explore a modeled GatePass demo with no production customer data.", noindex: true },
+  "/os": { title: "GatePass OS", description: "GatePass operating workspace.", noindex: true },
+  "/admin": { title: "GatePass Admin", description: "GatePass admin workspace.", noindex: true },
+};
+
+function RouteMetadata() {
+  const location = useLocation();
+  React.useEffect(() => {
+    const meta = ROUTE_META[location.pathname] || ROUTE_META["/"];
+    const canonicalUrl = `https://www.gatepasshoa.com${location.pathname === "/" ? "" : location.pathname}`;
+    document.title = meta.title;
+    const setMeta = (selector: string, attr: "content" | "href", value: string) => {
+      const el = document.head.querySelector(selector);
+      if (el) el.setAttribute(attr, value);
+    };
+    setMeta('meta[name="description"]', "content", meta.description);
+    setMeta('meta[property="og:title"]', "content", meta.title);
+    setMeta('meta[property="og:description"]', "content", meta.description);
+    setMeta('meta[property="og:url"]', "content", canonicalUrl);
+    setMeta('meta[name="twitter:title"]', "content", meta.title);
+    setMeta('meta[name="twitter:description"]', "content", meta.description);
+    setMeta('link[rel="canonical"]', "href", canonicalUrl);
+    setMeta('meta[name="robots"]', "content", meta.noindex ? "noindex,nofollow" : "index,follow");
+  }, [location.pathname]);
+  return null;
+}
+
+function NotFound() {
+  return (
+    <div className="min-h-screen bg-[#0a130d] text-white">
+      <div className="min-h-screen flex items-center justify-center px-6 text-center">
+        <div className="max-w-lg">
+          <p className="text-xs text-[#B8883A] tracking-[0.25em] uppercase">404</p>
+          <h1 className="gp-display text-5xl md:text-6xl mt-5">Page not found.</h1>
+          <p className="text-white/55 mt-5 leading-relaxed">That GatePass page does not exist. Return to the public site or open the modeled demo.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 mt-8">
+            <a href="/" className="inline-flex justify-center text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full">Go home</a>
+            <a href="/demo" className="inline-flex justify-center text-sm text-white/70 border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full">Open demo</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function OSRoute() {
@@ -592,6 +638,8 @@ function AdminRoute() {
 // ─── App ──────────────────────────────────────────────────────────────
 export default function App() {
   return (
+    <>
+    <RouteMetadata />
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/onboard" element={<OnboardRoute />} />
@@ -607,7 +655,8 @@ export default function App() {
       <Route path="/investors" element={<Investors />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   );
 }

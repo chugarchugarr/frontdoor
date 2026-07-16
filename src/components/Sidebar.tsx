@@ -24,8 +24,8 @@ const NAV_ITEMS: { id: OSView; label: string; icon: React.ReactNode; section?: s
   { id: "permits",     label: "Permit Feed", icon: <Icons.Activity />, section: "Intel" },
   { id: "livefeeds",   label: "Live Feeds",  icon: <Icons.Signal /> },
   { id: "marketplace", label: "Marketplace", icon: <Icons.Wrench />, section: "Market" },
-  { id: "investor",    label: "Investor Proof", icon: <Icons.Activity /> },
-  { id: "transition",  label: "Transition Graph", icon: <Icons.Map />, section: "Moat" },
+  { id: "investor",    label: "Investor Status", icon: <Icons.Activity /> },
+  { id: "transition",  label: "Association Records", icon: <Icons.Map />, section: "Records" },
   { id: "compliance",  label: "Compliance",  icon: <Icons.Shield />, section: "Records" },
 ];
 

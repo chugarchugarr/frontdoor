@@ -1,311 +1,76 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowRight, Check } from 'lucide-react';
 import Navbar from '../components/landing/Navbar';
 import Footer from '../components/landing/Footer';
 
-const features = [
-  'All 9 operating modules included',
-  'Unlimited board members',
-  'Unlimited homeowners',
-  'Data migration from your current system — free',
-  'Board training included — free',
-  'Onboarding timeline scoped during transition review',
-  'Automation support where board-approved workflows are configured',
-  'Austin-based support',
-  'Your data — exportable anytime',
-];
-
-const comparisonRows = [
-  { label: 'Setup fee', mgmt: '$500–$2,000', gp: '$0' },
-  { label: 'Per-module pricing', mgmt: 'Yes', gp: 'No' },
-  { label: 'Board record access', mgmt: 'Vendor-dependent', gp: 'Exportable anytime' },
-  { label: 'Contractor access controls', mgmt: 'Varies by provider', gp: 'Association-controlled' },
-  { label: 'Contract term', mgmt: '12-mo minimum', gp: 'Annual platform enrollment' },
-  { label: 'Management continuity', mgmt: 'Portal changes can break history', gp: 'Designed to preserve operating records' },
-];
-
-const faqs = [
-  {
-    q: 'Is there a long-term contract?',
-    a: 'GatePass starts with a board-safe transition review before payment. Platform enrollment is annual at $20/unit/year once your board approves the pilot. Your data remains exportable if you leave.',
-  },
-  {
-    q: 'What does migration involve?',
-    a: 'Migration scope depends on what your current provider can export and what your board approves importing. GatePass starts with a transition review so timeline and record availability are clear before enrollment.',
-  },
-  {
-    q: "What if our HOA doesn't have a physical gate?",
-    a: "GatePass works for any board-managed residential community — gated or not. The name refers to giving your board access to modern operations, not physical infrastructure.",
-  },
-  {
-    q: 'Is GatePass a licensed property management company?',
-    a: 'GatePass is software for association-owned records and board workflows, not a property-management firm. Licensing and fiduciary responsibilities depend on the activities performed by the board, manager, vendors, and service providers. GatePass does not provide legal advice or hold itself out as counsel or a licensed property manager.',
-  },
-  {
-    q: 'Who handles support?',
-    a: 'Austin-based humans, not bots. Reach us at info@gatepasshoa.com. We also provide board training as part of onboarding.',
-  },
-  {
-    q: 'What is the expansion path — is $20/unit the only pricing forever?',
-    a: 'The $20/unit flat rate is your community\'s operating platform. GatePass is opening founding contractor access in Austin as communities move through access review. Any future marketplace economics will be introduced only after live work, legal structure, and board-facing terms support it.',
-  },
+const included = [
+  'Board workspace and records',
+  'Dues snapshot and delinquency view',
+  'Violations, ARC requests, votes, work orders, amenities, and announcements',
+  'Contractor access review workflow',
+  'Board training and setup scoping',
+  'Exportable association records',
 ];
 
 export default function Pricing() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0a130d] text-white">
       <Navbar />
+      <main>
+        <section className="pt-36 pb-20 px-6 md:px-8 border-b border-white/10">
+          <div className="max-w-[940px] mx-auto">
+            <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase">Pricing</span>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight mt-6">The HOA software is $20 per unit per year.</h1>
+            <p className="text-lg text-white/50 mt-6 max-w-2xl leading-relaxed">The core board tools are included. There is no setup fee.</p>
+          </div>
+        </section>
 
-      {/* Hero */}
-      <section className="bg-[#0d1a12] pt-40 pb-24 px-8">
-        <div className="max-w-[900px] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase mb-6 block">Pricing</span>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-              One plan.<br />Everything included.
-            </h1>
-            <p className="text-lg text-white/40 mt-6 max-w-lg leading-relaxed">
-              No tiers. No add-ons. Just $20 per unit, per year for the GatePass software layer. GatePass works alongside your current management provider.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Pricing Card */}
-      <section className="bg-[#0a130d] py-20 px-8">
-        <div className="max-w-lg mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-[#0d1a12] border border-white/10 rounded-2xl p-10"
-          >
-            <span className="text-xs text-[#B8883A] tracking-[0.2em] uppercase font-semibold">GatePass — Full Access</span>
-
-            <div className="flex items-end gap-3 mt-6">
-              <span className="text-7xl font-bold text-white leading-none">$20</span>
-              <span className="text-white/40 text-base mb-2">/unit/year</span>
+        <section className="py-20 px-6 md:px-8 bg-[#0d1a12]">
+          <div className="max-w-[940px] mx-auto grid lg:grid-cols-[0.9fr_1.1fr] gap-8">
+            <div className="rounded-[32px] bg-white/[0.04] border border-white/10 p-8">
+              <div className="text-xs text-white/35 uppercase tracking-[0.2em]">HOA software</div>
+              <div className="flex items-end gap-3 mt-6">
+                <span className="text-7xl font-bold leading-none">$20</span>
+                <span className="text-white/45 mb-2">/ unit / year</span>
+              </div>
+              <p className="text-sm text-white/45 mt-5 leading-relaxed">Annual enrollment begins only after the board agrees to move forward. The access review comes first.</p>
+              <Link to="/onboard" className="mt-8 inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors w-full">Request an access review <ArrowRight className="w-4 h-4" /></Link>
             </div>
-            <p className="text-white/40 text-sm mt-3">Annual platform enrollment. No setup fee. Transition review starts before payment.</p>
-
-            <div className="my-8 border-t border-white/10" />
-
-            <ul className="space-y-4">
-              {features.map((f) => (
-                <li key={f} className="flex items-start gap-3">
-                  <Check className="w-4 h-4 text-[#B8883A] mt-0.5 shrink-0" />
-                  <span className="text-sm text-white/70">{f}</span>
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              to="/onboard"
-              className="mt-10 w-full inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-8 py-4 rounded-full transition-colors"
-            >
-              Start transition review <ArrowRight className="w-4 h-4" />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Pilot economics — visible context for anyone doing the numbers */}
-      <section className="bg-[#0d1a12] py-16 px-8">
-        <div className="max-w-[900px] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center gap-4 mb-10">
-              <span className="text-xs text-white/30 tracking-[0.25em] uppercase">Pilot economics</span>
-              <div className="flex-1 h-px bg-white/10" />
+            <div className="rounded-[32px] bg-white/[0.04] border border-white/10 p-8">
+              <h2 className="text-2xl font-bold tracking-tight">Included core tools</h2>
+              <div className="grid sm:grid-cols-2 gap-4 mt-6">
+                {included.map((item) => (
+                  <div key={item} className="flex gap-3 text-sm text-white/65 leading-relaxed">
+                    <Check className="w-4 h-4 text-[#B8883A] mt-0.5 shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 rounded-2xl border border-[#B8883A]/25 bg-[#B8883A]/10 p-5">
+                <h3 className="text-lg font-bold">Contractor access</h3>
+                <p className="text-sm text-white/60 leading-relaxed mt-2">Founding contractor access is $99 once, after approval. It does not promise leads or job volume.</p>
+              </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                { val: '$20', label: 'per unit / year' },
-                { val: '$4,000', label: '200-unit community ARR' },
-                { val: '$99', label: 'founding contractor seat' },
-                { val: 'Austin', label: 'pilot market first' },
-              ].map(({ val, label }) => (
-                <div key={label} className="p-5 bg-white/5 border border-white/10 rounded-xl">
-                  <div className="text-2xl font-bold text-[#B8883A]">{val}</div>
-                  <div className="text-xs text-white/30 mt-1.5 leading-snug">{label}</div>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-white/20 mt-6">
-              Marketplace upside comes after the board-owned operating layer is installed and real contractor transactions exist. No community-facing marketplace economics are promised before legal structure and live activity support them.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* Expansion path */}
-      <section className="bg-[#0a130d] py-16 px-8">
-        <div className="max-w-[900px] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center gap-4 mb-10">
-              <span className="text-xs text-white/30 tracking-[0.25em] uppercase">Revenue path</span>
-              <div className="flex-1 h-px bg-white/10" />
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              {[
-                {
-                  stage: 'Year 1',
-                  title: 'Platform subscription',
-                  desc: '$20/unit/yr software enrollment. Work alongside current management while preserving association-owned continuity.',
-                  color: '#B8883A',
-                },
-                {
-                  stage: 'Austin Launch',
-                  title: 'Founding contractor marketplace',
-                  desc: 'Contractors apply for founding access as communities move through access review. Fees and marketplace economics come later, after real transactions and legal structure support them.',
-                  color: '#5a9e7a',
-                },
-                {
-                  stage: 'Year 3+',
-                  title: 'Data & integrations',
-                  desc: 'Premium board analytics. Lender/title integrations for unit resales. Transition memory plus contractor history becomes the moat.',
-                  color: '#7b9fd4',
-                },
-              ].map((item) => (
-                <div key={item.stage} className="p-6 bg-white/5 border border-white/10 rounded-xl">
-                  <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: item.color }}>{item.stage}</span>
-                  <h3 className="text-white font-bold mt-2 mb-2">{item.title}</h3>
-                  <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Comparison */}
-      <section className="bg-[#f4f1ec] py-24 px-8">
-        <div className="max-w-[900px] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center gap-4 mb-14">
-              <span className="text-xs text-[#2A5240]/40 tracking-[0.25em] uppercase">Comparison</span>
-              <div className="flex-1 h-px bg-[#2A5240]/10" />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1C1C1A] mb-12">
-              What GatePass controls
-            </h2>
-
-            {/* Header row */}
-            <div className="grid grid-cols-3 gap-4 mb-3 px-4">
-              <div />
-              <div className="text-xs text-[#1C1C1A]/40 font-semibold uppercase tracking-widest text-center">Typical PMC stack</div>
-              <div className="text-xs text-[#2A5240] font-semibold uppercase tracking-widest text-center">GatePass</div>
-            </div>
-
-            {/* Rows */}
-            <div className="rounded-2xl overflow-hidden border border-[#2A5240]/10">
-              {comparisonRows.map((row, i) => (
-                <div
-                  key={row.label}
-                  className={`grid grid-cols-3 gap-4 px-4 py-4 ${i % 2 === 0 ? 'bg-white' : 'bg-[#f4f1ec]'}`}
-                >
-                  <div className="text-sm text-[#1C1C1A] font-medium">{row.label}</div>
-                  <div className="text-sm text-[#1C1C1A]/50 text-center">{row.mgmt}</div>
-                  <div className="text-sm text-[#2A5240] font-semibold text-center">{row.gp}</div>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-xs text-[#1C1C1A]/40 mt-4">
-              GatePass is software. It does not replace licensed management responsibilities or fiduciary duties.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="bg-[#0d1a12] py-24 px-8">
-        <div className="max-w-[900px] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center gap-4 mb-14">
-              <span className="text-xs text-white/30 tracking-[0.25em] uppercase">Questions</span>
-              <div className="flex-1 h-px bg-white/10" />
-            </div>
-
-            <div className="space-y-0">
-              {faqs.map((faq, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.07, duration: 0.5 }}
-                  className="border-b border-white/10 py-8"
-                >
-                  <p className="font-semibold text-white text-base">{faq.q}</p>
-                  <p className="text-sm text-white/50 mt-2 leading-relaxed">{faq.a}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <section className="bg-[#0a130d] py-32 px-8">
-        <div className="max-w-[700px] mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase mb-6 block">Ready when you are</span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-              Ready to cut your costs?
-            </h2>
-            <p className="text-lg text-white/40 mt-6 leading-relaxed">
-              Start with a board-safe transition review. Setup and migration are included when your board approves enrollment.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
-              <Link
-                to="/onboard"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-8 py-4 rounded-full transition-colors"
-              >
-                Request transition review <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                to="/demo"
-                className="text-sm text-white/50 hover:text-white transition-colors border border-white/20 hover:border-white/40 px-8 py-4 rounded-full"
-              >
-                See the demo →
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
+        <section className="py-20 px-6 md:px-8 bg-[#f4f1ec] text-[#1C1C1A]">
+          <div className="max-w-[940px] mx-auto grid md:grid-cols-3 gap-4">
+            {[
+              ['No setup fee', 'Setup scope is reviewed before the board agrees to enrollment.'],
+              ['No module tiers', 'The core board workspace is not split into upsell fragments.'],
+              ['Exportable records', 'The association can keep the records it creates in GatePass.'],
+            ].map(([title, body]) => (
+              <div key={title} className="rounded-[24px] bg-white border border-[#2A5240]/10 p-6">
+                <h3 className="font-bold text-xl tracking-tight">{title}</h3>
+                <p className="text-sm text-[#1C1C1A]/60 leading-relaxed mt-3">{body}</p>
+              </div>
+            ))}
+          </div>
+          <p className="max-w-[940px] mx-auto text-xs text-[#1C1C1A]/45 mt-6">GatePass provides software. It does not provide legal advice or act as the association's property manager.</p>
+        </section>
+      </main>
       <Footer />
     </div>
   );

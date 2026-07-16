@@ -32,7 +32,7 @@ function DemoNav({ onBack }: { onBack: () => void }) {
         </div>
         <span style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.02em" }}>GatePass</span>
         <span style={{ width: 1, height: 16, background: "#E5E5E5", margin: "0 4px" }} />
-        <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252" }}>Summit Roofing Co · Contractor Portal</span>
+        <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252" }}>Demo Roofing Company · Contractor Portal</span>
       </div>
       <button
         onClick={onBack}
@@ -103,7 +103,7 @@ function JobsTab() {
           Available Jobs
         </div>
         <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#737373" }}>
-          Open work orders from Steiner Ranch HOA · Steiner Ranch, Austin TX
+          Open work orders from Sample Austin HOA · Austin, TX
         </div>
       </div>
 
@@ -226,7 +226,7 @@ function PermitsTab() {
             Austin Permit Feed
           </div>
           <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#737373" }}>
-            Real-time contractor activity near Steiner Ranch from Austin Open Data.
+            Citywide Austin permit activity from Austin Open Data.
           </div>
         </div>
         <div style={{
@@ -311,10 +311,10 @@ function ProfileTab() {
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.025em", marginBottom: 2 }}>
-              Summit Roofing Co.
+              Demo Roofing Company
             </div>
             <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#525252", marginBottom: 8 }}>
-              Mike Torres · Owner / Operator
+              Sample Contractor · Owner / Operator
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <Tag color={T.forest} bg={T.forestPale}>Founding Contractor</Tag>

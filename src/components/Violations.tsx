@@ -148,7 +148,7 @@ export function Violations({ hoaId }: { hoaId: string }) {
 
       {/* Create Modal */}
       <Modal open={modal} onClose={() => setModal(false)} title="Log Violation">
-        <FDInput label="Property Address" placeholder="1847 Oakwood Dr" value={form.address} onChange={e => set("address", e.target.value)} />
+        <FDInput label="Property Address" placeholder="Modeled Address 2" value={form.address} onChange={e => set("address", e.target.value)} />
         <FDSelect label="Category" value={form.category} onChange={e => set("category", e.target.value)}>
           <option value="">Select category</option>
           {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}

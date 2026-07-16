@@ -9,13 +9,14 @@ export default function Footer() {
           <div className="font-bold text-lg text-white tracking-tight">
             Gate<span style={{ color: '#B8883A' }}>Pass</span>
           </div>
-          <p className="text-xs text-white/30 mt-1.5">HOA-owned operations and contractor access. Built in Austin, TX.</p>
+          <p className="text-xs text-white/30 mt-1.5">HOA-controlled contractor access. Built in Austin, TX.</p>
         </div>
         <div className="flex flex-wrap items-center gap-8">
-          <Link to="/demo" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Demo</Link>
+          <Link to="/demo" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">See the demo</Link>
           <Link to="/onboard" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">For HOAs</Link>
           <Link to="/contractors" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Contractors</Link>
           <Link to="/pricing" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Pricing</Link>
+          <Link to="/investors" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Investors</Link>
           <Link to="/privacy" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Privacy</Link>
           <Link to="/terms" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide uppercase">Terms</Link>
           <a href="mailto:info@gatepasshoa.com" className="text-xs text-white/40 hover:text-white transition-colors tracking-wide">info@gatepasshoa.com</a>

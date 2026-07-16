@@ -65,8 +65,8 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
       `}</style>
       <div style={{ maxWidth: 1180, margin: "0 auto" }}>
         <SectionHeader
-          title="Marketplace Proof Loop"
-          sub="Modeled demo of the atomic GatePass loop: transition memory creates contractor access; approved work can later create fee capture and compliance memory."
+        title="Contractor Access Flow"
+          sub="Modeled demo of how contractor access works: an HOA-approved issue can become a quote and a record."
           action={<Tag color={T.gold} bg={T.goldLight}>{dashboard?.demo || demo ? "Demo data" : "Live records"}</Tag>}
         />
 
@@ -96,7 +96,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                     <Label>Atomic transaction</Label>
                     <h3 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>HOA transition → job → modeled fee path → memory</h3>
                   </div>
-                  <Btn variant="ghost" onClick={() => window.location.href = "/investor-proof"}>Investor view</Btn>
+            <Btn variant="ghost" onClick={() => window.location.href = "/investors#current-status"}>Investor status</Btn>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {dashboard.proofLoop.map((node, index) => <LoopNode key={node.label} index={index} {...node} />)}
@@ -112,7 +112,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                       <div className="gp-money-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                         <div><Label>Gross job</Label><strong>{fmtMoney(tx.grossAmountCents)}</strong></div>
                         <div><Label>GatePass fee</Label><strong>{fmtMoney(tx.gatepassFeeCents)}</strong></div>
-                        <div><Label>Community ledger</Label><strong>{dashboard.demo ? "Counsel-gated" : fmtMoney(tx.hoaShareCents)}</strong></div>
+                        <div><Label>Association record</Label><strong>{dashboard.demo ? "Modeled only" : fmtMoney(tx.hoaShareCents)}</strong></div>
                       </div>
                     </div>
                   ))}

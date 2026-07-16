@@ -4,8 +4,7 @@ import { client as rpc } from "@/lib/client";
 import { T } from "./tokens";
 import { Card, Tag, StatusTag, Icons } from "./ui-kit";
 import type { OSView } from "./Sidebar";
-
-const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
+import { DEMO_HOA_ID, modeledDemoData, formatCents } from "@/lib/modeledDemoData";
 
 function MetricTile({ label, value, color, icon, onClick, badge }: {
   label: string; value: string | number;
@@ -137,26 +136,18 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
   if (!data) return null;
 
   const { hoa, stats, nextMeeting, financial } = data;
-  const isDemoFallback = !hoa && hoaId === DEMO_HOA_ID;
-  const displayHoa = hoa ?? (isDemoFallback ? {
-    community: "Steiner Ranch HOA (Demo)",
-    city: "Austin",
-    state: "TX",
-    zip: "78732",
-    units: 847,
-    plan: "full access",
-    paid: true,
-  } : null);
-  const displayStats = isDemoFallback ? {
-    homeowners: 10,
-    openViolations: 5,
-    openWorkOrders: 3,
-    pendingARC: 3,
-    openVotes: 1,
-  } : stats;
-  const displayFinancial = isDemoFallback ? {
-    totalOutstanding: 18500,
-    delinquentCount: 2,
+  const isModeledDemo = hoaId === DEMO_HOA_ID;
+  const displayHoa = isModeledDemo ? modeledDemoData.hoa : hoa;
+  const displayStats = isModeledDemo ? {
+    homeowners: modeledDemoData.stats.homeowners,
+    openViolations: modeledDemoData.stats.openViolations,
+    openWorkOrders: modeledDemoData.stats.openWorkOrders,
+    pendingARC: modeledDemoData.stats.pendingARC,
+    openVotes: modeledDemoData.stats.openVotes,
+  } : (stats ?? { homeowners: 0, openViolations: 0, openWorkOrders: 0, pendingARC: 0, openVotes: 0 });
+  const displayFinancial = isModeledDemo ? {
+    totalOutstanding: modeledDemoData.stats.outstandingBalanceCents,
+    delinquentCount: modeledDemoData.stats.delinquentAccounts,
     budgetedYTD: 42500000,
     actualYTD: 41120000,
     variance: 1380000,
@@ -169,7 +160,7 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
 
   const modules: { id: OSView; label: string; icon: React.ReactNode; badge?: number; color: string; desc: string }[] = [
     { id: "homeowners", label: "Homeowners",  icon: <Icons.Users />,    badge: displayStats.homeowners,      color: T.forest,  desc: `${displayStats.homeowners} residents` },
-    { id: "payos",      label: "PayOS",       icon: <Icons.Dollar />,   badge: 0,                            color: T.gold,    desc: displayFinancial ? `$${(displayFinancial.totalOutstanding/100).toLocaleString()} outstanding` : "Dues & finances" },
+    { id: "payos",      label: "PayOS",       icon: <Icons.Dollar />,   badge: 0,                            color: T.gold,    desc: displayFinancial ? `${formatCents(displayFinancial.totalOutstanding)} outstanding` : "Dues & finances" },
     { id: "violations", label: "FineBot",     icon: <Icons.Alert />,    badge: displayStats.openViolations,  color: T.danger,  desc: `${displayStats.openViolations} open violations` },
     { id: "arc",        label: "ARC Agent",   icon: <Icons.Pencil />,   badge: displayStats.pendingARC,      color: T.blue,    desc: `${displayStats.pendingARC} pending review` },
     { id: "workorders", label: "WorkOrder",   icon: <Icons.Wrench />,   badge: displayStats.openWorkOrders,  color: T.purple,  desc: `${displayStats.openWorkOrders} open orders` },
@@ -186,8 +177,8 @@ export function Dashboard({ hoaId, onNav }: { hoaId: string; onNav: (v: OSView) 
       <div className="anim-up" style={{ marginBottom: 36 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
           <Tag style={{ fontSize: 9 }}>{displayHoa?.plan || "starter"} plan</Tag>
-          {isDemoFallback && <Tag color={T.warn} bg={T.warnPale} style={{ fontSize: 9 }}>Demo data</Tag>}
-          {displayHoa?.paid && <Tag color={T.success} bg={T.successPale} style={{ fontSize: 9 }}>Active</Tag>}
+          {isModeledDemo && <Tag color={T.warn} bg={T.warnPale} style={{ fontSize: 9 }}>Modeled demo</Tag>}
+          {displayHoa?.paid && !isModeledDemo && <Tag color={T.success} bg={T.successPale} style={{ fontSize: 9 }}>Active</Tag>}
         </div>
         <h1 style={{
           fontFamily: T.fontSans,

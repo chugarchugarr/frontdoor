@@ -362,7 +362,7 @@ export function Homeowners({ hoaId }: { hoaId: string }) {
           <FDInput label="Email" type="email" placeholder="sarah@email.com" value={form.email} onChange={e => set("email", e.target.value)} />
           <FDInput label="Phone (optional)" type="tel" placeholder="512-555-0100" value={form.phone} onChange={e => set("phone", e.target.value)} />
           <div style={{ gridColumn: "1 / -1" }}>
-            <FDInput label="Address" placeholder="1847 Oakwood Dr" value={form.address} onChange={e => set("address", e.target.value)} />
+            <FDInput label="Address" placeholder="Modeled Address 1" value={form.address} onChange={e => set("address", e.target.value)} />
           </div>
           <FDInput label="Unit (optional)" placeholder="4B" value={form.unit} onChange={e => set("unit", e.target.value)} />
           <FDSelect label="Role" value={form.role} onChange={e => set("role", e.target.value)}>

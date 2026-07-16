@@ -12,11 +12,14 @@ export function Label({ children, style: s }: { children: React.ReactNode; style
 
 // ─── Form inputs ──────────────────────────────────────────────────────
 export function FDInput({ label, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label?: string }) {
+  const generatedId = React.useId();
+  const inputId = props.id || (label ? `fd-input-${generatedId}` : undefined);
   return (
     <div style={{ marginBottom: 18 }}>
-      {label && <Label>{label}</Label>}
+      {label && <label htmlFor={inputId} style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: 10, fontWeight: 500, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>{label}</label>}
       <input
         {...props}
+        id={inputId}
         style={{
           width: "100%",
           padding: "12px 16px",
@@ -34,11 +37,14 @@ export function FDInput({ label, ...props }: React.InputHTMLAttributes<HTMLInput
 }
 
 export function FDTextarea({ label, ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label?: string }) {
+  const generatedId = React.useId();
+  const inputId = props.id || (label ? `fd-textarea-${generatedId}` : undefined);
   return (
     <div style={{ marginBottom: 18 }}>
-      {label && <Label>{label}</Label>}
+      {label && <label htmlFor={inputId} style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: 10, fontWeight: 500, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>{label}</label>}
       <textarea
         {...props}
+        id={inputId}
         style={{
           width: "100%",
           padding: "12px 16px",
@@ -59,11 +65,14 @@ export function FDTextarea({ label, ...props }: React.TextareaHTMLAttributes<HTM
 }
 
 export function FDSelect({ label, children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement> & { label?: string }) {
+  const generatedId = React.useId();
+  const inputId = props.id || (label ? `fd-select-${generatedId}` : undefined);
   return (
     <div style={{ marginBottom: 18 }}>
-      {label && <Label>{label}</Label>}
+      {label && <label htmlFor={inputId} style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: 10, fontWeight: 500, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>{label}</label>}
       <select
         {...props}
+        id={inputId}
         style={{
           width: "100%",
           padding: "12px 36px 12px 16px",
@@ -203,8 +212,9 @@ export function StatusTag({ status }: { status: string }) {
     fined:             { color: T.danger,  bg: T.dangerPale },
     revision_requested:{ color: T.gold,    bg: T.goldLight },
   };
-  const s = map[status] || { color: "var(--text-light)", bg: "var(--bg-subtle)" };
-  return <Tag color={s.color} bg={s.bg}>{status.replace(/_/g, " ")}</Tag>;
+  const safeStatus = status || "pending";
+  const s = map[safeStatus] || { color: "var(--text-light)", bg: "var(--bg-subtle)" };
+  return <Tag color={s.color} bg={s.bg}>{safeStatus.replace(/_/g, " ")}</Tag>;
 }
 
 // ─── Modal ────────────────────────────────────────────────────────────

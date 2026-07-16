@@ -300,4 +300,13 @@ export const GLOBAL_CSS = `
   }
 
   .dark .stat-value { color: #FAFAFA !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 `;

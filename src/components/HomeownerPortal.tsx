@@ -3,10 +3,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
 import { T, GLOBAL_CSS } from "./tokens";
 import { Btn, Card, Tag, FDInput, FDTextarea, FDSelect, Label, StatusTag, EmptyState } from "./ui-kit";
+import { MODELED_DEMO_BANNER } from "@/lib/modeledDemoData";
 
 const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
-const DEMO_HOMEOWNER_NAME = "Jennifer Park";
-const DEMO_HOMEOWNER_ADDRESS = "4521 Comanche Trail";
+const DEMO_HOMEOWNER_NAME = "Sample Resident";
+const DEMO_HOMEOWNER_ADDRESS = "Modeled Address 1";
 
 const PROJECT_TYPES = ["fence","paint","deck","addition","shed","pool","solar","landscaping","roof","driveway","other"];
 
@@ -37,7 +38,7 @@ function DemoNav({ onBack }: { onBack: () => void }) {
         <span style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.02em" }}>GatePass</span>
         <span style={{ width: 1, height: 16, background: "#E5E5E5", margin: "0 4px" }} />
         <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252" }}>
-          {DEMO_HOMEOWNER_NAME} · {DEMO_HOMEOWNER_ADDRESS}
+          {MODELED_DEMO_BANNER}
         </span>
       </div>
       <button
@@ -107,7 +108,7 @@ function MyHomeTab({ homeownerId }: { homeownerId: string }) {
             <div style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.025em", marginBottom: 4 }}>
               {DEMO_HOMEOWNER_ADDRESS}
             </div>
-            <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#525252" }}>Steiner Ranch HOA · Austin, TX 78732</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#525252" }}>Sample Austin HOA · Austin, TX 78732</div>
           </div>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: T.forestPale, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -127,7 +128,7 @@ function MyHomeTab({ homeownerId }: { homeownerId: string }) {
           </div>
           <div style={{ textAlign: "right" }}>
             <Tag color={T.success} bg={T.successPale}>Autopay On</Tag>
-            <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", marginTop: 6 }}>Next charge: Apr 1</div>
+            <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", marginTop: 6 }}>Next charge: modeled monthly cycle</div>
           </div>
         </div>
       </Card>

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { client as rpc } from "@/lib/client";
-import { CONTRACTOR_FOUNDING_SEAT_CAPACITY } from "@/lib/contractorInventory";
 import { T, GLOBAL_CSS } from "./tokens";
 import { Btn, Card, Tag, FDInput, FDSelect, Icons, Label } from "./ui-kit";
 
@@ -17,24 +16,19 @@ const CATEGORIES = [
 ];
 
 const TRUST_POINTS = [
-  { icon: "✓", text: "Founding-access application — be reviewed for permissioned HOA channels before broad launch" },
-  { icon: "✓", text: "Prelaunch permit intelligence — Austin permit signals matched to your trade as communities enroll" },
-  { icon: "✓", text: "Prepared WorkOrder routing for HOA-approved jobs once live communities activate access" },
-  { icon: "✓", text: "Launch terms and access status confirmed before broad HOA rollout" },
+  { icon: "✓", text: "Apply for HOA-approved contractor access before broad launch" },
+  { icon: "✓", text: "Permit signals and HOA requests can become a cleaner next step than cold knocking" },
+  { icon: "✓", text: "Approval happens before payment" },
+  { icon: "✓", text: "No lead volume or job volume is promised" },
 ];
 
 export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
   const [form, setForm] = useState({ company: "", contactName: "", email: "", phone: "", category: "", zip: "" });
+  const [submitted, setSubmitted] = useState(false);
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
 
-  const { data: stats } = useQuery({
-    queryKey: ["contractorStats"],
-    queryFn: () => rpc.getContractorStats(),
-    refetchInterval: 20000,
-  });
-
   const mutation = useMutation({
-    mutationFn: () => rpc.createContractorCheckout({
+    mutationFn: () => rpc.createContractorApplication({
       company: form.company,
       contactName: form.contactName,
       email: form.email,
@@ -42,16 +36,9 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
       category: form.category,
       zip: form.zip,
     }),
-    onSuccess: (data: { url: string | null }) => {
-      if (data.url) window.location.href = data.url;
-    },
+    onSuccess: () => setSubmitted(true),
   });
 
-  const capacity = stats?.capacity ?? CONTRACTOR_FOUNDING_SEAT_CAPACITY;
-  const spotsLeft = stats?.spotsLeft ?? capacity;
-  const spotsTaken = stats?.reserved ?? capacity - spotsLeft;
-  const pct = Math.round((spotsTaken / capacity) * 100);
-  const isUrgent = spotsLeft <= 8;
   const canSubmit = form.company && form.contactName && form.email && form.category && form.zip && !mutation.isPending;
 
   return (
@@ -88,21 +75,6 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
         {/* ── Left: value prop ── */}
         <div className="anim-up">
 
-          {/* Urgency pill */}
-          {isUrgent && (
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: 7,
-              padding: "5px 13px", borderRadius: 20,
-              background: `${T.danger}12`, border: `1px solid ${T.danger}30`,
-              marginBottom: 22,
-            }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.danger }} className="ai-pulse" />
-              <span style={{ fontFamily: T.fontMono, fontSize: 10, color: T.danger, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                Only {spotsLeft} seats left
-              </span>
-            </div>
-          )}
-
           <h1 style={{
             fontFamily: T.fontSans,
             fontSize: "clamp(28px, 3.5vw, 40px)",
@@ -110,11 +82,11 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
             letterSpacing: "-0.025em", lineHeight: 1.1,
             marginBottom: 16,
           }}>
-            Apply for founding access<br />to HOA-controlled work.
+            Stop knocking. Bring the information through the HOA.
           </h1>
 
           <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.75, marginBottom: 28, maxWidth: 380 }}>
-            GatePass is building a permissioned channel where exterior-condition observations, Austin permit signals, and board-approved work paths can route through the HOA instead of door-to-door solicitation. This is founding access, not a promise of live transaction volume.
+            GatePass is prelaunch. Applying does not guarantee access, leads, or job volume. Founding access is $99 once, after approval.
           </p>
 
           {/* Benefits list */}
@@ -162,59 +134,32 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
         {/* ── Right: form ── */}
         <div className="anim-up-2">
 
-          {/* Seats progress card */}
-          <Card style={{ padding: "18px 22px", marginBottom: 16, background: "var(--bg-card)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-              <div>
-                <Label style={{ margin: 0 }}>Founding Contractor Seats</Label>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-                  <span style={{ fontFamily: T.fontSans, fontSize: 28, fontWeight: 700, color: isUrgent ? T.danger : "var(--text)", letterSpacing: "-0.02em" }}>{spotsLeft}</span>
-                  <span style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>of {capacity} remaining</span>
-                </div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: T.gold }}>$99</div>
-                <div style={{ fontFamily: T.fontMono, fontSize: 9, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>one-time</div>
-              </div>
-            </div>
-            {/* Progress bar */}
-            <div style={{ height: 6, background: "var(--bg-subtle)", borderRadius: 4, overflow: "hidden" }}>
-              <div style={{
-                height: "100%",
-                width: `${pct}%`,
-                background: isUrgent
-                  ? `linear-gradient(90deg, ${T.danger}, #E05050)`
-                  : `linear-gradient(90deg, ${T.gold}, #D4A040)`,
-                borderRadius: 4,
-                transition: "width 0.6s cubic-bezier(0.16,1,0.3,1)",
-              }} />
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-              <span style={{ fontFamily: T.fontMono, fontSize: 9, color: "var(--text-light)" }}>{spotsTaken} reserved</span>
-              <span style={{ fontFamily: T.fontMono, fontSize: 9, color: isUrgent ? T.danger : "var(--text-light)" }}>{pct}% full</span>
-            </div>
-          </Card>
-
           {/* Form card */}
           <Card style={{ padding: "26px 28px" }}>
-            <h3 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 20, letterSpacing: "-0.01em" }}>
-              Reserve your seat
-            </h3>
+            {submitted ? (
+              <>
+                <h3 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>Application received.</h3>
+                <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7, marginBottom: 22 }}>No payment was taken. GatePass will review access fit before any $99 founding access charge.</p>
+                <Btn onClick={onBack}>Back to GatePass</Btn>
+              </>
+            ) : (
+            <>
+            <h3 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 20, letterSpacing: "-0.01em" }}>Apply for founding access</h3>
 
             <div className="gp-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div style={{ gridColumn: "1 / -1" }}>
-                <FDInput label="Company Name" placeholder="Summit Roofing Co." value={form.company} onChange={e => set("company", e.target.value)} />
+                <FDInput label="Company Name" required placeholder="Demo Roofing Company" value={form.company} onChange={e => set("company", e.target.value)} />
               </div>
               <div style={{ gridColumn: "1 / -1" }}>
-                <FDInput label="Your Name" placeholder="Mike Torres" value={form.contactName} onChange={e => set("contactName", e.target.value)} />
+                <FDInput label="Your Name" required placeholder="Sample Contractor" value={form.contactName} onChange={e => set("contactName", e.target.value)} />
               </div>
-              <FDInput label="Email" type="email" placeholder="mike@summit.com" value={form.email} onChange={e => set("email", e.target.value)} />
+              <FDInput label="Email" required type="email" placeholder="contractor@example.invalid" value={form.email} onChange={e => set("email", e.target.value)} />
               <FDInput label="Phone" type="tel" placeholder="512-555-0100" value={form.phone} onChange={e => set("phone", e.target.value)} />
-              <FDSelect label="Trade Category" value={form.category} onChange={e => set("category", e.target.value)}>
+              <FDSelect label="Trade Category" required value={form.category} onChange={e => set("category", e.target.value)}>
                 <option value="">Select category…</option>
                 {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
               </FDSelect>
-              <FDInput label="Primary ZIP Code" placeholder="78732" value={form.zip} onChange={e => set("zip", e.target.value)} />
+              <FDInput label="Primary ZIP Code" required placeholder="78732" value={form.zip} onChange={e => set("zip", e.target.value)} />
             </div>
 
             <Btn
@@ -224,14 +169,14 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
               disabled={!canSubmit}
               style={{ marginTop: 4, padding: "13px 20px", fontSize: 14, boxShadow: `0 4px 20px rgba(184,136,58,0.25)` }}
             >
-              {mutation.isPending ? "Redirecting to checkout…" : <>Reserve Seat — $99 <Icons.ArrowR /></>}
+              {mutation.isPending ? "Submitting…" : <>Apply for founding access <Icons.ArrowR /></>}
             </Btn>
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginTop: 14, flexWrap: "wrap" }}>
               {[
-                { icon: "🔒", text: "Secure checkout" },
-                { icon: "📄", text: "Terms shown at checkout" },
-                { icon: "⚡", text: "Instant confirmation" },
+                { icon: "📄", text: "Reviewed before approval" },
+                { icon: "✓", text: "No payment now" },
+                { icon: "⚠", text: "No lead guarantee" },
               ].map(t => (
                 <span key={t.text} style={{ fontFamily: T.fontSans, fontSize: 11, color: "var(--text-light)", display: "flex", alignItems: "center", gap: 4 }}>
                   {t.icon} {t.text}
@@ -243,6 +188,8 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
               <div style={{ marginTop: 14, padding: "10px 14px", background: T.dangerPale, borderRadius: T.radius, fontFamily: T.fontSans, fontSize: 13, color: T.danger }}>
                 Something went wrong — please try again.
               </div>
+            )}
+            </>
             )}
           </Card>
         </div>

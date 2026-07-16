@@ -160,7 +160,7 @@ export function ARCAgent({ hoaId }: { hoaId: string }) {
             {(homeowners as {id:string;name:string;address:string}[]).map(h => <option key={h.id} value={h.id}>{h.name} — {h.address}</option>)}
           </FDSelect>
         )}
-        <FDInput label="Property Address" placeholder="1847 Oakwood Dr" value={form.address} onChange={e => set("address", e.target.value)} />
+        <FDInput label="Property Address" placeholder="Modeled Address 1" value={form.address} onChange={e => set("address", e.target.value)} />
         <FDSelect label="Project Type" value={form.projectType} onChange={e => set("projectType", e.target.value)}>
           <option value="">Select type</option>
           {PROJECT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}

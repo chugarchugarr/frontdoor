@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /demo
+Disallow: /os
+Disallow: /admin
+Disallow: /investor-proof
+
+Sitemap: https://www.gatepasshoa.com/sitemap.xml

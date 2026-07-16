@@ -18,27 +18,27 @@ function isDemoHoa(hoaId: string) {
 
 function demoHomeowners() {
   return [
-    { id: "demo-hw-1", hoaId: DEMO_HOA_ID, name: "Jennifer Park", email: "jennifer@example.invalid", phone: null, address: "4521 Comanche Trail", unit: null, role: "director", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-1", homeownerId: "demo-hw-1", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 1 } },
-    { id: "demo-hw-2", hoaId: DEMO_HOA_ID, name: "Sarah Mitchell", email: "sarah@example.invalid", phone: null, address: "1847 Oakwood Dr", unit: null, role: "president", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-2", homeownerId: "demo-hw-2", balanceCents: 18500, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: false, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 0 } },
-    { id: "demo-hw-3", hoaId: DEMO_HOA_ID, name: "Marcus Torres", email: "marcus@example.invalid", phone: null, address: "7312 Lakewood Ridge", unit: null, role: "treasurer", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-3", homeownerId: "demo-hw-3", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 0 } },
-    { id: "demo-hw-4", hoaId: DEMO_HOA_ID, name: "Elena Ruiz", email: "elena@example.invalid", phone: null, address: "1220 Canyon Glen", unit: null, role: "secretary", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-4", homeownerId: "demo-hw-4", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 0 } },
-    { id: "demo-hw-5", hoaId: DEMO_HOA_ID, name: "David Chen", email: "david@example.invalid", phone: null, address: "9104 Ridgewell Cove", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-5", homeownerId: "demo-hw-5", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 0 } },
-    { id: "demo-hw-6", hoaId: DEMO_HOA_ID, name: "Priya Shah", email: "priya@example.invalid", phone: null, address: "6409 Vista Ridge", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-6", homeownerId: "demo-hw-6", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 1 } },
-    { id: "demo-hw-7", hoaId: DEMO_HOA_ID, name: "Thomas Reed", email: "thomas@example.invalid", phone: null, address: "2217 Overlook Pass", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-7", homeownerId: "demo-hw-7", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 0 } },
-    { id: "demo-hw-8", hoaId: DEMO_HOA_ID, name: "Nora Patel", email: "nora@example.invalid", phone: null, address: "5031 Cedar View", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-8", homeownerId: "demo-hw-8", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 0 } },
-    { id: "demo-hw-9", hoaId: DEMO_HOA_ID, name: "Owen Brooks", email: "owen@example.invalid", phone: null, address: "7840 Hill Trace", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-9", homeownerId: "demo-hw-9", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 1 } },
-    { id: "demo-hw-10", hoaId: DEMO_HOA_ID, name: "Maya Johnson", email: "maya@example.invalid", phone: null, address: "3165 River Bend", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-10", homeownerId: "demo-hw-10", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 0 } },
+    { id: "demo-hw-1", hoaId: DEMO_HOA_ID, name: "Sample Resident 1", email: "resident1@example.invalid", phone: null, address: "Modeled Address 1", unit: null, role: "director", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-1", homeownerId: "demo-hw-1", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 1 } },
+    { id: "demo-hw-2", hoaId: DEMO_HOA_ID, name: "Sample Resident 2", email: "resident2@example.invalid", phone: null, address: "Modeled Address 2", unit: null, role: "president", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-2", homeownerId: "demo-hw-2", balanceCents: 18500, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: false, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 0 } },
+    { id: "demo-hw-3", hoaId: DEMO_HOA_ID, name: "Sample Resident 3", email: "resident3@example.invalid", phone: null, address: "Modeled Address 3", unit: null, role: "treasurer", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-3", homeownerId: "demo-hw-3", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 0 } },
+    { id: "demo-hw-4", hoaId: DEMO_HOA_ID, name: "Sample Resident 4", email: "resident4@example.invalid", phone: null, address: "Modeled Address 4", unit: null, role: "secretary", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-4", homeownerId: "demo-hw-4", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 0 } },
+    { id: "demo-hw-5", hoaId: DEMO_HOA_ID, name: "Sample Resident 5", email: "resident5@example.invalid", phone: null, address: "Modeled Address 5", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-5", homeownerId: "demo-hw-5", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 0 } },
+    { id: "demo-hw-6", hoaId: DEMO_HOA_ID, name: "Sample Resident 6", email: "resident6@example.invalid", phone: null, address: "Modeled Address 6", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-6", homeownerId: "demo-hw-6", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 1 } },
+    { id: "demo-hw-7", hoaId: DEMO_HOA_ID, name: "Sample Resident 7", email: "resident7@example.invalid", phone: null, address: "Modeled Address 7", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-7", homeownerId: "demo-hw-7", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 0 } },
+    { id: "demo-hw-8", hoaId: DEMO_HOA_ID, name: "Sample Resident 8", email: "resident8@example.invalid", phone: null, address: "Modeled Address 8", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-8", homeownerId: "demo-hw-8", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 0 } },
+    { id: "demo-hw-9", hoaId: DEMO_HOA_ID, name: "Sample Resident 9", email: "resident9@example.invalid", phone: null, address: "Modeled Address 9", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-9", homeownerId: "demo-hw-9", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 0, workOrders: 1 } },
+    { id: "demo-hw-10", hoaId: DEMO_HOA_ID, name: "Sample Resident 10", email: "resident10@example.invalid", phone: null, address: "Modeled Address 10", unit: null, role: "resident", active: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), duesAccount: { id: "demo-dues-10", homeownerId: "demo-hw-10", balanceCents: 0, monthlyDueCents: 18500, stripeCustomerId: null, autopayEnabled: true, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW() }, _count: { violations: 1, workOrders: 0 } },
   ];
 }
 
 function demoViolations() {
   const hw = demoHomeowners();
   return [
-    { id: "demo-v-1", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-2", address: "1847 Oakwood Dr", category: "landscaping", description: "Dead front-yard tree requires board notice before removal deadline.", severity: "moderate", status: "noticed", noticeCount: 1, fineCents: null, reportedBy: "Board", latestNoticeAt: DEMO_NOW(), nextNoticeAt: DEMO_FUTURE(21), resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[1], notices: [] },
-    { id: "demo-v-2", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-5", address: "9104 Ridgewell Cove", category: "parking", description: "Trailer parked in driveway past permitted window.", severity: "minor", status: "open", noticeCount: 0, fineCents: null, reportedBy: "Board", latestNoticeAt: null, nextNoticeAt: null, resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[4], notices: [] },
-    { id: "demo-v-3", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-6", address: "6409 Vista Ridge", category: "architectural", description: "Fence stain color differs from approved palette.", severity: "moderate", status: "open", noticeCount: 0, fineCents: null, reportedBy: "Board", latestNoticeAt: null, nextNoticeAt: null, resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[5], notices: [] },
-    { id: "demo-v-4", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-8", address: "5031 Cedar View", category: "trash", description: "Bins visible from street outside collection window.", severity: "minor", status: "open", noticeCount: 0, fineCents: null, reportedBy: "Board", latestNoticeAt: null, nextNoticeAt: null, resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[7], notices: [] },
-    { id: "demo-v-5", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-10", address: "3165 River Bend", category: "landscaping", description: "Unapproved front-bed hardscape materials installed.", severity: "moderate", status: "escalated", noticeCount: 2, fineCents: 5000, reportedBy: "Board", latestNoticeAt: DEMO_NOW(), nextNoticeAt: DEMO_FUTURE(14), resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[9], notices: [] },
+    { id: "demo-v-1", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-2", address: "Modeled Address 2", category: "landscaping", description: "Dead front-yard tree requires board notice before removal deadline.", severity: "moderate", status: "noticed", noticeCount: 1, fineCents: null, reportedBy: "Board", latestNoticeAt: DEMO_NOW(), nextNoticeAt: DEMO_FUTURE(21), resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[1], notices: [] },
+    { id: "demo-v-2", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-5", address: "Modeled Address 5", category: "parking", description: "Trailer parked in driveway past permitted window.", severity: "minor", status: "open", noticeCount: 0, fineCents: null, reportedBy: "Board", latestNoticeAt: null, nextNoticeAt: null, resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[4], notices: [] },
+    { id: "demo-v-3", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-6", address: "Modeled Address 6", category: "architectural", description: "Fence stain color differs from approved palette.", severity: "moderate", status: "open", noticeCount: 0, fineCents: null, reportedBy: "Board", latestNoticeAt: null, nextNoticeAt: null, resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[5], notices: [] },
+    { id: "demo-v-4", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-8", address: "Modeled Address 8", category: "trash", description: "Bins visible from street outside collection window.", severity: "minor", status: "open", noticeCount: 0, fineCents: null, reportedBy: "Board", latestNoticeAt: null, nextNoticeAt: null, resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[7], notices: [] },
+    { id: "demo-v-5", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-10", address: "Modeled Address 10", category: "landscaping", description: "Unapproved front-bed hardscape materials installed.", severity: "moderate", status: "escalated", noticeCount: 2, fineCents: 5000, reportedBy: "Board", latestNoticeAt: DEMO_NOW(), nextNoticeAt: DEMO_FUTURE(14), resolvedAt: null, notes: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: hw[9], notices: [] },
   ];
 }
 
@@ -54,9 +54,9 @@ function demoWorkOrders() {
 function demoARCRequests() {
   const hw = demoHomeowners();
   return [
-    { id: "demo-arc-1", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-1", address: "4521 Comanche Trail", projectType: "roof", description: "Replace roof using approved dimensional shingles in weathered wood color.", status: "submitted", estimatedCost: 1850000, startDate: null, documentUrls: null, reviewDeadline: DEMO_FUTURE(38), submittedAt: DEMO_NOW(), reviewedBy: null, reviewNotes: null, conditions: null, decidedAt: null, aiAnalysis: null, homeowner: hw[0] },
-    { id: "demo-arc-2", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-7", address: "2217 Overlook Pass", projectType: "fence", description: "Replace rear fence with same height and approved cedar finish.", status: "under_review", estimatedCost: 620000, startDate: null, documentUrls: null, reviewDeadline: DEMO_FUTURE(22), submittedAt: DEMO_NOW(), reviewedBy: null, reviewNotes: null, conditions: null, decidedAt: null, aiAnalysis: null, homeowner: hw[6] },
-    { id: "demo-arc-3", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-8", address: "5031 Cedar View", projectType: "paint", description: "Exterior trim repaint using approved neutral palette.", status: "submitted", estimatedCost: 240000, startDate: null, documentUrls: null, reviewDeadline: DEMO_FUTURE(41), submittedAt: DEMO_NOW(), reviewedBy: null, reviewNotes: null, conditions: null, decidedAt: null, aiAnalysis: null, homeowner: hw[7] },
+    { id: "demo-arc-1", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-1", address: "Modeled Address 1", projectType: "roof", description: "Replace roof using approved dimensional shingles in weathered wood color.", status: "submitted", estimatedCost: 1850000, startDate: null, documentUrls: null, reviewDeadline: DEMO_FUTURE(38), submittedAt: DEMO_NOW(), reviewedBy: null, reviewNotes: null, conditions: null, decidedAt: null, aiAnalysis: null, homeowner: hw[0] },
+    { id: "demo-arc-2", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-7", address: "Modeled Address 7", projectType: "fence", description: "Replace rear fence with same height and approved cedar finish.", status: "under_review", estimatedCost: 620000, startDate: null, documentUrls: null, reviewDeadline: DEMO_FUTURE(22), submittedAt: DEMO_NOW(), reviewedBy: null, reviewNotes: null, conditions: null, decidedAt: null, aiAnalysis: null, homeowner: hw[6] },
+    { id: "demo-arc-3", hoaId: DEMO_HOA_ID, homeownerId: "demo-hw-8", address: "Modeled Address 8", projectType: "paint", description: "Exterior trim repaint using approved neutral palette.", status: "submitted", estimatedCost: 240000, startDate: null, documentUrls: null, reviewDeadline: DEMO_FUTURE(41), submittedAt: DEMO_NOW(), reviewedBy: null, reviewNotes: null, conditions: null, decidedAt: null, aiAnalysis: null, homeowner: hw[7] },
   ];
 }
 
@@ -144,6 +144,39 @@ export async function createHOACheckout(input: {
   });
 
   return { url: session.url, hoaId: hoa.id };
+}
+
+export async function createHOAAccessReview(input: {
+  community: string;
+  zip: string;
+  units: number;
+  contactName: string;
+  contactEmail: string;
+  contactPhone?: string;
+  role: string;
+  managementSetup: string;
+  needsHelpWith: string;
+}) {
+  const hoa = await db.hOA.create({
+    data: {
+      name: input.community,
+      community: input.community,
+      zip: input.zip,
+      units: input.units,
+      contactName: input.contactName,
+      contactEmail: input.contactEmail,
+      contactPhone: input.contactPhone,
+      plan: "access_review",
+      pricePerUnit: 2000,
+      paid: false,
+    },
+  });
+
+  return {
+    ok: true,
+    hoaId: hoa.id,
+    message: "Access review received. GatePass will follow up before any enrollment or payment.",
+  };
 }
 
 export async function getHOAStats() {
@@ -254,6 +287,35 @@ export async function createContractorCheckout(input: {
   return { url: session.url, contractorId: contractor.id, position };
 }
 
+export async function createContractorApplication(input: {
+  company: string;
+  contactName: string;
+  email: string;
+  phone?: string;
+  category: string;
+  zip: string;
+}) {
+  const count = await db.contractorWaitlist.count();
+  const contractor = await db.contractorWaitlist.create({
+    data: {
+      company: input.company,
+      contactName: input.contactName,
+      email: input.email,
+      phone: input.phone,
+      category: input.category,
+      zip: input.zip,
+      position: count + 1,
+      paid: false,
+    },
+  });
+
+  return {
+    ok: true,
+    contractorId: contractor.id,
+    message: "Application received. Payment happens only after approval.",
+  };
+}
+
 export async function getContractorStats() {
   const total = await db.contractorWaitlist.count();
   const paid = await db.contractorWaitlist.count({ where: { paid: true } });
@@ -293,11 +355,11 @@ function demoMarketplaceDashboard() {
     ],
     proofLoop: [
       { label: "Transition review opened", detail: "Board enters through synthetic continuity-risk mapping and redacted compliance review.", value: "Transition" },
-      { label: "Contractor access slot opened", detail: "GatePass opens roofing access for Steiner Ranch after board-safe workflow review.", value: "$99 seat" },
+      { label: "Contractor application opened", detail: "GatePass accepts a modeled roofing application for Sample Austin HOA after workflow review.", value: "$99 after approval" },
       { label: "Homeowner job routed", detail: "ARC-approved roof replacement becomes a marketplace job instead of a dead lead.", value: "$18.5K job" },
-      { label: "Contractor quote approved", detail: "Permissioned contractor submits modeled scope through GatePass and the board/homeowner approves in demo.", value: "Modeled" },
+      { label: "Contractor quote approved", detail: "Approved contractor submits modeled scope through GatePass and the board/homeowner approves in demo.", value: "Modeled" },
       { label: "Fee path modeled", detail: "Demo shows where GatePass fee capture would be recorded after real transaction infrastructure exists.", value: "Modeled" },
-      { label: "Compliance memory generated", detail: "The completed job becomes durable board-owned operating memory.", value: "Moat" },
+      { label: "Record generated", detail: "The completed job becomes an exportable association record.", value: "Modeled" },
     ],
   };
 }
@@ -305,11 +367,11 @@ function demoMarketplaceDashboard() {
 function demoInvestorProofMetrics() {
   return {
     demo: true,
-    headline: "Software wedge. Marketplace business. Transition-memory moat.",
+    headline: "HOA-controlled contractor access.",
     metrics: {
       hoaPipeline: 5,
       transitionCases: 1,
-      privateMoatSignals: 4,
+      privateSignals: 0,
       contractorSlotsOpen: 25,
       contractorSignups: 0,
       marketplaceJobs: 2,
@@ -318,16 +380,16 @@ function demoInvestorProofMetrics() {
     },
     money: { demoGmvCents: 1850000, gatepassFeeCents: 92500, hoaCreditsCents: 0 },
     checklist: [
-      { label: "Board-safe transition graph live", status: "done" as const },
-      { label: "Compliance memory export observable", status: "done" as const },
+      { label: "Association record screen live", status: "done" as const },
+      { label: "Modeled export screen observable", status: "done" as const },
       { label: "Marketplace transaction loop modeled", status: "demo" as const },
       { label: "First paid HOA record", status: "missing" as const },
       { label: "Real contractor payment + webhook", status: "missing" as const },
       { label: "Real proof pack from production HOA", status: "missing" as const },
     ],
     proofLinks: [
-      { label: "Marketplace proof loop", href: "/demo?view=marketplace", note: "Modeled contractor transaction path with fee and compliance boundaries labeled." },
-      { label: "Transition graph", href: "/demo?view=transition", note: "Redacted transition memory and board-continuity map." },
+      { label: "Contractor access flow", href: "/demo?view=marketplace", note: "Modeled contractor transaction path with boundaries labeled." },
+      { label: "Association record", href: "/demo?view=transition", note: "Redacted modeled board record." },
       { label: "Contractor access", href: "/contractors", note: "Austin founding-contractor supply path." },
       { label: "Investor brief", href: "/investors", note: "$500K SAFE at $6M post-money with demo/real boundaries labeled." },
     ],
@@ -359,7 +421,7 @@ function demoTransitionMoat() {
     boardFear: "Continuity risk if records, vendors, and resident communication are scattered across tools.",
     decidingProof: "Redacted transition pack showing motion language, resident announcement, vendor continuity checklist, and compliance export structure.",
     counterMove: "Existing provider may offer operational fixes; GatePass preserves association-owned continuity either way.",
-    nextStep: "Use the demo pack to show what a board-safe transition review would capture after counsel and board approval.",
+    nextStep: "Use the demo pack to show what an access review would capture after board approval.",
     status: "pilot_scoped",
     transitionScore: 92,
     replicabilityScore: 84,
@@ -384,13 +446,13 @@ function demoTransitionMoat() {
     summary: {
       transitionCases: 1,
       boardStakeholders: stakeholders.length,
-      moatSignals: signals.length,
+      recordSignals: signals.length,
       privateSignals: 3,
-      weightedMoat: 28,
+      recordWeight: 28,
       averageReplicability: 84,
       complianceEvents: 3,
       legalComplianceEvents: 2,
-      investorLine: "Demo only: GatePass's moat is association-owned transition memory plus compliance history.",
+      investorLine: "Demo only: GatePass creates exportable association records.",
     },
     cases: [demoCase],
     stakeholders,
@@ -541,7 +603,7 @@ export async function recordCompliance(input: { transactionId: string; workSumma
   return db.$transaction(async (tx) => {
     const transaction = await tx.marketplaceTransaction.findUniqueOrThrow({ where: { id: input.transactionId }, include: { job: true } });
     if (transaction.status !== "settled" && transaction.status !== "paid" && transaction.status !== "recorded") {
-      throw new Error("Cannot write compliance memory for an unsettled transaction");
+      throw new Error("Cannot write a record for an unsettled transaction");
     }
     if (transaction.job.status === "in_progress") assertJobTransition(transaction.job.status, "completed");
     const record = await tx.contractorComplianceRecord.create({
@@ -594,7 +656,7 @@ export async function getMarketplaceDashboard(input: { hoaId: string; demo?: boo
       { label: "Marketplace job", detail: "Route ARC/work-order demand into a job.", value: `${jobs.length} jobs` },
       { label: "Quote", detail: "Permissioned contractor submits scope and price.", value: `${quotes.length} quotes` },
       { label: "Transaction", detail: "Record fee capture and internal ledger entry.", value: `${transactions.length} tx` },
-      { label: "Compliance memory", detail: "Link completed work back into board-owned records.", value: `${complianceRecords.length} records` },
+      { label: "Association record", detail: "Link completed work back into board-owned records.", value: `${complianceRecords.length} records` },
     ],
   };
 }
@@ -610,7 +672,7 @@ export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boo
   const credits = marketplace.credits;
   return {
     demo: false,
-    headline: "Software wedge. Marketplace business. Transition-memory moat.",
+    headline: "HOA-controlled contractor access.",
     metrics: {
       hoaPipeline: await db.hOA.count(),
       transitionCases: moat.summary.transitionCases,
@@ -627,15 +689,15 @@ export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boo
       hoaCreditsCents: credits.reduce((sum, c) => sum + c.amountCents, 0),
     },
     checklist: [
-      { label: "Board-safe transition graph live", status: moat.summary.transitionCases ? "done" as const : "missing" as const },
-      { label: "Compliance memory export live", status: moat.summary.complianceEvents ? "done" as const : "missing" as const },
+      { label: "Association record screen live", status: moat.summary.transitionCases ? "done" as const : "missing" as const },
+      { label: "Modeled export available", status: moat.summary.complianceEvents ? "done" as const : "missing" as const },
       { label: "Marketplace transaction loop visible", status: marketplace.jobs.length ? "done" as const : "missing" as const },
       { label: "First paid HOA record", status: (await db.hOA.count({ where: { paid: true } })) ? "done" as const : "missing" as const },
       { label: "Real contractor payment + webhook", status: (await db.contractorWaitlist.count({ where: { paid: true } })) ? "done" as const : "missing" as const },
       { label: "Real proof pack from production HOA", status: moat.summary.complianceEvents ? "done" as const : "missing" as const },
     ],
     proofLinks: demoInvestorProofMetrics().proofLinks,
-    caution: ["Production counts only. Demo data is labeled separately.", "Use Austin HOA pipeline until signed/paid commitments exist.", "Transition support remains case-by-case and board-safe."],
+    caution: ["Production counts only. Demo data is labeled separately.", "Use Austin HOA pipeline until signed/paid commitments exist.", "Access support remains case-by-case and board-approved."],
   };
 }
 
@@ -833,7 +895,7 @@ export async function getLiveCityFeeds(input?: { zip?: string; councilDistrict?:
 }
 
 const MOCK_PERMITS = [
-  { id: "1", type: "Roof Replacement", description: "Remove and replace asphalt shingle roof", address: "1847 Oakwood Dr", zip: "78752", contractor: "Summit Roofing Co.", contractorTrade: "General Contractor", contractorPhone: null, value: "$14,200", date: "Mar 8, 2026", status: "Final", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
+  { id: "1", type: "Roof Replacement", description: "Remove and replace asphalt shingle roof", address: "Modeled Austin Address", zip: "78752", contractor: "Demo Roofing Company", contractorTrade: "General Contractor", contractorPhone: null, value: "$14,200", date: "Mar 8, 2026", status: "Final", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
   { id: "2", type: "Foundation Repair", description: "Foundation leveling and pier installation", address: "1203 Elm St", zip: "78752", contractor: "Bedrock Foundation", contractorTrade: "General Contractor", contractorPhone: null, value: "$8,900", date: "Mar 5, 2026", status: "Active", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
   { id: "3", type: "HVAC Replacement", description: "Full HVAC system replacement", address: "4521 Lamar Blvd", zip: "78751", contractor: "CoolAir Systems", contractorTrade: "Mechanical", contractorPhone: null, value: "$11,600", date: "Feb 28, 2026", status: "Active", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
   { id: "4", type: "Electrical Panel", description: "200A panel upgrade", address: "902 Congress Ave", zip: "78701", contractor: "BrightWire Electric", contractorTrade: "Electrical", contractorPhone: null, value: "$4,800", date: "Feb 25, 2026", status: "Final", projectId: null, permitClass: "Residential", latitude: null, longitude: null },
@@ -2237,7 +2299,7 @@ export async function addMoatSignal(input: {
     targetType: "moat_signal",
     targetId: signal.id,
     targetLabel: input.label,
-    summary: `Moat signal captured: ${input.label}`,
+    summary: `Record signal captured: ${input.label}`,
     legalFlag: input.category === "contract_fact" || input.category === "compliance_risk",
     legalCategory: input.category === "contract_fact" ? "contract" : input.category === "compliance_risk" ? "liability" : "governance",
     dataSnapshot: { evidence: input.evidence, source: input.source, confidence: input.confidence, isPubliclyReplicable: input.isPubliclyReplicable },
@@ -2319,7 +2381,7 @@ export async function exportPilotProofPack(input: {
       requestedBy: input.requestedBy,
       demo: true,
       title: "Demo HOA Transition Proof Pack — redacted sample",
-      positioning: "GatePass turns governed board actions into association-owned transition memory.",
+      positioning: "GatePass turns governed board actions into exportable association records.",
       moatThesis: {
         publicData: "Public HOA and contractor signals are acquisition inputs, not proof by themselves.",
         proprietaryData: "The durable layer is board-approved actions, continuity checklists, compliance events, and redacted transition history owned by the association.",
@@ -2374,7 +2436,7 @@ export async function exportPilotProofPack(input: {
     generatedAt: new Date().toISOString(),
     requestedBy: input.requestedBy,
     title: `${hoa.community} PMC Exit Proof Pack`,
-    positioning: "GatePass turns every PMC exit into structured transition memory.",
+    positioning: "GatePass turns governed access decisions into structured association records.",
     moatThesis: {
       publicData: "HOA names, PMC names, and public reviews are copyable acquisition signals.",
       proprietaryData: "Board objections, private contract terms, switching triggers, transition timelines, compliance events, and operating benchmarks are generated only by helping boards actually leave PMCs.",
@@ -2401,7 +2463,7 @@ export async function exportPilotProofPack(input: {
 export async function getOSDashboard(hoaId: string) {
   if (isDemoHoa(hoaId)) {
     return {
-      hoa: { id: DEMO_HOA_ID, name: "Demo HOA", community: "Steiner Ranch HOA (Demo)", city: "Austin", state: "TX", zip: "78732", units: 847, plan: "full access", paid: true },
+      hoa: { id: DEMO_HOA_ID, name: "Demo HOA", community: "Sample Austin HOA", city: "Austin", state: "TX", zip: "78732", units: 200, plan: "modeled demo", paid: false },
       stats: { homeowners: 10, openViolations: 5, openWorkOrders: 3, pendingARC: 3, openVotes: 1 },
       nextMeeting: { id: "demo-meeting-1", scheduledAt: DEMO_FUTURE(12), title: "Monthly board meeting" },
       financial: { totalOutstanding: 18500, delinquentCount: 1, budgetedYTD: 42500000, actualYTD: 41120000, variance: 1380000 },
@@ -2555,10 +2617,10 @@ export async function deleteHOA(hoaId: string) {
 
 // ─── Demo Seed ────────────────────────────────────────────────────────
 // Creates (or resets) a fully-populated demo HOA for live presentations.
-// Idempotent: if "Steiner Ranch HOA (Demo)" already exists, wipes and rebuilds it.
+// Idempotent: if "Sample Austin HOA" already exists, wipes and rebuilds it.
 
 export async function seedDemoData() {
-  const DEMO_COMMUNITY = "Steiner Ranch HOA (Demo)";
+  const DEMO_COMMUNITY = "Sample Austin HOA";
 
   // Wipe any prior demo HOA
   const prior = await db.hOA.findFirst({ where: { community: DEMO_COMMUNITY } });
@@ -2597,7 +2659,7 @@ export async function seedDemoData() {
   // ── Create HOA ──
   const hoa = await db.hOA.create({
     data: {
-      name: "Steiner Ranch HOA",
+      name: "Sample Austin HOA",
       community: DEMO_COMMUNITY,
       city: "Austin", state: "TX", zip: "78732",
       units: 847,
@@ -2628,7 +2690,7 @@ export async function seedDemoData() {
       boardFear: "Continuity risk if records, vendors, and resident communication are scattered across tools.",
       decidingProof: "Redacted transition pack showing motion language, resident announcement, vendor checklist, and compliance export structure.",
       counterMove: "Existing provider may offer operational fixes; GatePass preserves association-owned continuity either way.",
-      nextStep: "Use the demo pack to show what a board-safe transition review would capture after counsel and board approval.",
+      nextStep: "Use the demo pack to show what an access review would capture after board approval.",
       status: "pilot_scoped",
       transitionScore: 92,
       replicabilityScore: 84,
@@ -2656,9 +2718,9 @@ export async function seedDemoData() {
   const homeonerData = [
     { name: "Demo Board President", email: "president@example.invalid", address: "1847 Stonelake Blvd", role: "president", monthly: 18500 },
     { name: "Demo Treasurer", email: "treasurer@example.invalid", address: "1203 Ranch Rd 620 N", role: "treasurer", monthly: 18500 },
-    { name: "Demo Resident", email: "resident@example.invalid", address: "4521 Comanche Trail", role: "resident", monthly: 18500 },
+    { name: "Demo Resident", email: "resident@example.invalid", address: "Modeled Address 1", role: "resident", monthly: 18500 },
     { name: "David Nguyen",     email: "dnguyen@outlook.com",   address: "902 Canyon Edge Dr",     role: "resident",   monthly: 18500 },
-    { name: "Lisa Hartman",     email: "lhartman@yahoo.com",    address: "3317 Steiner Ranch Blvd",role: "resident",   monthly: 18500 },
+    { name: "Sample Resident",  email: "resident11@example.invalid", address: "Modeled Address 11", role: "resident",   monthly: 18500 },
     { name: "Robert Kim",       email: "rkim@gmail.com",        address: "6782 Lariat Loop",       role: "resident",   monthly: 18500 },
     { name: "Angela Davis",     email: "adavis@email.com",      address: "2241 Flat Creek Cove",   role: "resident",   monthly: 18500 },
     { name: "Tyler Brooks",     email: "tbrooks@gmail.com",     address: "5508 Cerro Vista Dr",    role: "resident",   monthly: 18500 },
@@ -2895,7 +2957,7 @@ export async function seedDemoData() {
     });
   }
 
-  // ── Compliance memory proof events ──
+  // ── Association record proof events ──
   await logComplianceEvent({
     hoaId: hoa.id,
     module: "transition",
@@ -2956,7 +3018,7 @@ export async function seedDemoData() {
   };
 }
 
-// ─── Compliance Memory Layer ──────────────────────────────────────────
+// ─── Association Record Layer ─────────────────────────────────────────
 // L3 Trust → L8 Memory moat. Every legally/financially significant
 // action is timestamped and stored in the durable compliance ledger.
 

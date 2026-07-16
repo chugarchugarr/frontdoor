@@ -18,6 +18,21 @@ export declare function createHOACheckout(input: {
 	url: string | null;
 	hoaId: string;
 }>;
+export declare function createHOAAccessReview(input: {
+	community: string;
+	zip: string;
+	units: number;
+	contactName: string;
+	contactEmail: string;
+	contactPhone?: string;
+	role: string;
+	managementSetup: string;
+	needsHelpWith: string;
+}): Promise<{
+	ok: boolean;
+	hoaId: string;
+	message: string;
+}>;
 export declare function getHOAStats(): Promise<{
 	totalHOAs: number;
 	paidHOAs: number;
@@ -230,6 +245,18 @@ export declare function createContractorCheckout(input: {
 	url: string | null;
 	contractorId: string;
 	position: number;
+}>;
+export declare function createContractorApplication(input: {
+	company: string;
+	contactName: string;
+	email: string;
+	phone?: string;
+	category: string;
+	zip: string;
+}): Promise<{
+	ok: boolean;
+	contractorId: string;
+	message: string;
 }>;
 export declare function getContractorStats(): Promise<{
 	capacity: number;
@@ -590,7 +617,7 @@ export declare function getInvestorProofMetrics(input: {
 	metrics: {
 		hoaPipeline: number;
 		transitionCases: number;
-		privateMoatSignals: number;
+		privateSignals: number;
 		contractorSlotsOpen: number;
 		contractorSignups: number;
 		marketplaceJobs: number;
@@ -612,6 +639,34 @@ export declare function getInvestorProofMetrics(input: {
 		label: string;
 		status: "missing";
 	})[];
+	proofLinks: {
+		label: string;
+		href: string;
+		note: string;
+	}[];
+	caution: string[];
+} | {
+	demo: boolean;
+	headline: string;
+	metrics: {
+		hoaPipeline: number;
+		transitionCases: number;
+		privateMoatSignals: number;
+		contractorSlotsOpen: number;
+		contractorSignups: number;
+		marketplaceJobs: number;
+		quotesSubmitted: number;
+		complianceRecords: number;
+	};
+	money: {
+		demoGmvCents: number;
+		gatepassFeeCents: number;
+		hoaCreditsCents: number;
+	};
+	checklist: {
+		label: string;
+		status: "done" | "missing";
+	}[];
 	proofLinks: {
 		label: string;
 		href: string;
@@ -2115,9 +2170,9 @@ export declare function getTransitionMoat(hoaId: string): Promise<{
 	summary: {
 		transitionCases: number;
 		boardStakeholders: number;
-		moatSignals: number;
+		recordSignals: number;
 		privateSignals: number;
-		weightedMoat: number;
+		recordWeight: number;
 		averageReplicability: number;
 		complianceEvents: number;
 		legalComplianceEvents: number;
@@ -2312,9 +2367,9 @@ export declare function exportPilotProofPack(input: {
 	moatSummary: {
 		transitionCases: number;
 		boardStakeholders: number;
-		moatSignals: number;
+		recordSignals: number;
 		privateSignals: number;
-		weightedMoat: number;
+		recordWeight: number;
 		averageReplicability: number;
 		complianceEvents: number;
 		legalComplianceEvents: number;
@@ -2449,9 +2504,9 @@ export declare function exportPilotProofPack(input: {
 	moatSummary: {
 		transitionCases: number;
 		boardStakeholders: number;
-		moatSignals: number;
+		recordSignals: number;
 		privateSignals: number;
-		weightedMoat: number;
+		recordWeight: number;
 		averageReplicability: number;
 		complianceEvents: number;
 		legalComplianceEvents: number;

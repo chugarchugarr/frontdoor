@@ -599,9 +599,8 @@ model Message {
   updatedAt       DateTime @updatedAt
 }
 
-// ─── Compliance Memory Layer ──────────────────────────────────────────
-// Immutable audit ledger — every legally/financially significant action
-// timestamped and stored permanently. This is the L3 Trust → L8 Memory moat.
+// ─── Association Record Layer ─────────────────────────────────────────
+// Audit ledger for legally/financially significant actions.
 
 model ComplianceEvent {
   id              String   @id @default(cuid())
@@ -652,10 +651,8 @@ model ComplianceExport {
   createdAt       DateTime @default(now())
 }
 
-// ─── Transition Intelligence Graph ────────────────────────────────────
-// Proprietary PMC-displacement memory. Public lead data starts the motion;
-// these records capture why a board actually leaves, what blocks switching,
-// and which operational proof makes the next transition safer/faster.
+// ─── Association Record Graph ─────────────────────────────────────────
+// Structured board records for access reviews, vendor continuity, and exports.
 
 model TransitionCase {
   id                    String   @id @default(cuid())

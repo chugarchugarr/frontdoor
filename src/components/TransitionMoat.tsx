@@ -67,7 +67,7 @@ function CaseCard({ transitionCase }: { transitionCase: TransitionCase }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 14, marginBottom: 20 }}>
         <Meter label="Exit readiness" value={transitionCase.transitionScore} />
         <Meter label="Data completeness" value={transitionCase.dataCompleteness} color={T.gold} />
-        <Meter label="Hard to copy" value={transitionCase.replicabilityScore} color={T.purple} />
+        <Meter label="Record depth" value={transitionCase.replicabilityScore} color={T.purple} />
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 18 }}>
@@ -126,26 +126,26 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
     <div className="gp-transition-shell" style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
       <div className="gp-transition-inner" style={{ maxWidth: 1120, margin: "0 auto" }}>
         <SectionHeader
-          title="Transition Graph"
-          sub="Synthetic demo of how board-approved transition notes, continuity checklists, and compliance memory become association-owned records."
-          action={<div className="gp-transition-actions" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><Btn variant="outline" onClick={() => setCaseForm(!caseForm)}>PMC Intake</Btn><Btn variant="ghost" onClick={() => setStakeholderForm(!stakeholderForm)} disabled={!primaryCaseId}>Board Map</Btn><Btn variant="gold" onClick={() => setSignalForm(!signalForm)} disabled={!primaryCaseId}>Moat Signal</Btn><Btn onClick={() => exportProof.mutate()} disabled={!primaryCaseId || exportProof.isPending}>Export Proof Pack</Btn></div>}
+          title="Association Record"
+          sub="Synthetic demo of how board-approved notes, continuity checklists, and completed work become association-owned records."
+          action={<div className="gp-transition-actions" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><Btn variant="outline" onClick={() => setCaseForm(!caseForm)}>Record Intake</Btn><Btn variant="ghost" onClick={() => setStakeholderForm(!stakeholderForm)} disabled={!primaryCaseId}>Board Map</Btn><Btn variant="gold" onClick={() => setSignalForm(!signalForm)} disabled={!primaryCaseId}>Record Signal</Btn><Btn onClick={() => exportProof.mutate()} disabled={!primaryCaseId || exportProof.isPending}>Sample Export</Btn></div>}
         />
 
         <Card className="gp-transition-thesis" style={{ padding: "18px 22px", marginBottom: 18, background: "linear-gradient(135deg, #1C1C1A, #2A5240)", color: "white" }}>
-          <div style={{ fontFamily: T.fontMono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.58)", marginBottom: 8 }}>Investor-safe moat thesis</div>
-          <div style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 6 }}>Association-owned continuity memory is the moat.</div>
+          <div style={{ fontFamily: T.fontMono, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.58)", marginBottom: 8 }}>Modeled association export</div>
+          <div style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 6 }}>The association keeps the record.</div>
           <div style={{ fontFamily: T.fontSans, fontSize: 13, lineHeight: 1.65, color: "rgba(255,255,255,0.78)" }}>This public demo uses redacted synthetic data. Production transition packs should expose only board-approved, share-safe summaries externally.</div>
         </Card>
 
-        {isLoading && <div style={{ padding: 48, textAlign: "center", fontFamily: T.fontSans, color: "var(--text-light)" }}>Loading transition memory…</div>}
+        {isLoading && <div style={{ padding: 48, textAlign: "center", fontFamily: T.fontSans, color: "var(--text-light)" }}>Loading association record…</div>}
 
         {data && (
           <>
             <div className="gp-transition-summary" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 18 }}>
-              <SummaryCard label="Exit cases" value={data.summary.transitionCases} sub="Prospects converted into transition memory" />
+              <SummaryCard label="Record cases" value={data.summary.transitionCases} sub="Modeled association records" />
               <SummaryCard label="Private signals" value={data.summary.privateSignals} sub="Not publicly scrapeable" />
-              <SummaryCard label="Weighted moat" value={data.summary.weightedMoat} sub="Signal weight × private multiplier" />
-              <SummaryCard label="Compliance events" value={data.summary.complianceEvents} sub={`${data.summary.legalComplianceEvents} legally significant`} />
+              <SummaryCard label="Record score" value={"recordWeight" in data.summary ? data.summary.recordWeight : 0} sub="Modeled signal weight" />
+              <SummaryCard label="Record events" value={data.summary.complianceEvents} sub={`${data.summary.legalComplianceEvents} governance highlights`} />
             </div>
 
             {caseForm && (
@@ -158,7 +158,7 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
                 </div>
                 <FDTextarea label="Signal summary" value={newCase.signalSummary} onChange={(e) => setNewCase({ ...newCase, signalSummary: e.target.value })} placeholder="What public/private signal says this board may need an exit path…" />
                 <FDTextarea label="Board fear" value={newCase.boardFear} onChange={(e) => setNewCase({ ...newCase, boardFear: e.target.value })} placeholder="What they fear will break if they leave the PMC…" />
-                <FDTextarea label="Next step" value={newCase.nextStep} onChange={(e) => setNewCase({ ...newCase, nextStep: e.target.value })} placeholder="The next board-safe transition action…" />
+                <FDTextarea label="Next step" value={newCase.nextStep} onChange={(e) => setNewCase({ ...newCase, nextStep: e.target.value })} placeholder="The next board-approved action…" />
                 <div style={{ marginBottom: 18 }}><Label>Complaint themes</Label><div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{themeOptions.map((theme) => { const active = newCase.complaintThemes.includes(theme); return <button key={theme} onClick={() => setNewCase({ ...newCase, complaintThemes: active ? newCase.complaintThemes.filter((t) => t !== theme) : [...newCase.complaintThemes, theme] })} style={{ border: "none", borderRadius: 999, padding: "5px 11px", fontFamily: T.fontMono, fontSize: 10, textTransform: "uppercase", cursor: "pointer", background: active ? T.forest : "var(--bg-subtle)", color: active ? "white" : "var(--text-mid)" }}>{theme.replace(/_/g, " ")}</button>; })}</div></div>
                 <Btn onClick={() => createCase.mutate()} disabled={!newCase.currentPmc || !newCase.signalSummary || createCase.isPending}>Create exit case</Btn>
               </Card>
@@ -180,28 +180,28 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
 
             {signalForm && (
               <Card style={{ padding: 22, marginBottom: 18 }}>
-                <h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 800, marginBottom: 18 }}>Moat Signal Capture</h3>
+                <h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 800, marginBottom: 18 }}>Record Signal Capture</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
                   <FDSelect label="Category" value={newSignal.category} onChange={(e) => setNewSignal({ ...newSignal, category: e.target.value as SignalCategory })}><option value="board_objection">Board objection</option><option value="contract_fact">Contract fact</option><option value="pmc_failure">PMC failure</option><option value="switching_trigger">Switching trigger</option><option value="compliance_risk">Compliance risk</option><option value="proof_artifact">Proof artifact</option><option value="case_study_metric">Case-study metric</option></FDSelect>
                   <FDSelect label="Source" value={newSignal.source} onChange={(e) => setNewSignal({ ...newSignal, source: e.target.value })}><option value="board_call">Board call</option><option value="board_email">Board email</option><option value="document">Document</option><option value="meeting">Meeting</option><option value="public">Public</option><option value="platform_usage">Platform usage</option><option value="operator_note">Operator note</option></FDSelect>
                   <FDSelect label="Confidence" value={newSignal.confidence} onChange={(e) => setNewSignal({ ...newSignal, confidence: e.target.value as SignalConfidence })}><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="verified">Verified</option></FDSelect>
-                  <FDInput label="Moat weight 1–5" type="number" min={1} max={5} value={newSignal.moatWeight} onChange={(e) => setNewSignal({ ...newSignal, moatWeight: Number(e.target.value) })} />
+                  <FDInput label="Record weight 1–5" type="number" min={1} max={5} value={newSignal.moatWeight} onChange={(e) => setNewSignal({ ...newSignal, moatWeight: Number(e.target.value) })} />
                 </div>
                 <FDInput label="Label" value={newSignal.label} onChange={(e) => setNewSignal({ ...newSignal, label: e.target.value })} />
                 <FDTextarea label="Evidence" value={newSignal.evidence} onChange={(e) => setNewSignal({ ...newSignal, evidence: e.target.value })} />
                 <label style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", marginBottom: 18 }}><input type="checkbox" checked={newSignal.isPubliclyReplicable} onChange={(e) => setNewSignal({ ...newSignal, isPubliclyReplicable: e.target.checked })} />Publicly replicable signal</label>
-                <Btn onClick={() => addSignal.mutate()} disabled={!newSignal.label || !newSignal.evidence || addSignal.isPending}>Capture moat signal</Btn>
+                <Btn onClick={() => addSignal.mutate()} disabled={!newSignal.label || !newSignal.evidence || addSignal.isPending}>Capture record signal</Btn>
               </Card>
             )}
 
             <div className="gp-transition-content-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.4fr) minmax(300px, 0.8fr)", gap: 18, alignItems: "start" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {data.cases.map((c) => <CaseCard key={c.id} transitionCase={c} />)}
-                {data.cases.length === 0 && <Card style={{ padding: 40, textAlign: "center", color: "var(--text-light)", fontFamily: T.fontSans }}>No transition cases yet. Open a PMC Exit Intake to start compounding the moat.</Card>}
+                {data.cases.length === 0 && <Card style={{ padding: 40, textAlign: "center", color: "var(--text-light)", fontFamily: T.fontSans }}>No record cases yet. Open a Record Intake to start the demo.</Card>}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <Card style={{ padding: 20 }}><h3 style={{ fontFamily: T.fontSans, fontSize: 16, fontWeight: 800, marginBottom: 14 }}>Board map</h3>{data.stakeholders.map((s: BoardStakeholder) => <div key={s.id} style={{ padding: "12px 0", borderTop: "1px solid var(--border)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><strong style={{ fontFamily: T.fontSans, fontSize: 13 }}>{s.name}</strong><StatusTag status={s.stance} /></div><div style={{ fontFamily: T.fontMono, fontSize: 10, color: "var(--text-light)", textTransform: "uppercase", marginTop: 4 }}>{s.role.replace(/_/g, " ")}</div>{s.primaryConcern && <p style={{ fontSize: 12, color: "var(--text-mid)", lineHeight: 1.5, margin: "8px 0 0" }}>{s.primaryConcern}</p>}</div>)}</Card>
-                <Card style={{ padding: 20 }}><h3 style={{ fontFamily: T.fontSans, fontSize: 16, fontWeight: 800, marginBottom: 14 }}>Moat signals</h3>{data.signals.slice(0, 10).map((s: MoatSignal) => <div key={s.id} style={{ padding: "12px 0", borderTop: "1px solid var(--border)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><strong style={{ fontFamily: T.fontSans, fontSize: 13 }}>{s.label}</strong><Tag color={s.isPubliclyReplicable ? T.warn : T.success} bg={s.isPubliclyReplicable ? T.warnPale : T.successPale}>{s.isPubliclyReplicable ? "public" : "private"}</Tag></div><div style={{ fontFamily: T.fontMono, fontSize: 10, color: "var(--text-light)", textTransform: "uppercase", marginTop: 4 }}>{s.category.replace(/_/g, " ")} · weight {s.moatWeight}</div><p style={{ fontSize: 12, color: "var(--text-mid)", lineHeight: 1.5, margin: "8px 0 0" }}>{s.evidence}</p></div>)}</Card>
+                <Card style={{ padding: 20 }}><h3 style={{ fontFamily: T.fontSans, fontSize: 16, fontWeight: 800, marginBottom: 14 }}>Record signals</h3>{data.signals.slice(0, 10).map((s: MoatSignal) => <div key={s.id} style={{ padding: "12px 0", borderTop: "1px solid var(--border)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><strong style={{ fontFamily: T.fontSans, fontSize: 13 }}>{s.label}</strong><Tag color={s.isPubliclyReplicable ? T.warn : T.success} bg={s.isPubliclyReplicable ? T.warnPale : T.successPale}>{s.isPubliclyReplicable ? "public" : "private"}</Tag></div><div style={{ fontFamily: T.fontMono, fontSize: 10, color: "var(--text-light)", textTransform: "uppercase", marginTop: 4 }}>{s.category.replace(/_/g, " ")} · weight {s.moatWeight}</div><p style={{ fontSize: 12, color: "var(--text-mid)", lineHeight: 1.5, margin: "8px 0 0" }}>{s.evidence}</p></div>)}</Card>
               </div>
             </div>
 

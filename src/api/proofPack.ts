@@ -42,8 +42,8 @@ export async function buildProofPack(opts: {
 
   doc.rect(0, 0, W, 150).fill(COLORS.forest);
   doc.fill(COLORS.gold).fontSize(11).text("GATEPASS", M, 44, { characterSpacing: 3 });
-  doc.fill(COLORS.cream).fontSize(28).text("Marketplace Proof Pack", M, 64);
-  const banner = opts.live ? "LIVE RECORDS" : "DEMO — NOT LIVE TRACTION";
+  doc.fill(COLORS.cream).fontSize(28).text("Contractor Access Export", M, 64);
+  const banner = opts.live ? "LIVE RECORDS" : "DEMO — NOT LIVE CUSTOMER ACTIVITY";
   doc.fill(opts.live ? COLORS.gold : "#E0726A").fontSize(12).text(banner, M, 108, { characterSpacing: 2 });
   doc.fill(COLORS.cream).fontSize(10).text(new Date().toLocaleString("en-US"), W - M - 160, 112, { width: 160, align: "right" });
 
@@ -63,15 +63,15 @@ export async function buildProofPack(opts: {
   stat("Compliance records", String(compliance), M + col * 2);
   y += 70;
 
-  doc.fill(COLORS.forest).fontSize(14).text("The atomic loop", M, y);
+  doc.fill(COLORS.forest).fontSize(14).text("How contractor access works", M, y);
   y += 22;
   const loop = [
-    "PMC / compliance pain — board-owned operating layer",
+    "Board workflow review — association-owned record",
     "Contractor access slot opens by trade + community",
     "Job routes through GatePass (work order / ARC)",
     "Contractor quote — board approval",
     "Transaction settles: GatePass fee + internal ledger entry",
-    "Completed work becomes compliance memory",
+    "Completed work becomes an exportable record",
   ];
   doc.fontSize(10).fill(COLORS.charcoal);
   loop.forEach((line, i) => {
@@ -113,7 +113,7 @@ export async function buildProofPack(opts: {
   doc.fontSize(8).fill(COLORS.charcoal).text(
     opts.live
       ? "All figures derive from stored MarketplaceTransaction records. Demo data is excluded unless the route is explicitly called with demo=true."
-      : "DEMO EXPORT. Figures are illustrative and must not be presented as live traction.",
+    : "DEMO EXPORT. Figures are illustrative and must not be presented as live customer activity.",
     M,
     footY + 8,
     { width: W - M * 2, lineBreak: false, height: 30 }
