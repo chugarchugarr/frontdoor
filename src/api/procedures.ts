@@ -1052,6 +1052,18 @@ export async function recordPayment(input: {
 }
 
 export async function getFinancialSummary(hoaId: string) {
+  if (isDemoHoa(hoaId)) {
+    return {
+      totalOutstanding: 18500,
+      delinquentCount: 1,
+      delinquentAmount: 18500,
+      budgetedYTD: 42500000,
+      actualYTD: 41120000,
+      variance: 1380000,
+      homeownerCount: 10,
+    };
+  }
+
   const homeowners = await db.homeowner.findMany({
     where: { hoaId, active: true },
     include: { duesAccount: { include: { transactions: { orderBy: { createdAt: "desc" }, take: 1 } } } },
