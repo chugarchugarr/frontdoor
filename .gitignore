@@ -1,6 +1,6 @@
-# Important: keep these in the repo git reverts to previous versions
-!.env.development
-!.env.production
+# Environment files (contain secrets — never commit)
+.env*
+!.env.example
 
 # Important: ignore production database so git reverts don't overwrite it
 development.db
