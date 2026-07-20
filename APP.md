@@ -37,6 +37,7 @@
 - `createHOAAccessReview()` stores an unpaid HOA review request.
 - `createContractorApplication()` stores an unpaid contractor application.
 - Legacy checkout functions still exist for future use but are no longer called by public forms.
+- `getMeetings()`, `getAmenities()`, and `getAnnouncements()` return synthetic records for the fixed demo HOA without requiring seeded local data.
 - Demo and association-record functions are used for modeled product screens.
 
 ## Verification requirements before handoff

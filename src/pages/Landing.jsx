@@ -21,7 +21,7 @@ export default function LandingPage() {
               <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase">Built in Austin</span>
               <h1 className="gp-display text-6xl md:text-7xl lg:text-8xl leading-[0.9] mt-6">The HOA controls the gate.</h1>
               <p className="text-xl md:text-2xl text-white/70 mt-7 max-w-2xl leading-snug">GatePass is a contractor marketplace the HOA controls.</p>
-              <p className="text-base text-white/50 mt-5 max-w-2xl leading-relaxed">A board can see a roof, fence, drainage line, hail mark, or other exterior problem, decide who is allowed to act on it, keep the record, and export the file if the association ever changes vendors.</p>
+              <p className="text-base text-white/50 mt-5 max-w-2xl leading-relaxed">A board can see a roof, fence, drainage line, hail mark, or other exterior condition, decide who is allowed to act on it, keep the record, and export the file if the association ever changes vendors.</p>
               <div className="flex flex-col sm:flex-row gap-4 mt-9">
                 <Link to="/demo" className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">See the demo <ArrowRight className="w-4 h-4" /></Link>
                 <Link to="/investors" className="inline-flex items-center justify-center gap-2 text-sm text-white/70 hover:text-white border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full transition-colors">Read the investor brief</Link>
@@ -75,7 +75,7 @@ export default function LandingPage() {
           <div className="max-w-[1120px] mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
             <div>
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">What the product handles.</h2>
-              <p className="text-white/50 mt-5 leading-relaxed">GatePass is a working, modeled demo of the board workspace and access workflow. It is not being presented as customer traction.</p>
+              <p className="text-white/50 mt-5 leading-relaxed">GatePass is a working, modeled demo of the board workspace and access workflow. It does not represent production customer activity.</p>
             </div>
             <div className="grid gap-3">
               {productItems.map((item) => <div key={item} className="rounded-2xl bg-white/[0.04] border border-white/10 p-5 text-sm text-white/60 leading-relaxed">{item}</div>)}

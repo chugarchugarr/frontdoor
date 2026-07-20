@@ -1,6 +1,6 @@
 export const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
 
-export const MODELED_DEMO_BANNER = "MODELED DEMO — NO PRODUCTION CUSTOMER DATA OR TRACTION";
+export const MODELED_DEMO_BANNER = "MODELED DEMO — NO PRODUCTION CUSTOMER OR TRANSACTION DATA";
 
 export const modeledDemoData = {
   hoa: {

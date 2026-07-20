@@ -11,6 +11,8 @@ const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
 
 const DEMO_NOW = () => new Date().toISOString();
 const DEMO_FUTURE = (days: number) => new Date(Date.now() + days * 86400000).toISOString();
+const DEMO_PAST = (days: number) => new Date(Date.now() - days * 86400000).toISOString();
+const DEMO_FUTURE_DATE = (days: number) => DEMO_FUTURE(days).slice(0, 10);
 
 function isDemoHoa(hoaId: string) {
   return hoaId === DEMO_HOA_ID;
@@ -62,6 +64,84 @@ function demoARCRequests() {
 
 function demoVotes() {
   return [{ id: "demo-vote-1", hoaId: DEMO_HOA_ID, meetingId: null, title: "Approve pool gate repair budget", description: "Authorize up to $1,200 for north pool gate safety repair.", type: "motion", status: "open", options: JSON.stringify(["Approve", "Reject", "Abstain"]), allowMultiple: false, requiresQuorum: true, quorumCount: 4, closesAt: DEMO_FUTURE(7), resultSummary: null, certifiedAt: null, aiAnalysis: null, createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), casts: [], meeting: null }];
+}
+
+function demoMeetings() {
+  return [
+    {
+      id: "demo-meeting-1", hoaId: DEMO_HOA_ID, title: "Monthly Board Meeting", type: "board",
+      scheduledAt: DEMO_FUTURE(12), location: "Clubhouse Room B", virtualLink: null,
+      agenda: "1. Call to order\n2. Financial report\n3. Pool gate repair update\n4. Violation enforcement review\n5. ARC committee update\n6. New business\n7. Adjournment",
+      minutes: null, quorumRequired: 3, quorumMet: null, status: "scheduled", aiAnalysis: null, aiAnalyzedAt: null,
+      createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(),
+      agendaItems: [
+        { id: "demo-agenda-1", meetingId: "demo-meeting-1", order: 1, title: "Call to order", description: null, presenter: "Board President", duration: 5, actionRequired: false, status: "pending", notes: null, createdAt: DEMO_NOW() },
+        { id: "demo-agenda-2", meetingId: "demo-meeting-1", order: 2, title: "Financial report", description: null, presenter: "Treasurer", duration: 15, actionRequired: false, status: "pending", notes: null, createdAt: DEMO_NOW() },
+        { id: "demo-agenda-3", meetingId: "demo-meeting-1", order: 3, title: "Pool gate repair budget", description: null, presenter: "Board President", duration: 15, actionRequired: true, status: "pending", notes: null, createdAt: DEMO_NOW() },
+      ],
+      votes: [{ id: "demo-vote-1", title: "Approve pool gate repair budget", status: "open" }],
+    },
+    {
+      id: "demo-meeting-2", hoaId: DEMO_HOA_ID, title: "Previous Board Meeting", type: "board",
+      scheduledAt: DEMO_PAST(28), location: "Clubhouse Room B", virtualLink: null, agenda: null,
+      minutes: "Meeting called to order with quorum confirmed. The board reviewed the monthly financial report, open work orders, violations, and pending ARC requests. The meeting adjourned after all recorded motions were completed.",
+      quorumRequired: 3, quorumMet: true, status: "completed", aiAnalysis: null, aiAnalyzedAt: null,
+      createdAt: DEMO_PAST(35), updatedAt: DEMO_PAST(28), agendaItems: [], votes: [],
+    },
+  ];
+}
+
+function demoAmenities() {
+  const reservation = (input: { id: string; amenityId: string; homeownerId: string; name: string; days: number; startTime: string; endTime: string; guestCount: number; notes: string | null }) => ({
+    id: input.id, amenityId: input.amenityId, homeownerId: input.homeownerId,
+    date: DEMO_FUTURE_DATE(input.days), startTime: input.startTime, endTime: input.endTime,
+    partySize: null, guestCount: input.guestCount, notes: input.notes, status: "confirmed",
+    depositPaid: false, depositRefunded: false, aiAnalysis: null, aiAnalyzedAt: null,
+    createdAt: DEMO_NOW(), updatedAt: DEMO_NOW(), homeowner: { name: input.name },
+  });
+
+  return [
+    {
+      id: "demo-amenity-pool", hoaId: DEMO_HOA_ID, name: "Main Community Pool",
+      description: "Heated pool with lap lanes and a children's area.", capacity: 75,
+      rules: "No glass. Children under 12 must be accompanied by an adult.", depositCents: 0,
+      openTime: "06:00", closeTime: "22:00", advanceBookingDays: 30, active: true, createdAt: DEMO_NOW(),
+      reservations: [
+        reservation({ id: "demo-reservation-1", amenityId: "demo-amenity-pool", homeownerId: "demo-hw-1", name: "Sample Resident 1", days: 1, startTime: "09:00", endTime: "10:00", guestCount: 4, notes: "Lap swim" }),
+        reservation({ id: "demo-reservation-2", amenityId: "demo-amenity-pool", homeownerId: "demo-hw-3", name: "Sample Resident 3", days: 2, startTime: "14:00", endTime: "17:00", guestCount: 12, notes: "Reserved pool area" }),
+        reservation({ id: "demo-reservation-3", amenityId: "demo-amenity-pool", homeownerId: "demo-hw-9", name: "Sample Resident 9", days: 4, startTime: "16:00", endTime: "18:00", guestCount: 6, notes: "Household swim" }),
+      ],
+    },
+    {
+      id: "demo-amenity-clubhouse", hoaId: DEMO_HOA_ID, name: "Clubhouse & Event Hall",
+      description: "Community event space with kitchen, AV system, tables, and chairs.", capacity: 120,
+      rules: "Deposit required. Clean-up by midnight. No amplified music after 10 PM.", depositCents: 50000,
+      openTime: "08:00", closeTime: "23:00", advanceBookingDays: 30, active: true, createdAt: DEMO_NOW(),
+      reservations: [
+        reservation({ id: "demo-reservation-4", amenityId: "demo-amenity-clubhouse", homeownerId: "demo-hw-2", name: "Sample Resident 2", days: 3, startTime: "18:00", endTime: "22:00", guestCount: 45, notes: "Community planning meeting" }),
+        reservation({ id: "demo-reservation-5", amenityId: "demo-amenity-clubhouse", homeownerId: "demo-hw-7", name: "Sample Resident 7", days: 7, startTime: "11:00", endTime: "16:00", guestCount: 80, notes: "Private reception" }),
+      ],
+    },
+    {
+      id: "demo-amenity-courts", hoaId: DEMO_HOA_ID, name: "Tennis Courts (2)",
+      description: "Two lighted hard courts available for resident reservations.", capacity: 8,
+      rules: "Two-hour booking limit during high demand. Court shoes required.", depositCents: 0,
+      openTime: "07:00", closeTime: "21:00", advanceBookingDays: 30, active: true, createdAt: DEMO_NOW(),
+      reservations: [
+        reservation({ id: "demo-reservation-6", amenityId: "demo-amenity-courts", homeownerId: "demo-hw-5", name: "Sample Resident 5", days: 1, startTime: "07:00", endTime: "08:30", guestCount: 2, notes: null }),
+      ],
+    },
+  ];
+}
+
+function demoAnnouncements() {
+  return [
+    { id: "demo-announcement-1", hoaId: DEMO_HOA_ID, title: "Pool Gate Repair Scheduled", body: "The north pool gate repair is scheduled for this week. The pool remains open, but residents should use the south entrance while work is underway.", category: "urgent", pinned: true, sentEmail: true, sentAt: DEMO_NOW(), authorName: "HOA Board", expiresAt: DEMO_FUTURE(7), aiAnalysis: null, aiAnalyzedAt: null, createdAt: DEMO_NOW() },
+    { id: "demo-announcement-2", hoaId: DEMO_HOA_ID, title: "Monthly Board Meeting", body: "The next board meeting will be held in Clubhouse Room B. Residents may review the agenda in the board workspace before the meeting.", category: "governance", pinned: false, sentEmail: true, sentAt: DEMO_PAST(1), authorName: "HOA Board", expiresAt: DEMO_FUTURE(12), aiAnalysis: null, aiAnalyzedAt: null, createdAt: DEMO_PAST(1) },
+    { id: "demo-announcement-3", hoaId: DEMO_HOA_ID, title: "Quarterly Dues Reminder", body: "Quarterly dues statements are available in the resident portal. Contact the board if your account details need review.", category: "financial", pinned: false, sentEmail: true, sentAt: DEMO_PAST(3), authorName: "HOA Board", expiresAt: null, aiAnalysis: null, aiAnalyzedAt: null, createdAt: DEMO_PAST(3) },
+    { id: "demo-announcement-4", hoaId: DEMO_HOA_ID, title: "Common-Area Landscaping Schedule", body: "Routine trimming, mulching, and irrigation inspection will take place next week. Please keep vehicles clear of marked work areas.", category: "maintenance", pinned: false, sentEmail: false, sentAt: null, authorName: "HOA Board", expiresAt: DEMO_FUTURE(10), aiAnalysis: null, aiAnalyzedAt: null, createdAt: DEMO_PAST(5) },
+    { id: "demo-announcement-5", hoaId: DEMO_HOA_ID, title: "Welcome to the Modeled GatePass Demo", body: "This synthetic community shows how residents and the board can review requests, notices, reservations, votes, and community records in one workspace.", category: "general", pinned: false, sentEmail: false, sentAt: null, authorName: "HOA Board", expiresAt: null, aiAnalysis: null, aiAnalyzedAt: null, createdAt: DEMO_PAST(7) },
+  ];
 }
 
 function getStripe() {
@@ -1339,6 +1419,7 @@ export async function createMeeting(input: {
 }
 
 export async function getMeetings(hoaId: string) {
+  if (isDemoHoa(hoaId)) return demoMeetings();
   return db.meeting.findMany({
     where: { hoaId },
     include: {
@@ -1615,6 +1696,7 @@ export async function createAmenity(input: {
 }
 
 export async function getAmenities(hoaId: string) {
+  if (isDemoHoa(hoaId)) return demoAmenities();
   return db.amenity.findMany({
     where: { hoaId, active: true },
     include: {
@@ -1684,6 +1766,7 @@ export async function createAnnouncement(input: {
 }
 
 export async function getAnnouncements(hoaId: string) {
+  if (isDemoHoa(hoaId)) return demoAnnouncements();
   return db.announcement.findMany({
     where: {
       hoaId,
