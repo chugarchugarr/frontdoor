@@ -28,7 +28,7 @@ const app = new Hono();
 
 // ─── Stripe Webhook ────────────────────────────────────────────────────
 app.post("/webhook/stripe", stripeWebhook);
-app.get("/admin/proof-pack.pdf", proofPackRoute);
+app.get("/admin/record-pack.pdf", proofPackRoute);
 
 app.use(honoMiddleware({ procedures, jobs, transcoder }));
 

@@ -408,7 +408,7 @@ export async function getWaitlistPosition(id: string) {
   return db.contractorWaitlist.findUnique({ where: { id } });
 }
 
-// ─── Marketplace Proof Loop ───────────────────────────────────────────
+// ─── Marketplace Validation Loop ──────────────────────────────────────
 
 function demoMarketplaceDashboard() {
   return {
@@ -465,7 +465,7 @@ function demoInvestorProofMetrics() {
       { label: "Marketplace transaction loop modeled", status: "demo" as const },
       { label: "First paid HOA record", status: "missing" as const },
       { label: "Real contractor payment + webhook", status: "missing" as const },
-      { label: "Real proof pack from production HOA", status: "missing" as const },
+      { label: "Production HOA record export", status: "missing" as const },
     ],
     proofLinks: [
       { label: "Contractor access flow", href: "/demo?view=marketplace", note: "Modeled contractor transaction path with boundaries labeled." },
@@ -731,7 +731,7 @@ export async function getMarketplaceDashboard(input: { hoaId: string; demo?: boo
     credits: credits.map((c) => ({ id: c.id, amountCents: c.amountCents, status: c.status, memo: c.memo ?? c.type })),
     complianceRecords,
     proofLoop: [
-      { label: "Transition case", detail: "Open or import a PMC transition case.", value: "Wedge" },
+      { label: "Transition case", detail: "Open or import a PMC transition case.", value: "Entry" },
       { label: "Contractor access", detail: "Open permissioned slots by community/trade.", value: `${slots.length} slots` },
       { label: "Marketplace job", detail: "Route ARC/work-order demand into a job.", value: `${jobs.length} jobs` },
       { label: "Quote", detail: "Permissioned contractor submits scope and price.", value: `${quotes.length} quotes` },
@@ -743,7 +743,7 @@ export async function getMarketplaceDashboard(input: { hoaId: string; demo?: boo
 
 export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boolean }) {
   if (input.demo || input.hoaId === DEMO_HOA_ID) return demoInvestorProofMetrics();
-  const [moat, marketplace, waitlistCount] = await Promise.all([
+  const [associationRecords, marketplace, waitlistCount] = await Promise.all([
     getTransitionMoat(input.hoaId),
     getMarketplaceDashboard({ hoaId: input.hoaId }),
     db.contractorWaitlist.count(),
@@ -755,13 +755,13 @@ export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boo
     headline: "HOA-controlled contractor access.",
     metrics: {
       hoaPipeline: await db.hOA.count(),
-      transitionCases: moat.summary.transitionCases,
-      privateMoatSignals: moat.summary.privateSignals,
+      transitionCases: associationRecords.summary.transitionCases,
+      privateMoatSignals: associationRecords.summary.privateSignals,
       contractorSlotsOpen: Math.max(0, CONTRACTOR_FOUNDING_SEAT_CAPACITY - waitlistCount),
       contractorSignups: waitlistCount,
       marketplaceJobs: marketplace.jobs.length,
       quotesSubmitted: marketplace.quotes.length,
-      complianceRecords: moat.summary.complianceEvents,
+      complianceRecords: associationRecords.summary.complianceEvents,
     },
     money: {
       demoGmvCents: txs.reduce((sum, t) => sum + t.grossAmountCents, 0),
@@ -769,12 +769,12 @@ export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boo
       hoaCreditsCents: credits.reduce((sum, c) => sum + c.amountCents, 0),
     },
     checklist: [
-      { label: "Association record screen live", status: moat.summary.transitionCases ? "done" as const : "missing" as const },
-      { label: "Modeled export available", status: moat.summary.complianceEvents ? "done" as const : "missing" as const },
+      { label: "Association record screen live", status: associationRecords.summary.transitionCases ? "done" as const : "missing" as const },
+      { label: "Modeled export available", status: associationRecords.summary.complianceEvents ? "done" as const : "missing" as const },
       { label: "Marketplace transaction loop visible", status: marketplace.jobs.length ? "done" as const : "missing" as const },
       { label: "First paid HOA record", status: (await db.hOA.count({ where: { paid: true } })) ? "done" as const : "missing" as const },
       { label: "Real contractor payment + webhook", status: (await db.contractorWaitlist.count({ where: { paid: true } })) ? "done" as const : "missing" as const },
-      { label: "Real proof pack from production HOA", status: moat.summary.complianceEvents ? "done" as const : "missing" as const },
+      { label: "Production HOA record export", status: associationRecords.summary.complianceEvents ? "done" as const : "missing" as const },
     ],
     proofLinks: demoInvestorProofMetrics().proofLinks,
     caution: ["Production counts only. Demo data is labeled separately.", "Use Austin HOA pipeline until signed/paid commitments exist.", "Access support remains case-by-case and board-approved."],
@@ -783,12 +783,12 @@ export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boo
 
 export async function exportMarketplaceProofPack(input?: { hoaId?: string; demo?: boolean }): Promise<{ filename: string; mimeType: string; base64: string }> {
   if (input?.demo && process.env.GATEPASS_ALLOW_DEMO !== "true" && env.VITE_NODE_ENV === "production") {
-    throw new Error("Demo proof pack disabled in production");
+    throw new Error("Demo record pack disabled in production");
   }
   const { buildProofPack } = await import("@/api/proofPack");
   const pdf = await buildProofPack({ live: !input?.demo, hoaId: input?.hoaId });
   return {
-    filename: `gatepass-proof-pack${input?.demo ? "-demo" : ""}.pdf`,
+    filename: `gatepass-record-pack${input?.demo ? "-demo" : ""}.pdf`,
     mimeType: "application/pdf",
     base64: pdf.toString("base64"),
   };
@@ -2143,9 +2143,9 @@ export async function getGatePassMetrics() {
 }
 
 // ─── Transition Intelligence Graph ────────────────────────────────────
-// Public HOA/PMC data is only the acquisition wedge. These procedures capture
+// Public HOA/PMC data is only the acquisition entry. These procedures capture
 // the proprietary PMC exit memory: board psychology, contract blockers,
-// transition triggers, proof artifacts, and reusable exit patterns.
+// transition triggers, evidence artifacts, and reusable exit patterns.
 
 type TransitionStatus = "identified" | "contacted" | "meeting" | "exit_pack_sent" | "pilot_scoped" | "won" | "lost" | "parked";
 type MoatSignalCategory = "board_objection" | "contract_fact" | "pmc_failure" | "switching_trigger" | "compliance_risk" | "proof_artifact" | "case_study_metric";
@@ -2438,7 +2438,7 @@ export async function getTransitionMoat(hoaId: string) {
     terminationFeeCents: null,
     buyoutOfferedCents: null,
     boardFear: c.boardFear ? "Private board concern captured; redacted from public/demo view." : null,
-    decidingProof: c.decidingProof ? "Redacted proof artifact available in board-approved pack." : null,
+    decidingProof: c.decidingProof ? "Redacted evidence artifact available in board-approved pack." : null,
     counterMove: c.counterMove ? "Provider response scenario captured; redacted from public/demo view." : null,
   });
 
@@ -2452,7 +2452,7 @@ export async function getTransitionMoat(hoaId: string) {
       averageReplicability,
       complianceEvents: complianceCount,
       legalComplianceEvents: legalComplianceCount,
-      investorLine: "Public HOA data is the wedge. GatePass's moat is private PMC exit memory plus compliance history.",
+      investorLine: "Public HOA data is the entry. GatePass retains private PMC exit history plus compliance records.",
     },
     cases: cases.map(redactCase),
     stakeholders: stakeholders.map(redactStakeholder),
@@ -2467,18 +2467,18 @@ export async function exportPilotProofPack(input: {
 }) {
   const hoa = await db.hOA.findUnique({ where: { id: input.hoaId } });
   if (!hoa && input.hoaId === DEMO_HOA_ID) {
-    const moat = demoTransitionMoat();
+    const associationRecords = demoTransitionMoat();
     const selectedCase = input.transitionCaseId
-      ? moat.cases.find((c) => c.id === input.transitionCaseId)
-      : moat.cases[0];
+      ? associationRecords.cases.find((c) => c.id === input.transitionCaseId)
+      : associationRecords.cases[0];
     return {
       generatedAt: new Date().toISOString(),
       requestedBy: input.requestedBy,
       demo: true,
-      title: "Demo HOA Transition Proof Pack — redacted sample",
+      title: "Demo HOA Transition Record Pack — redacted sample",
       positioning: "GatePass turns governed board actions into exportable association records.",
       moatThesis: {
-        publicData: "Public HOA and contractor signals are acquisition inputs, not proof by themselves.",
+        publicData: "Public HOA and contractor signals are acquisition inputs, not validation by themselves.",
         proprietaryData: "The durable layer is board-approved actions, continuity checklists, compliance events, and redacted transition history owned by the association.",
         hardLine: "Demo pack is synthetic; production packs must be redacted before external sharing.",
       },
@@ -2495,9 +2495,9 @@ export async function exportPilotProofPack(input: {
         nextStep: selectedCase.nextStep,
         status: selectedCase.status,
       } : null,
-      moatSummary: moat.summary,
-      topSignals: moat.signals.slice(0, 12).map((s) => ({ label: s.label, category: s.category, evidence: s.evidence, confidence: s.confidence, moatWeight: s.moatWeight })),
-      boardMap: moat.stakeholders.map((s) => ({ role: s.role, stance: s.stance, primaryConcern: s.primaryConcern })),
+      moatSummary: associationRecords.summary,
+      topSignals: associationRecords.signals.slice(0, 12).map((s) => ({ label: s.label, category: s.category, evidence: s.evidence, confidence: s.confidence, moatWeight: s.moatWeight })),
+      boardMap: associationRecords.stakeholders.map((s) => ({ role: s.role, stance: s.stance, primaryConcern: s.primaryConcern })),
       complianceSummary: { totalEvents: 3, legalEvents: 2, moduleBreakdown: { transition: 1, boardroom: 1, workorder: 1 } },
       legalHighlights: [
         { module: "transition", eventType: "transition.review_pack_generated", summary: "Redacted transition-review pack generated for synthetic demo community", actor: "Demo Board", legalCategory: "contract" },
@@ -2515,7 +2515,7 @@ export async function exportPilotProofPack(input: {
   }
   if (!hoa) throw new Error("HOA not found");
 
-  const moat = await getTransitionMoat(input.hoaId);
+  const associationRecords = await getTransitionMoat(input.hoaId);
   const compliance = await exportCompliancePack({
     hoaId: input.hoaId,
     dateFrom: "2000-01-01T00:00:00.000Z",
@@ -2524,13 +2524,13 @@ export async function exportPilotProofPack(input: {
     purpose: "pmc_transition",
   });
   const selectedCase = input.transitionCaseId
-    ? moat.cases.find((c) => c.id === input.transitionCaseId)
-    : moat.cases[0];
+    ? associationRecords.cases.find((c) => c.id === input.transitionCaseId)
+    : associationRecords.cases[0];
 
   return {
     generatedAt: new Date().toISOString(),
     requestedBy: input.requestedBy,
-    title: `${hoa.community} PMC Exit Proof Pack`,
+    title: `${hoa.community} PMC Exit Record Pack`,
     positioning: "GatePass turns governed access decisions into structured association records.",
     moatThesis: {
       publicData: "HOA names, PMC names, and public reviews are copyable acquisition signals.",
@@ -2539,9 +2539,9 @@ export async function exportPilotProofPack(input: {
     },
     community: { id: hoa.id, name: hoa.name, community: hoa.community, units: hoa.units, plan: hoa.plan },
     selectedCase,
-    moatSummary: moat.summary,
-      topSignals: moat.signals.slice(0, 12).map((s) => ({ label: s.label, category: s.category, evidence: s.evidence, confidence: s.confidence, moatWeight: s.moatWeight })),
-      boardMap: moat.stakeholders.map((s) => ({ role: s.role, stance: s.stance, primaryConcern: s.primaryConcern })),
+    moatSummary: associationRecords.summary,
+      topSignals: associationRecords.signals.slice(0, 12).map((s) => ({ label: s.label, category: s.category, evidence: s.evidence, confidence: s.confidence, moatWeight: s.moatWeight })),
+      boardMap: associationRecords.stakeholders.map((s) => ({ role: s.role, stance: s.stance, primaryConcern: s.primaryConcern })),
     complianceSummary: compliance.summary,
     legalHighlights: compliance.legalHighlights,
     firstPilotProofChecklist: [
@@ -3052,7 +3052,7 @@ export async function seedDemoData() {
     });
   }
 
-  // ── Association record proof events ──
+  // ── Association record events ──
   await logComplianceEvent({
     hoaId: hoa.id,
     module: "transition",
@@ -3114,7 +3114,7 @@ export async function seedDemoData() {
 }
 
 // ─── Association Record Layer ─────────────────────────────────────────
-// L3 Trust → L8 Memory moat. Every legally/financially significant
+// Every legally or financially significant
 // action is timestamped and stored in the durable compliance ledger.
 
 /**

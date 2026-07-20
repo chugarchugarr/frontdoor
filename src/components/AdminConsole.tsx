@@ -19,7 +19,7 @@ const STEPS: { key: StepKey; n: string; label: string; verb: string }[] = [
   { key: "approve", n: "05", label: "Approve quote", verb: "Board approves quote" },
   { key: "settle", n: "06", label: "Settle transaction", verb: "Record fee + internal ledger entry" },
   { key: "compliance", n: "07", label: "Write memory", verb: "Write compliance record" },
-  { key: "export", n: "08", label: "Export proof pack", verb: "Generate investor PDF" },
+  { key: "export", n: "08", label: "Export record pack", verb: "Generate investor PDF" },
 ];
 
 export default function AdminConsole() {
@@ -121,5 +121,5 @@ function StepForm({ step, busy, onRun }: { step: StepKey; busy: boolean; onRun: 
     compliance: [{ k: "transactionId", label: "Transaction ID" }, { k: "workSummary", label: "Work summary" }],
     export: [{ k: "hoaId", label: "HOA ID (optional)" }, { k: "demo", label: "Demo? true/false" }],
   };
-  return <div className="gp-admin-form" style={{ maxWidth: 520 }}>{schema[step].map((field) => <label key={field.k} style={{ display: "block", marginBottom: 14 }}><span style={{ display: "block", fontSize: 13, marginBottom: 5, color: C.forest }}>{field.label}</span><input value={fields[field.k] ?? ""} onChange={(event) => set(field.k, event.target.value)} style={{ width: "100%", padding: "10px 12px", border: `1px solid ${C.line}`, borderRadius: 6, background: "#fff", fontSize: 16, fontFamily: "monospace" }} /></label>)}<button disabled={busy} onClick={() => onRun(step, fields)} style={{ marginTop: 8, padding: "11px 22px", border: "none", borderRadius: 6, background: busy ? C.line : C.gold, color: C.charcoal, fontWeight: 700, fontSize: 14, cursor: busy ? "wait" : "pointer" }}>{step === "export" ? "Generate proof pack" : busy ? "Working…" : "Run step"}</button></div>;
+  return <div className="gp-admin-form" style={{ maxWidth: 520 }}>{schema[step].map((field) => <label key={field.k} style={{ display: "block", marginBottom: 14 }}><span style={{ display: "block", fontSize: 13, marginBottom: 5, color: C.forest }}>{field.label}</span><input value={fields[field.k] ?? ""} onChange={(event) => set(field.k, event.target.value)} style={{ width: "100%", padding: "10px 12px", border: `1px solid ${C.line}`, borderRadius: 6, background: "#fff", fontSize: 16, fontFamily: "monospace" }} /></label>)}<button disabled={busy} onClick={() => onRun(step, fields)} style={{ marginTop: 8, padding: "11px 22px", border: "none", borderRadius: 6, background: busy ? C.line : C.gold, color: C.charcoal, fontWeight: 700, fontSize: 14, cursor: busy ? "wait" : "pointer" }}>{step === "export" ? "Generate record pack" : busy ? "Working…" : "Run step"}</button></div>;
 }

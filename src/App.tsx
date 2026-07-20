@@ -648,7 +648,7 @@ export default function App() {
       <Route path="/demo/transition" element={<TransitionDemoRoute />} />
       <Route path="/demo/marketplace" element={<MarketplaceLoopRoute />} />
       <Route path="/marketplace-loop" element={<MarketplaceLoopRoute />} />
-      <Route path="/investor-proof" element={<InvestorProofRoute />} />
+      <Route path="/investor-status" element={<InvestorProofRoute />} />
       <Route path="/os" element={<OSRoute />} />
       <Route path="/admin" element={<AdminRoute />} />
       <Route path="/pricing" element={<Pricing />} />

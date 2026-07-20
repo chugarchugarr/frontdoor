@@ -3,6 +3,6 @@ Allow: /
 Disallow: /demo
 Disallow: /os
 Disallow: /admin
-Disallow: /investor-proof
+Disallow: /investor-status
 
 Sitemap: https://www.gatepasshoa.com/sitemap.xml

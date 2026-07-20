@@ -19,7 +19,7 @@ type ProofMetrics = {
 
 export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { hoaId?: string; demo?: boolean }) {
   const { data, isLoading } = useQuery<ProofMetrics>({
-    queryKey: ["investor-proof", hoaId, demo],
+    queryKey: ["investor-status", hoaId, demo],
     queryFn: () => rpc.getInvestorProofMetrics({ hoaId, demo }),
   });
 

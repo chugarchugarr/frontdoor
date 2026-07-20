@@ -47,12 +47,12 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
   const dashboard = data;
 
   return (
-    <div className="gp-proof-shell" style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
+    <div className="gp-market-shell" style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
       <style>{GLOBAL_CSS}{`
         @media (max-width: 720px) {
-          .gp-proof-shell { padding: 16px !important; }
-          .gp-proof-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
-          .gp-proof-main { grid-template-columns: 1fr !important; gap: 14px !important; }
+          .gp-market-shell { padding: 16px !important; }
+          .gp-market-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
+          .gp-market-main { grid-template-columns: 1fr !important; gap: 14px !important; }
           .gp-card-title-row { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
           .gp-card-title-row button { width: 100% !important; min-height: 44px !important; justify-content: center !important; }
           .gp-money-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
@@ -60,7 +60,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
           .gp-loop-node-head > span { align-self: flex-start !important; }
         }
         @media (max-width: 390px) {
-          .gp-proof-stats { grid-template-columns: 1fr !important; }
+          .gp-market-stats { grid-template-columns: 1fr !important; }
         }
       `}</style>
       <div style={{ maxWidth: 1180, margin: "0 auto" }}>
@@ -74,7 +74,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
 
         {dashboard && (
           <>
-            <div className="gp-proof-stats" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 22 }}>
+            <div className="gp-market-stats" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 22 }}>
               {[
                 ["Contractor slots", dashboard.slots.length],
                 ["Marketplace jobs", dashboard.jobs.length],
@@ -89,7 +89,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
               ))}
             </div>
 
-            <div className="gp-proof-main" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 0.75fr)", gap: 18, alignItems: "start" }}>
+            <div className="gp-market-main" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 0.75fr)", gap: 18, alignItems: "start" }}>
               <Card style={{ padding: 22 }}>
                 <div className="gp-card-title-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
                   <div>

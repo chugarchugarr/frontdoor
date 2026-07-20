@@ -84,7 +84,7 @@ function CaseCard({ transitionCase }: { transitionCase: TransitionCase }) {
       {(transitionCase.boardFear || transitionCase.decidingProof || transitionCase.nextStep) && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 12 }}>
           {transitionCase.boardFear && <div style={{ padding: 14, background: "var(--bg-subtle)", borderRadius: 12 }}><Label>Board fear</Label><p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "var(--text-mid)" }}>{transitionCase.boardFear}</p></div>}
-          {transitionCase.decidingProof && <div style={{ padding: 14, background: T.forestPale, borderRadius: 12 }}><Label>Deciding proof</Label><p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "var(--text-mid)" }}>{transitionCase.decidingProof}</p></div>}
+          {transitionCase.decidingProof && <div style={{ padding: 14, background: T.forestPale, borderRadius: 12 }}><Label>Deciding evidence</Label><p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "var(--text-mid)" }}>{transitionCase.decidingProof}</p></div>}
           {transitionCase.nextStep && <div style={{ padding: 14, background: T.goldLight, borderRadius: 12 }}><Label>Next step</Label><p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "var(--text-mid)" }}>{transitionCase.nextStep}</p></div>}
         </div>
       )}
@@ -102,20 +102,20 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
   const [newSignal, setNewSignal] = React.useState<{ category: SignalCategory; label: string; evidence: string; source: string; confidence: SignalConfidence; isPubliclyReplicable: boolean; moatWeight: number }>({ category: "board_objection", label: "", evidence: "", source: "board_call", confidence: "high", isPubliclyReplicable: false, moatWeight: 5 });
   const [newStakeholder, setNewStakeholder] = React.useState<{ name: string; role: string; stance: StakeholderStance; primaryConcern: string; persuasionAngle: string }>({ name: "", role: "president", stance: "unknown", primaryConcern: "", persuasionAngle: "" });
 
-  const { data, isLoading } = useQuery({ queryKey: ["transition-moat", hoaId], queryFn: () => rpc.getTransitionMoat(hoaId) });
+  const { data, isLoading } = useQuery({ queryKey: ["association-records", hoaId], queryFn: () => rpc.getTransitionMoat(hoaId) });
   const primaryCaseId = data?.cases[0]?.id;
 
   const createCase = useMutation({
     mutationFn: () => rpc.createTransitionCase({ hoaId, ...newCase }),
-    onSuccess: () => { setCaseForm(false); qc.invalidateQueries({ queryKey: ["transition-moat", hoaId] }); },
+    onSuccess: () => { setCaseForm(false); qc.invalidateQueries({ queryKey: ["association-records", hoaId] }); },
   });
   const addSignal = useMutation({
     mutationFn: () => rpc.addMoatSignal({ hoaId, transitionCaseId: primaryCaseId, ...newSignal }),
-    onSuccess: () => { setSignalForm(false); qc.invalidateQueries({ queryKey: ["transition-moat", hoaId] }); },
+    onSuccess: () => { setSignalForm(false); qc.invalidateQueries({ queryKey: ["association-records", hoaId] }); },
   });
   const addStakeholder = useMutation({
     mutationFn: () => rpc.addBoardStakeholder({ hoaId, transitionCaseId: primaryCaseId, ...newStakeholder }),
-    onSuccess: () => { setStakeholderForm(false); qc.invalidateQueries({ queryKey: ["transition-moat", hoaId] }); },
+    onSuccess: () => { setStakeholderForm(false); qc.invalidateQueries({ queryKey: ["association-records", hoaId] }); },
   });
   const exportProof = useMutation({
     mutationFn: () => rpc.exportPilotProofPack({ hoaId, transitionCaseId: primaryCaseId, requestedBy: "GatePass Operator" }),
@@ -182,7 +182,7 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
               <Card style={{ padding: 22, marginBottom: 18 }}>
                 <h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 800, marginBottom: 18 }}>Record Signal Capture</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
-                  <FDSelect label="Category" value={newSignal.category} onChange={(e) => setNewSignal({ ...newSignal, category: e.target.value as SignalCategory })}><option value="board_objection">Board objection</option><option value="contract_fact">Contract fact</option><option value="pmc_failure">PMC failure</option><option value="switching_trigger">Switching trigger</option><option value="compliance_risk">Compliance risk</option><option value="proof_artifact">Proof artifact</option><option value="case_study_metric">Case-study metric</option></FDSelect>
+                  <FDSelect label="Category" value={newSignal.category} onChange={(e) => setNewSignal({ ...newSignal, category: e.target.value as SignalCategory })}><option value="board_objection">Board objection</option><option value="contract_fact">Contract fact</option><option value="pmc_failure">PMC failure</option><option value="switching_trigger">Switching trigger</option><option value="compliance_risk">Compliance risk</option><option value="proof_artifact">Evidence artifact</option><option value="case_study_metric">Case-study metric</option></FDSelect>
                   <FDSelect label="Source" value={newSignal.source} onChange={(e) => setNewSignal({ ...newSignal, source: e.target.value })}><option value="board_call">Board call</option><option value="board_email">Board email</option><option value="document">Document</option><option value="meeting">Meeting</option><option value="public">Public</option><option value="platform_usage">Platform usage</option><option value="operator_note">Operator note</option></FDSelect>
                   <FDSelect label="Confidence" value={newSignal.confidence} onChange={(e) => setNewSignal({ ...newSignal, confidence: e.target.value as SignalConfidence })}><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="verified">Verified</option></FDSelect>
                   <FDInput label="Record weight 1–5" type="number" min={1} max={5} value={newSignal.moatWeight} onChange={(e) => setNewSignal({ ...newSignal, moatWeight: Number(e.target.value) })} />
@@ -207,7 +207,7 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
 
             {proofPack !== null && (
               <Card style={{ padding: 22, marginTop: 18 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}><h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 800 }}>Redacted Proof Pack</h3><Btn variant="ghost" onClick={() => setProofPack(null)}>Close</Btn></div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}><h3 style={{ fontFamily: T.fontSans, fontSize: 17, fontWeight: 800 }}>Redacted Record Pack</h3><Btn variant="ghost" onClick={() => setProofPack(null)}>Close</Btn></div>
                 <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.6, marginBottom: 16 }}>Public demo export is summarized instead of exposing raw JSON, stakeholder contacts, internal IDs, notes, or contract terms.</p>
                 {(() => {
                   const pack = proofPack as { title?: string; generatedAt?: string; complianceSummary?: { totalEvents?: number; legalEvents?: number }; firstPilotProofChecklist?: string[]; topSignals?: { label: string; evidence: string }[] };
@@ -216,7 +216,7 @@ export function TransitionMoat({ hoaId }: { hoaId: string }) {
                       <Card style={{ padding: 16 }}><Label>Title</Label><div style={{ fontFamily: T.fontSans, fontWeight: 700 }}>{pack.title}</div><div style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)", marginTop: 6 }}>{pack.generatedAt}</div></Card>
                       <Card style={{ padding: 16 }}><Label>Compliance summary</Label><div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)" }}>{pack.complianceSummary?.totalEvents ?? 0} demo events · {pack.complianceSummary?.legalEvents ?? 0} governance/legal highlights</div></Card>
                       <Card style={{ padding: 16 }}><Label>Top redacted signals</Label><ul style={{ margin: "8px 0 0", paddingLeft: 18 }}>{(pack.topSignals ?? []).slice(0, 4).map((s) => <li key={s.label} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", marginBottom: 6 }}><strong>{s.label}:</strong> {s.evidence}</li>)}</ul></Card>
-                      <Card style={{ padding: 16 }}><Label>First pilot proof checklist</Label><ul style={{ margin: "8px 0 0", paddingLeft: 18 }}>{(pack.firstPilotProofChecklist ?? []).map((item) => <li key={item} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", marginBottom: 5 }}>{item}</li>)}</ul></Card>
+                      <Card style={{ padding: 16 }}><Label>First pilot evidence checklist</Label><ul style={{ margin: "8px 0 0", paddingLeft: 18 }}>{(pack.firstPilotProofChecklist ?? []).map((item) => <li key={item} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", marginBottom: 5 }}>{item}</li>)}</ul></Card>
                     </div>
                   );
                 })()}
