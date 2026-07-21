@@ -73,9 +73,9 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
                 <div className="gp-investor-money" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 14 }}>
                   <div><Label>Demo GMV</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.demoGmvCents)}</strong></div>
                   <div><Label>GatePass fee</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.gatepassFeeCents)}</strong></div>
-                  <div><Label>Internal ledger</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.hoaCreditsCents)}</strong></div>
+                  <div><Label>Community / homeowner share</Label><strong style={{ fontSize: 24 }}>{data.money.hoaCreditsCents > 0 ? fmtMoney(data.money.hoaCreditsCents) : "Pending"}</strong></div>
                 </div>
-                <p style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", lineHeight: 1.55, marginTop: 14 }}>These are demo economics until real contractor transactions are processed. Production counts remain honest.</p>
+                <p style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", lineHeight: 1.55, marginTop: 14 }}>These are modeled economics until real contractor transactions are processed. The community or homeowner share remains unset until legal and payment approval.</p>
               </Card>
 
               <Card style={{ padding: 22 }}>

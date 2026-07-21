@@ -21,12 +21,11 @@ const NAV_ITEMS: { id: OSView; label: string; icon: React.ReactNode; section?: s
   { id: "votebox",     label: "VoteBox",     icon: <Icons.Vote /> },
   { id: "amenity",     label: "Amenity",     icon: <Icons.Star /> },
   { id: "commhub",     label: "CommHub",     icon: <Icons.Bell /> },
-  { id: "permits",     label: "Permit Feed", icon: <Icons.Activity />, section: "Intel" },
+  { id: "permits",     label: "Permit Feed", icon: <Icons.Activity />, section: "Contractor Network" },
   { id: "livefeeds",   label: "Live Feeds",  icon: <Icons.Signal /> },
-  { id: "marketplace", label: "Marketplace", icon: <Icons.Wrench />, section: "Market" },
-  { id: "investor",    label: "Investor Status", icon: <Icons.Activity /> },
-  { id: "transition",  label: "Association Records", icon: <Icons.Map />, section: "Records" },
-  { id: "compliance",  label: "Compliance",  icon: <Icons.Shield />, section: "Records" },
+  { id: "marketplace", label: "Contractor Access", icon: <Icons.Wrench /> },
+  { id: "transition",  label: "Association Records", icon: <Icons.Map />, section: "Association Records" },
+  { id: "compliance",  label: "Compliance",  icon: <Icons.Shield /> },
 ];
 
 export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (v: OSView) => void; hoaName?: string }) {

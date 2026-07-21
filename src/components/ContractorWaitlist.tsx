@@ -66,7 +66,7 @@ export function ContractorWaitlist({ onBack }: { onBack: () => void }) {
           </div>
           <span style={{ fontFamily: T.fontSans, fontSize: 15, fontWeight: 700, color: "var(--text)" }}>GatePass</span>
         </div>
-        <Tag bg={T.goldLight} color={T.gold}>Contractor Waitlist</Tag>
+        <Tag bg={T.goldLight} color={T.gold}>Contractor Application</Tag>
       </header>
 
       {/* Body */}

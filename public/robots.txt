@@ -4,5 +4,6 @@ Disallow: /demo
 Disallow: /os
 Disallow: /admin
 Disallow: /investor-status
+Disallow: /marketplace-loop
 
 Sitemap: https://www.gatepasshoa.com/sitemap.xml

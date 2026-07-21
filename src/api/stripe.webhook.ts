@@ -84,7 +84,6 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session, 
       name: contractor.contactName,
       company: contractor.company,
       category: contractor.category,
-      position: contractor.position ?? 0,
     }).catch((error) => console.error("[email] Contractor confirmation failed:", error));
   }
 

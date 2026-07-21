@@ -5,7 +5,6 @@ import { Resend } from "resend";
 import { queue } from "@/api/queue";
 import { getAuth } from "@adaptive-ai/sdk/server";
 import { assertJobTransition, assertQuoteTransition, computeSplit } from "@/api/marketplace.guards";
-import { CONTRACTOR_FOUNDING_SEAT_CAPACITY } from "@/lib/contractorInventory";
 
 const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
 
@@ -320,7 +319,6 @@ export async function createContractorCheckout(input: {
 }) {
   const stripe = getStripe();
   const count = await db.contractorWaitlist.count();
-  if (count >= CONTRACTOR_FOUNDING_SEAT_CAPACITY) throw new Error(`All ${CONTRACTOR_FOUNDING_SEAT_CAPACITY} founding contractor seats are filled.`);
   const position = count + 1;
 
   const contractor = await db.contractorWaitlist.create({
@@ -344,8 +342,8 @@ export async function createContractorCheckout(input: {
         price_data: {
           currency: "usd",
           product_data: {
-            name: "GatePass — Founding Contractor Seat",
-            description: `${input.category} · Austin Metro · Seat #${position} of ${CONTRACTOR_FOUNDING_SEAT_CAPACITY}`,
+            name: "GatePass — Founding Contractor Access",
+            description: `${input.category} · Austin Metro · approval required before access`,
           },
           unit_amount: 9900,
         },
@@ -399,9 +397,7 @@ export async function createContractorApplication(input: {
 export async function getContractorStats() {
   const total = await db.contractorWaitlist.count();
   const paid = await db.contractorWaitlist.count({ where: { paid: true } });
-  const capacity = CONTRACTOR_FOUNDING_SEAT_CAPACITY;
-  const remaining = Math.max(0, capacity - total);
-  return { capacity, total, paid, reserved: total, remaining, spotsLeft: remaining };
+  return { total, paid, applications: total };
 }
 
 export async function getWaitlistPosition(id: string) {
@@ -414,27 +410,27 @@ function demoMarketplaceDashboard() {
   return {
     demo: true,
     slots: [
-      { id: "demo-slot-roofing", trade: "Roofing", status: "open", capacity: 3, seatsTaken: 1, priceCents: 9900, scarcityLabel: "2 founding seats left" },
-      { id: "demo-slot-hvac", trade: "HVAC", status: "open", capacity: 2, seatsTaken: 1, priceCents: 9900, scarcityLabel: "1 founding seat left" },
+      { id: "demo-slot-roofing", trade: "Roofing", status: "application review", capacity: 0, seatsTaken: 0, priceCents: 9900, scarcityLabel: null },
+      { id: "demo-slot-hvac", trade: "HVAC", status: "application review", capacity: 0, seatsTaken: 0, priceCents: 9900, scarcityLabel: null },
     ],
     jobs: [
       { id: "demo-job-arc-roof", title: "ARC-approved roof replacement", category: "roofing", status: "quoted", estimatedValueCents: 1850000, source: "ARC request" },
       { id: "demo-job-hvac", title: "Clubhouse HVAC repair", category: "hvac", status: "completed", estimatedValueCents: 180000, source: "Work order" },
     ],
     quotes: [
-      { id: "demo-quote-1", contractor: "Hill Country Roofing Co.", amountCents: 1850000, status: "approved", scope: "Replace shingle roof with HOA-approved color/material packet attached." },
+      { id: "demo-quote-1", contractor: "Modeled Roofing Contractor", amountCents: 1850000, status: "approved", scope: "Replace shingle roof with HOA-approved color/material packet attached." },
     ],
     transactions: [
       { id: "demo-tx-1", grossAmountCents: 1850000, gatepassFeeCents: 92500, hoaShareCents: 0, status: "modeled", contractor: "Demo Roofing Contractor" },
     ],
     credits: [
-      { id: "demo-credit-1", amountCents: 0, status: "modeled", memo: "Ledger placeholder only; no community economics promised before legal approval." },
+      { id: "demo-credit-1", amountCents: 0, status: "modeled", memo: "Community or homeowner transaction share is planned; the amount remains unset until legal and payment approval." },
     ],
     complianceRecords: [
       { id: "demo-compliance-1", summary: "Modeled roof replacement linked to ARC approval, contractor status, quote, and compliance record structure. No production payment is implied.", status: "generated" },
     ],
     proofLoop: [
-      { label: "Transition review opened", detail: "Board enters through synthetic continuity-risk mapping and redacted compliance review.", value: "Transition" },
+      { label: "Board workflow reviewed", detail: "The association defines how an exterior issue can enter an approved contractor channel.", value: "HOA decides" },
       { label: "Contractor application opened", detail: "GatePass accepts a modeled roofing application for Sample Austin HOA after workflow review.", value: "$99 after approval" },
       { label: "Homeowner job routed", detail: "ARC-approved roof replacement becomes a marketplace job instead of a dead lead.", value: "$18.5K job" },
       { label: "Contractor quote approved", detail: "Approved contractor submits modeled scope through GatePass and the board/homeowner approves in demo.", value: "Modeled" },
@@ -452,8 +448,8 @@ function demoInvestorProofMetrics() {
       hoaPipeline: 5,
       transitionCases: 1,
       privateSignals: 0,
-      contractorSlotsOpen: 25,
-      contractorSignups: 0,
+      contractorApplications: 0,
+      approvedContractors: 0,
       marketplaceJobs: 2,
       quotesSubmitted: 1,
       complianceRecords: 1,
@@ -731,8 +727,8 @@ export async function getMarketplaceDashboard(input: { hoaId: string; demo?: boo
     credits: credits.map((c) => ({ id: c.id, amountCents: c.amountCents, status: c.status, memo: c.memo ?? c.type })),
     complianceRecords,
     proofLoop: [
-      { label: "Transition case", detail: "Open or import a PMC transition case.", value: "Entry" },
-      { label: "Contractor access", detail: "Open permissioned slots by community/trade.", value: `${slots.length} slots` },
+      { label: "Board workflow", detail: "Define how the association approves exterior-work access.", value: "Entry" },
+      { label: "Contractor access", detail: "Review contractors by community and trade before payment.", value: `${slots.length} categories` },
       { label: "Marketplace job", detail: "Route ARC/work-order demand into a job.", value: `${jobs.length} jobs` },
       { label: "Quote", detail: "Permissioned contractor submits scope and price.", value: `${quotes.length} quotes` },
       { label: "Transaction", detail: "Record fee capture and internal ledger entry.", value: `${transactions.length} tx` },
@@ -757,8 +753,8 @@ export async function getInvestorProofMetrics(input: { hoaId: string; demo?: boo
       hoaPipeline: await db.hOA.count(),
       transitionCases: associationRecords.summary.transitionCases,
       privateMoatSignals: associationRecords.summary.privateSignals,
-      contractorSlotsOpen: Math.max(0, CONTRACTOR_FOUNDING_SEAT_CAPACITY - waitlistCount),
-      contractorSignups: waitlistCount,
+      contractorApplications: waitlistCount,
+      approvedContractors: await db.contractorProfile.count({ where: { screeningStatus: { in: ["verified", "board_endorsed", "active"] } } }),
       marketplaceJobs: marketplace.jobs.length,
       quotesSubmitted: marketplace.quotes.length,
       complianceRecords: associationRecords.summary.complianceEvents,
@@ -1955,7 +1951,7 @@ export async function sendContractorWelcomeEmail(contractorId: string) {
   await resend.emails.send({
     from: "GatePass <info@gatepasshoa.com>",
     to: contractor.email,
-    subject: `You're #${contractor.position} on the GatePass Founding Contractor list`,
+    subject: `Your approved GatePass contractor access is confirmed`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1C1C1A;">
         <div style="background: #1C1C1A; padding: 24px 32px; border-radius: 12px 12px 0 0;">
@@ -1963,18 +1959,17 @@ export async function sendContractorWelcomeEmail(contractorId: string) {
           <p style="color: #888; margin: 4px 0 0; font-size: 13px;">Austin Metro Contractor Network</p>
         </div>
         <div style="background: #F4F1EC; border: 1px solid #e0ddd8; border-top: none; padding: 32px; border-radius: 0 0 12px 12px;">
-          <p style="font-size: 18px; font-weight: 600; margin: 0 0 8px;">Seat locked, ${contractor.contactName}.</p>
-          <p style="color: #666; font-size: 28px; font-weight: 700; margin: 0 0 20px; color: #2A5240;">#${contractor.position} of 25</p>
+          <p style="font-size: 18px; font-weight: 600; margin: 0 0 8px;">Founding access confirmed, ${contractor.contactName}.</p>
           <p style="color: #555; line-height: 1.7; margin: 0 0 20px;">
-            <strong>${contractor.company}</strong> has secured a founding contractor seat for <strong>${contractor.category}</strong> services in the Austin metro. You'll be in the first batch of contractors able to send Digital Knocks to opted-in homeowners.
+            <strong>${contractor.company}</strong> completed payment after approval for founding contractor access for <strong>${contractor.category}</strong> services in the Austin metro. Each association still decides access to its community, and no lead or job volume is guaranteed.
           </p>
           <div style="background: white; border: 1px solid #e0ddd8; border-radius: 8px; padding: 16px 20px; margin-bottom: 20px;">
             <p style="font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 10px;">Founding benefits</p>
             <ul style="margin: 0; padding: 0 0 0 20px; color: #333; line-height: 2; font-size: 14px;">
-              <li>Priority access when Austin launches</li>
-              <li>Founding rate locked in for life</li>
-              <li>Direct line to GatePass team</li>
-              <li>Input on contractor features</li>
+              <li>Application review before any payment</li>
+              <li>$99 one-time founding access after approval</li>
+              <li>Association approval for each community channel</li>
+              <li>No lead or job-volume guarantee</li>
             </ul>
           </div>
           <p style="color: #888; font-size: 13px;">We'll be in touch as soon as the platform launches in your zip code (${contractor.zip}). Questions? Reply to this email.</p>
@@ -2138,7 +2133,7 @@ export async function getGatePassMetrics() {
     violations: { open: openViolations },
     workOrders: { open: openWorkOrders },
     arc: { pending: pendingARC },
-    contractors: { total: totalContractors, paid: paidContractors, spotsLeft: Math.max(0, 25 - paidContractors) },
+    contractors: { total: totalContractors, paid: paidContractors },
   };
 }
 

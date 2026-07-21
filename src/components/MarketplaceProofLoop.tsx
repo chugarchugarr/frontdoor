@@ -76,7 +76,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
           <>
             <div className="gp-market-stats" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 22 }}>
               {[
-                ["Contractor slots", dashboard.slots.length],
+                ["Access categories", dashboard.slots.length],
                 ["Marketplace jobs", dashboard.jobs.length],
                 ["Quotes", dashboard.quotes.length],
                 ["Transactions", dashboard.transactions.length],
@@ -94,7 +94,7 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                 <div className="gp-card-title-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
                   <div>
                     <Label>Atomic transaction</Label>
-                    <h3 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>HOA transition → job → modeled fee path → memory</h3>
+                    <h3 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>HOA-approved issue → contractor → modeled fee path → association record</h3>
                   </div>
             <Btn variant="ghost" onClick={() => window.location.href = "/investors#current-status"}>Investor status</Btn>
                 </div>
@@ -112,20 +112,20 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                       <div className="gp-money-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                         <div><Label>Gross job</Label><strong>{fmtMoney(tx.grossAmountCents)}</strong></div>
                         <div><Label>GatePass fee</Label><strong>{fmtMoney(tx.gatepassFeeCents)}</strong></div>
-                        <div><Label>Association record</Label><strong>{dashboard.demo ? "Modeled only" : fmtMoney(tx.hoaShareCents)}</strong></div>
+                        <div><Label>Community / homeowner share</Label><strong>{tx.hoaShareCents > 0 ? fmtMoney(tx.hoaShareCents) : "Structure pending"}</strong></div>
                       </div>
                     </div>
                   ))}
                 </Card>
 
                 <Card style={{ padding: 20 }}>
-                  <Label>Open access slots</Label>
+                  <Label>Contractor access categories</Label>
                   <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                     {dashboard.slots.map((slot) => (
                       <div key={slot.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, paddingBottom: 9, borderBottom: "1px solid var(--border)" }}>
                         <div>
                           <div style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 700, color: "var(--text)" }}>{slot.trade}</div>
-                          <div style={{ fontFamily: T.fontMono, fontSize: 10, color: "var(--text-light)" }}>{slot.seatsTaken}/{slot.capacity} seats · {fmtMoney(slot.priceCents)}</div>
+                          <div style={{ fontFamily: T.fontMono, fontSize: 10, color: "var(--text-light)" }}>{fmtMoney(slot.priceCents)} after approval · no lead guarantee</div>
                         </div>
                         <Tag>{slot.status}</Tag>
                       </div>

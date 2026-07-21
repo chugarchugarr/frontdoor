@@ -1,4 +1,6 @@
 # GatePass — Compliance Memory Layer
+
+> **Historical record — do not use for public positioning.** This document predates the current GatePass marketplace definition and contains superseded exclusivity, switching-cost, and management-transition claims. Association-owned records remain a supporting acquisition and continuity mechanism, not the business itself. `APP.md` and `CODEX.md` are authoritative. Restoring an older claim requires contact from reality.
 ## Technical Spec · L3 Trust → L8 Memory Build
 
 **Status:** Spec complete — ready for engineering implementation  

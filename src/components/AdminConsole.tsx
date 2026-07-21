@@ -113,7 +113,7 @@ function StepForm({ step, busy, onRun }: { step: StepKey; busy: boolean; onRun: 
   const set = (key: string, value: string) => setFields((current) => ({ ...current, [key]: value }));
   const schema: Record<StepKey, { k: string; label: string }[]> = {
     promote: [{ k: "waitlistId", label: "Waitlist ID" }, { k: "trade", label: "Trade override" }, { k: "zip", label: "ZIP override" }],
-    access: [{ k: "contractorId", label: "Contractor ID" }, { k: "hoaId", label: "HOA ID" }, { k: "trade", label: "Trade" }, { k: "capacity", label: "Slot capacity" }, { k: "priceCents", label: "Seat price cents" }],
+    access: [{ k: "contractorId", label: "Contractor ID" }, { k: "hoaId", label: "HOA ID" }, { k: "trade", label: "Trade" }, { k: "capacity", label: "Access capacity" }, { k: "priceCents", label: "Access price cents" }],
     job: [{ k: "source", label: "Source: work_order or arc" }, { k: "sourceId", label: "Source ID" }, { k: "title", label: "Title override" }],
     quote: [{ k: "marketplaceJobId", label: "Marketplace Job ID" }, { k: "contractorId", label: "Contractor ID" }, { k: "amountCents", label: "Amount cents" }, { k: "scope", label: "Scope" }],
     approve: [{ k: "quoteId", label: "Quote ID" }],

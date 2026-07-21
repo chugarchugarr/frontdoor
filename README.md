@@ -1,4 +1,10 @@
-# App Template
+# GatePass Development Repository
+
+GatePass is a contractor marketplace the HOA controls, supported by board software for association-approved exterior work. The GitHub repository is named `frontdoor`; the product is always called GatePass.
+
+Current product doctrine, pricing, public truth, and copy rules live in [`APP.md`](./APP.md) and [`CODEX.md`](./CODEX.md). Historical strategy documents under `docs/` do not override those files.
+
+## Adaptive application foundation
 
 Full-stack React application template with TypeScript, Vite, Hono, and Prisma ORM.
 

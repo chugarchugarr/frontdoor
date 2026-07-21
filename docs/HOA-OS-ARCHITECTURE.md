@@ -1,5 +1,7 @@
 # GatePass HOA Operating System — Architecture Document
 
+> **Historical record — do not implement as current doctrine.** This March 2026 document predates the current GatePass marketplace definition. Its management-company replacement, AI-first positioning, $20–25 pricing range, free-trial plan, contractor-seat scarcity, and switching-cost claims are superseded by `APP.md` and `CODEX.md`. Retain it only as implementation history. Restoring any of those positions requires contact from reality.
+
 **Version:** 2.0  
 **Date:** March 2026  
 **Status:** Engineering Handoff — Phase 2 Build Ready  

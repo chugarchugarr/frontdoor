@@ -81,6 +81,7 @@ export default function Investors() {
             <div className="space-y-5 text-white/55 leading-relaxed">
               <p>The first production milestone is not more website language. It is an Austin association paying for the software, a contractor completing one approved next step through GatePass, and the board exporting the record afterward.</p>
               <p>That proves the core motion: the HOA controls access, the contractor gets a better channel than knocking doors, and the association keeps the file.</p>
+              <p>The production transaction model is designed to return a defined share to the participating association or homeowner. The exact share and payment structure will not be promised until counsel and production payment infrastructure approve it.</p>
               <p>GatePass provides software. It does not provide legal advice or act as the association's property manager.</p>
             </div>
           </div>

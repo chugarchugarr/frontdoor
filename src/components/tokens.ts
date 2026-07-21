@@ -173,9 +173,40 @@ export const GLOBAL_CSS = `
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
+  .gp-mobile-view-nav { display: none; }
+
   /* Responsive */
   @media (max-width: 768px) {
     .sidebar { display: none !important; }
+    .gp-mobile-view-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E5E5E5;
+      position: sticky;
+      top: var(--guest-top-inset, 0px);
+      z-index: 180;
+    }
+    .gp-mobile-view-nav label {
+      font-family: Inter, sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #525252;
+      white-space: nowrap;
+    }
+    .gp-mobile-view-nav select {
+      min-width: 0;
+      flex: 1;
+      min-height: 40px;
+      border: 1px solid #D4D4D4;
+      border-radius: 10px;
+      background: #FFFFFF;
+      color: #171717;
+      padding: 0 10px;
+      font: 600 13px Inter, sans-serif;
+    }
     .main-pad { padding: 20px 16px !important; }
     .mobile-hide { display: none !important; }
     .gp-grid-3 { grid-template-columns: 1fr !important; }

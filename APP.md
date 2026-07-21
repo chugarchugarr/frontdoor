@@ -1,6 +1,6 @@
 # GatePass
 
-**Purpose**: HOA-controlled contractor access and board software for association-approved exterior work.
+**Purpose**: A contractor marketplace the HOA controls, supported by board software for association-approved exterior work.
 
 **Type**: standard Adaptive app
 
@@ -14,6 +14,20 @@
 - Production contractor transactions: 0.
 - Production revenue: $0.
 - Next milestone: one paid Austin HOA, one approved contractor transaction, and one export the association can keep.
+
+## Current doctrine
+
+- The HOA is the gatekeeper; GatePass is the approved access path.
+- Contractors pay for approved access. GatePass is designed to return a defined share of production transaction value to the participating association or homeowner after the legal and payment structure is approved.
+- Do not invent a transaction-share percentage or present modeled economics as a promise.
+- Exterior observations must be limited to information lawfully visible from a public approach or supplied by the homeowner or association.
+- GatePass can work alongside a management company, but permission and association records stay with the HOA.
+- AI may support specific workflows. It is a feature, not the product thesis or operating method.
+- Doctrine changes require contact from reality: a board conversation, contractor response, investor response, counsel ruling, or deployment result.
+
+## Source of truth
+
+Use this file and `CODEX.md` for current product and public-copy decisions. `docs/HOA-OS-ARCHITECTURE.md` and `docs/compliance-memory-layer.md` are historical design records and must not override current doctrine.
 
 ## Pricing displayed
 

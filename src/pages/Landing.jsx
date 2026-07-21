@@ -51,6 +51,7 @@ export default function LandingPage() {
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">GatePass was born on the doorstep.</h2>
             <div className="text-base leading-relaxed text-[#1C1C1A]/70 space-y-4">
               <p>Joseph spent years selling home improvement door to door in Central Texas. The pattern was obvious: contractors chase one house at a time, while the HOA sits above the neighborhood with the permission, records, and trust that make the work easier.</p>
+              <p>The starting point is limited to what can be lawfully seen from a public approach or what a homeowner or association brings forward. GatePass does not authorize trespassing, inspection without consent, or pretending to speak for the HOA.</p>
               <p>GatePass moves that first conversation from a cold knock to a board-approved path. The homeowner still chooses. The contractor still has to earn the work. The association decides what gets through the gate.</p>
             </div>
           </div>
@@ -61,7 +62,7 @@ export default function LandingPage() {
             {[
               ['Bring the observation through the HOA.', 'A visible exterior issue becomes a board-routed next step instead of another untracked solicitation.'],
               ['The board can run the whole path in one place.', 'Requests, approvals, notices, votes, quotes, and exports live together instead of being scattered across inboxes.'],
-              ['HOAs pay for the software. Contractors pay for access.', 'The association pays $20 per unit per year. Founding contractors apply first; approved access is $99 once and does not promise leads.'],
+              ['HOAs pay for the software. Contractors pay for approved access.', 'The association pays $20 per unit per year. Founding contractors apply first; approved access is $99 once and does not promise leads. When production payments and the legal structure are approved, GatePass is designed to return a defined transaction share to the participating association or homeowner.'],
             ].map(([title, body]) => (
               <div key={title} className="rounded-[28px] bg-white/[0.04] border border-white/10 p-7">
                 <h2 className="text-2xl font-bold tracking-tight leading-tight">{title}</h2>

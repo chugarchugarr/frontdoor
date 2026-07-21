@@ -35,7 +35,7 @@ import { ErrorBoundary } from "./components/error-boundary";
 import { DEMO_HOA_ID, MODELED_DEMO_BANNER, modeledDemoData } from "./lib/modeledDemoData";
 
 // ─── Success screens ──────────────────────────────────────────────────
-function _SuccessScreen({ type, position }: { type: "hoa" | "contractor"; position?: number }) {
+function _SuccessScreen({ type }: { type: "hoa" | "contractor" }) {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <style>{GLOBAL_CSS}</style>
@@ -51,12 +51,12 @@ function _SuccessScreen({ type, position }: { type: "hoa" | "contractor"; positi
           </svg>
         </div>
         <h1 style={{ fontFamily: T.fontSans, fontSize: 32, fontWeight: 700, color: "var(--text)", marginBottom: 14, letterSpacing: "-0.03em" }}>
-          {type === "hoa" ? "You're enrolled." : "Seat reserved."}
+          {type === "hoa" ? "You're enrolled." : "Founding access confirmed."}
         </h1>
         <p style={{ fontFamily: T.fontSans, fontSize: 15, color: "var(--text-mid)", lineHeight: 1.7, marginBottom: 32 }}>
           {type === "hoa"
             ? "Your community is now live on GatePass OS. We'll reach out within 24 hours to complete onboarding."
-            : `You're #${position} of 25 founding contractors. We'll contact you when Austin launches.`}
+            : "Your approved founding access is recorded. Each association still decides community access, and no lead or job volume is guaranteed."}
         </p>
         <Btn onClick={() => window.location.href = "/"}>Back to GatePass</Btn>
       </div>
@@ -154,8 +154,37 @@ function HOAOnboarding({ onBack }: { onBack: () => void }) {
 // ContractorWaitlist is now in ./components/ContractorWaitlist.tsx
 const ContractorWaitlist = ContractorWaitlistPanel;
 
-// ─── Live Demo — 3-persona selector + OS shell ───────────────────────
+// ─── Modeled Demo — 3-persona selector + OS shell ────────────────────
 type DemoPersona = "select" | "board" | "homeowner" | "contractor";
+
+const DEMO_VIEW_OPTIONS: { id: OSView; label: string }[] = [
+  { id: "dashboard", label: "Overview" },
+  { id: "homeowners", label: "Homeowners" },
+  { id: "payos", label: "PayOS" },
+  { id: "violations", label: "FineBot" },
+  { id: "arc", label: "ARC Agent" },
+  { id: "workorders", label: "WorkOrder" },
+  { id: "boardroom", label: "BoardRoom" },
+  { id: "votebox", label: "VoteBox" },
+  { id: "amenity", label: "Amenity" },
+  { id: "commhub", label: "CommHub" },
+  { id: "permits", label: "Permit Feed" },
+  { id: "livefeeds", label: "Live Feeds" },
+  { id: "marketplace", label: "Contractor Access" },
+  { id: "transition", label: "Association Records" },
+  { id: "compliance", label: "Compliance" },
+];
+
+function MobileViewNav({ view, onChange }: { view: OSView; onChange: (view: OSView) => void }) {
+  return (
+    <div className="gp-mobile-view-nav">
+      <label htmlFor="gatepass-mobile-view">Workspace screen</label>
+      <select id="gatepass-mobile-view" value={view} onChange={(event) => onChange(event.target.value as OSView)}>
+        {DEMO_VIEW_OPTIONS.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+      </select>
+    </div>
+  );
+}
 
 function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona, "select">) => void; onBack: () => void }) {
   const PERSONAS = [
@@ -218,7 +247,7 @@ function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona,
             </svg>
           </div>
           <span style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.02em" }}>GatePass</span>
-          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", marginLeft: 4 }}>Live Demo</span>
+          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", marginLeft: 4 }}>Modeled Demo</span>
         </div>
         <button
           onClick={onBack}
@@ -244,7 +273,7 @@ function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona,
             Choose your perspective
           </h1>
           <p style={{ fontFamily: T.fontSans, fontSize: 15, color: "#737373", maxWidth: 460, margin: "0 auto", lineHeight: 1.7 }}>
-            Every role in GatePass sees a tailored view. Pick one to explore the live demo.
+            Every role in GatePass sees a tailored view. Pick one to explore the modeled demo.
           </p>
         </div>
 
@@ -343,6 +372,8 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
         </button>
       </div>
 
+      <MobileViewNav view={view} onChange={setView} />
+
       {/* Full OS shell */}
       <div className="gp-demo-shell" style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         <Sidebar
@@ -426,27 +457,30 @@ function HOAOSShell({ hoaId, onExit }: { hoaId: string; onExit: () => void }) {
   const hoaZip = (hoa as {zip?: string} | null)?.zip;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "var(--bg)" }}>
       <style>{GLOBAL_CSS}</style>
-      <Sidebar current={view} onNav={(v) => { if (v === "landing") { onExit(); } else { setView(v); } }} hoaName={(hoa as {community?: string} | null)?.community} />
-      <main style={{ flex: 1, overflow: "auto", background: "var(--bg)" }}>
-        {view === "dashboard"   && <Dashboard hoaId={hoaId} onNav={setView} />}
-        {view === "homeowners"  && <Homeowners hoaId={hoaId} />}
-        {view === "payos"       && <PayOS hoaId={hoaId} />}
-        {view === "violations"  && <Violations hoaId={hoaId} />}
-        {view === "arc"         && <ARCAgent hoaId={hoaId} />}
-        {view === "boardroom"   && <BoardRoom hoaId={hoaId} />}
-        {view === "votebox"     && <VoteBox hoaId={hoaId} />}
-        {view === "workorders"  && <WorkOrders hoaId={hoaId} />}
-        {view === "amenity"     && <AmenityModule hoaId={hoaId} />}
-        {view === "commhub"     && <CommHub hoaId={hoaId} />}
-        {view === "permits"     && <PermitFeedView />}
-        {view === "livefeeds"   && <LiveFeeds hoaZip={hoaZip} />}
-        {view === "transition"  && <TransitionMoat hoaId={hoaId} />}
-        {view === "compliance"  && <ComplianceTimeline hoaId={hoaId} />}
-        {view === "marketplace" && <MarketplaceProofLoop hoaId={hoaId} />}
-        {view === "investor"    && <InvestorProofDashboard hoaId={hoaId} />}
-      </main>
+      <MobileViewNav view={view} onChange={setView} />
+      <div style={{ display: "flex", flex: 1, minWidth: 0 }}>
+        <Sidebar current={view} onNav={(v) => { if (v === "landing") { onExit(); } else { setView(v); } }} hoaName={(hoa as {community?: string} | null)?.community} />
+        <main style={{ flex: 1, overflow: "auto", background: "var(--bg)", minWidth: 0 }}>
+          {view === "dashboard"   && <Dashboard hoaId={hoaId} onNav={setView} />}
+          {view === "homeowners"  && <Homeowners hoaId={hoaId} />}
+          {view === "payos"       && <PayOS hoaId={hoaId} />}
+          {view === "violations"  && <Violations hoaId={hoaId} />}
+          {view === "arc"         && <ARCAgent hoaId={hoaId} />}
+          {view === "boardroom"   && <BoardRoom hoaId={hoaId} />}
+          {view === "votebox"     && <VoteBox hoaId={hoaId} />}
+          {view === "workorders"  && <WorkOrders hoaId={hoaId} />}
+          {view === "amenity"     && <AmenityModule hoaId={hoaId} />}
+          {view === "commhub"     && <CommHub hoaId={hoaId} />}
+          {view === "permits"     && <PermitFeedView />}
+          {view === "livefeeds"   && <LiveFeeds hoaZip={hoaZip} />}
+          {view === "transition"  && <TransitionMoat hoaId={hoaId} />}
+          {view === "compliance"  && <ComplianceTimeline hoaId={hoaId} />}
+          {view === "marketplace" && <MarketplaceProofLoop hoaId={hoaId} />}
+          {view === "investor"    && <InvestorProofDashboard hoaId={hoaId} />}
+        </main>
+      </div>
     </div>
   );
 }
@@ -517,7 +551,7 @@ function DemoRoute() {
     return <ErrorBoundary><BoardDemo initialView="marketplace" onBack={() => navigate('/demo')} /></ErrorBoundary>;
   }
   if (searchParams.get("view") === "investor") {
-    return <ErrorBoundary><BoardDemo initialView="investor" onBack={() => navigate('/demo')} /></ErrorBoundary>;
+    return <Navigate to="/investors#current-status" replace />;
   }
   if (searchParams.get("view") === "compliance") {
     return <ErrorBoundary><BoardDemo initialView="compliance" onBack={() => navigate('/demo')} /></ErrorBoundary>;
@@ -545,8 +579,14 @@ const ROUTE_META: Record<string, { title: string; description: string; noindex?:
   "/contractors": { title: "GatePass for Contractors | Apply for HOA Access", description: "Apply for founding contractor access through GatePass. Approval happens before payment and lead volume is not guaranteed." },
   "/onboard": { title: "GatePass for HOA Boards", description: "Request an access review for your HOA board and show GatePass how contractor access works today." },
   "/demo": { title: "GatePass Product Demo", description: "Explore a modeled GatePass demo with no production customer data.", noindex: true },
+  "/demo/transition": { title: "GatePass Association Records Demo", description: "Explore modeled association-owned records with no production customer data.", noindex: true },
+  "/demo/marketplace": { title: "GatePass Contractor Access Demo", description: "Explore a modeled HOA-approved contractor access flow with no production transaction data.", noindex: true },
+  "/marketplace-loop": { title: "GatePass Contractor Access Review", description: "Internal modeled review of the GatePass contractor access flow.", noindex: true },
+  "/investor-status": { title: "GatePass Investor Status", description: "GatePass current status and modeled product boundary.", noindex: true },
   "/os": { title: "GatePass OS", description: "GatePass operating workspace.", noindex: true },
   "/admin": { title: "GatePass Admin", description: "GatePass admin workspace.", noindex: true },
+  "/privacy": { title: "GatePass Privacy", description: "Privacy information for the GatePass prelaunch website and access-review forms." },
+  "/terms": { title: "GatePass Terms", description: "Terms for the GatePass prelaunch website, modeled demo, and access-review forms." },
 };
 
 function RouteMetadata() {
