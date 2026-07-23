@@ -46,6 +46,7 @@ jobs:
         run: |
           mkdir -p test-artifacts
           set -o pipefail
+          npm view @radix-ui/react-progress version 2>&1 | tee test-artifacts/radix-progress-version.log
           npm install --legacy-peer-deps 2>&1 | tee test-artifacts/npm-install.log
 
       - name: Write isolated production environment
