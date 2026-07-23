@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
+      ADAPTIVE_AI_REGISTRY: "https://registry.npmjs.org/"
       PORT: "3000"
       VITE_APP_ID: "gatepass-ci"
       VITE_BASE_URL: "http://localhost:3000"
