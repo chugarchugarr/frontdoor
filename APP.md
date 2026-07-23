@@ -23,6 +23,17 @@
 4. **Verified execution** — credentials, applicable licenses, insurance, scope, approvals, and completion evidence remain attached to the work. Verification is a defined record standard, not an endorsement or quality guarantee.
 5. **Permanent record** — the association owns the workflow history and can export it when managers, management companies, vendors, or board members change.
 
+## Product hierarchy
+
+- The operating system is the product identity.
+- Trusted contractor access is the commercial consequence of the operating system. Do not lead with marketplace language or describe GatePass as a marketplace business.
+- Association control of workflow and data is the ownership rule. Do not replace it with moat language.
+- Use **permanent record** in public copy. Do not use audit trail, compliance memory, transition memory, or defensible memory record as product labels.
+- HOA treasury economics are secondary and counsel-gated. They are not part of the product identity or current public promise.
+- GatePass is association-owned regardless of whether a board, individual manager, or management company operates the workflow.
+- Product modules are views into the one operating path. They are not separate businesses and should not lead public positioning.
+- Flywheel and wedge language may be used internally for strategy only. They must not appear in public or investor-facing copy.
+
 ## Operating boundaries
 
 - GatePass can work alongside a management company, but the association remains the principal and owns the workflow, records, and export.
