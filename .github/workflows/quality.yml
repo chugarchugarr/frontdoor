@@ -1,0 +1,51 @@
+name: GatePass quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PORT: "3000"
+      VITE_APP_ID: "gatepass-ci"
+      VITE_BASE_URL: "http://localhost:3000"
+      VITE_ROOT_URL: "http://localhost:5173"
+      VITE_NODE_ENV: "test"
+      VITE_BOX_ID: "gatepass-ci"
+      VITE_REALTIME_DOMAIN: "localhost"
+      GUEST_SERVICES_URL: "http://localhost"
+      DB_FILE_NAME: "file:development.db"
+      QUEUE_DB_FILE_NAME: "development-queue.db"
+      ERRORS_DB_FILE_NAME: "errors.db"
+      API_KEY: "ci-placeholder"
+      STRIPE_SECRET_KEY: "sk_test_ci_placeholder"
+      RESEND_API_KEY: "re_ci_placeholder"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Type and configuration check
+        run: npm run check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build frontend and API bundles
+        run: npm run prod:build:vite
