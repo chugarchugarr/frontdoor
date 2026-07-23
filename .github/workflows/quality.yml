@@ -12,8 +12,9 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
+      ADAPTIVE_AI_REGISTRY: "https://registry.npmjs.org/"
       PORT: "3000"
       VITE_APP_ID: "gatepass-ci"
       VITE_BASE_URL: "http://localhost:3000"
@@ -36,16 +37,74 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        id: install
+        shell: bash
+        run: |
+          set +e
+          npm install --legacy-peer-deps > npm-install.log 2>&1
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Type and configuration check
-        run: npm run check
+        id: check
+        if: steps.install.outputs.status == '0'
+        shell: bash
+        run: |
+          set +e
+          npm run check > check.log 2>&1
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Lint
-        run: npm run lint
+        id: lint
+        if: steps.install.outputs.status == '0'
+        shell: bash
+        run: |
+          set +e
+          npm run lint > lint.log 2>&1
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Build frontend and API bundles
-        run: npm run prod:build:vite
+        id: build
+        if: steps.install.outputs.status == '0'
+        shell: bash
+        run: |
+          set +e
+          npm run prod:build:vite > build.log 2>&1
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload quality logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gatepass-quality-logs
+          path: |
+            npm-install.log
+            check.log
+            lint.log
+            build.log
+          if-no-files-found: ignore
+          retention-days: 1
+
+      - name: Require successful quality gate
+        shell: bash
+        run: |
+          failed=0
+          for result in \
+            "install:${{ steps.install.outputs.status }}" \
+            "check:${{ steps.check.outputs.status }}" \
+            "lint:${{ steps.lint.outputs.status }}" \
+            "build:${{ steps.build.outputs.status }}"
+          do
+            name="${result%%:*}"
+            status="${result#*:}"
+            if [ "$status" != "0" ]; then
+              echo "$name failed with status ${status:-not-run}"
+              failed=1
+            fi
+          done
+          exit "$failed"
