@@ -5,8 +5,8 @@ import Navbar from '../components/landing/Navbar';
 import Footer from '../components/landing/Footer';
 
 const productItems = [
-  'Exterior signals, association rules, ARC decisions, contractor credentials, bids, work status, completion evidence, and exports in one workspace.',
-  'A modeled board demo shows 10 residents, 1 delinquent account, $185 outstanding, 5 open violations, 3 ARC requests, 3 work orders, and 1 active vote.',
+  'Exterior signals, association rules, ARC decisions, contractor credentials, bids, work status, completion evidence, and exports in one association-owned workspace.',
+  'The product modules are views into one operating path. They are not separate products or the public identity of GatePass.',
   'Every demo screen is labeled as modeled data. Production customers, transactions, and revenue are still zero.',
 ];
 
@@ -26,9 +26,9 @@ export default function LandingPage() {
           <div className="max-w-[1120px] mx-auto grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-end">
             <div>
               <span className="text-xs text-[#B8883A] tracking-[0.25em] uppercase">Built in Austin</span>
-              <h1 className="gp-display text-6xl md:text-7xl lg:text-8xl leading-[0.9] mt-6">Property work should leave the community smarter.</h1>
-              <p className="text-xl md:text-2xl text-white/70 mt-7 max-w-3xl leading-snug">GatePass is the association-owned operating system that routes property work from an exterior signal to permission, verified execution, and a permanent record.</p>
-              <p className="text-base text-white/50 mt-5 max-w-2xl leading-relaxed">Contractors pay for trusted access to communities. Associations retain control of the workflow and data.</p>
+              <h1 className="gp-display text-5xl md:text-6xl lg:text-7xl leading-[0.93] mt-6">The association-owned operating system for property work.</h1>
+              <p className="text-xl md:text-2xl text-white/70 mt-7 max-w-3xl leading-snug">GatePass routes property work from an exterior signal to permission, verified execution, and a permanent record.</p>
+              <p className="text-base text-white/50 mt-5 max-w-2xl leading-relaxed">Contractors pay for trusted access to communities; associations retain control of the workflow and data.</p>
               <div className="flex flex-col sm:flex-row gap-4 mt-9">
                 <Link to="/demo" className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full transition-colors">See the modeled demo <ArrowRight className="w-4 h-4" /></Link>
                 <Link to="/investors" className="inline-flex items-center justify-center gap-2 text-sm text-white/70 hover:text-white border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full transition-colors">Read the investor brief</Link>
@@ -59,7 +59,7 @@ export default function LandingPage() {
             <div className="text-base leading-relaxed text-[#1C1C1A]/70 space-y-4">
               <p>Joseph spent years selling home improvement door to door in Central Texas. Trained contractors often recognize an expensive exterior signal before a homeowner understands what they are seeing. The homeowner cannot safely separate a useful observation from a sales pitch.</p>
               <p>The starting point is limited to what can be lawfully seen from a public approach or what a homeowner or association supplies. GatePass does not authorize trespassing, inspection without consent, or pretending to speak for the association.</p>
-              <p>GatePass routes the signal through the community instead of forcing another cold knock. The homeowner keeps the choice. The contractor still has to earn the work. The association applies the rules and keeps the record.</p>
+              <p>GatePass routes the signal through the community instead of forcing another cold knock. The homeowner keeps the choice. The contractor still has to earn the work. The association applies the rules and keeps the permanent record.</p>
             </div>
           </div>
         </section>
@@ -80,7 +80,7 @@ export default function LandingPage() {
           <div className="max-w-[1120px] mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
             <div>
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">One operating path. One association-owned history.</h2>
-              <p className="text-white/50 mt-5 leading-relaxed">GatePass can work alongside a management company. The association remains the principal and owns the workflow, records, and export.</p>
+              <p className="text-white/50 mt-5 leading-relaxed">GatePass can work alongside any management setup. The association remains the principal and owns the workflow, data, permanent record, and export.</p>
             </div>
             <div className="grid gap-3">
               {productItems.map((item) => <div key={item} className="rounded-2xl bg-white/[0.04] border border-white/10 p-5 text-sm text-white/60 leading-relaxed">{item}</div>)}
