@@ -57,7 +57,7 @@ try {
   await page.waitForURL(/\/onboard$/);
 
   const boardSubmit = page.getByRole("button", { name: /Request a workflow review/i });
-  await assert.rejects(() => boardSubmit.click({ trial: true }), /disabled|not enabled/i);
+  assert(await boardSubmit.isDisabled(), "HOA workflow-review form should be disabled before required fields are completed");
   await page.getByLabel("Contact name").fill("GatePass CI Board");
   await page.getByLabel("Email").fill("board-ci@example.invalid");
   await page.getByLabel("Board or management role").fill("Board member");
