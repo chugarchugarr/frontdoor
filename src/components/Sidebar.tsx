@@ -1,5 +1,4 @@
 import React from "react";
-import { useAuth } from "@adaptive-ai/sdk/client";
 import { T, GLOBAL_CSS } from "./tokens";
 import { Icons } from "./ui-kit";
 
@@ -29,8 +28,6 @@ const NAV_ITEMS: { id: OSView; label: string; icon: React.ReactNode; section?: s
 ];
 
 export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (v: OSView) => void; hoaName?: string }) {
-  const auth = useAuth({ required: false });
-
   return (
     <aside className="sidebar" style={{
       width: 220,
@@ -46,7 +43,6 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
     }}>
       <style>{GLOBAL_CSS}</style>
 
-      {/* Logo */}
       <div style={{ padding: "20px 16px 14px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{
@@ -79,7 +75,6 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
         )}
       </div>
 
-      {/* Nav */}
       <nav style={{ flex: 1, padding: "4px 8px", display: "flex", flexDirection: "column", gap: 1, overflowY: "auto" }}>
         {NAV_ITEMS.map((item) => {
           const isCurrent = current === item.id;
@@ -125,16 +120,7 @@ export function Sidebar({ current, onNav, hoaName }: { current: OSView; onNav: (
         })}
       </nav>
 
-      {/* Footer */}
       <div style={{ padding: "12px 16px", borderTop: "1px solid #E5E5E5" }}>
-        {auth.status === "authenticated" && (
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
-            <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
-            <span style={{ fontFamily: T.fontMono, fontSize: 10, color: "#A3A3A3", letterSpacing: "0.04em" }}>
-              Active
-            </span>
-          </div>
-        )}
         <button
           onClick={() => onNav("landing")}
           style={{

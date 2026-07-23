@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,22 +13,25 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     env:
+      ADAPTIVE_AI_REGISTRY: "https://registry.npmjs.org/"
       PORT: "3000"
       VITE_APP_ID: "gatepass-ci"
-      VITE_BASE_URL: "http://localhost:3000"
-      VITE_ROOT_URL: "http://localhost:5173"
-      VITE_NODE_ENV: "test"
+      VITE_BASE_URL: "http://127.0.0.1:3000"
+      VITE_ROOT_URL: "http://127.0.0.1:3000"
+      VITE_NODE_ENV: "production"
       VITE_BOX_ID: "gatepass-ci"
       VITE_REALTIME_DOMAIN: "localhost"
-      GUEST_SERVICES_URL: "http://localhost"
-      DB_FILE_NAME: "file:development.db"
-      QUEUE_DB_FILE_NAME: "development-queue.db"
-      ERRORS_DB_FILE_NAME: "errors.db"
+      GUEST_SERVICES_URL: "http://127.0.0.1"
+      DB_FILE_NAME: "file:ci.db"
+      QUEUE_DB_FILE_NAME: "ci-queue.db"
+      ERRORS_DB_FILE_NAME: "ci-errors.db"
       API_KEY: "ci-placeholder"
       STRIPE_SECRET_KEY: "sk_test_ci_placeholder"
       RESEND_API_KEY: "re_ci_placeholder"
+      GATEPASS_BASE_URL: "http://127.0.0.1:3000"
+      GATEPASS_ARTIFACT_DIR: "test-artifacts"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -36,16 +40,176 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        shell: bash
+        run: |
+          mkdir -p test-artifacts
+          set -o pipefail
+          npm install --legacy-peer-deps 2>&1 | tee test-artifacts/npm-install.log
+
+      - name: Write isolated production environment
+        shell: bash
+        run: |
+          cat > .env.production <<'EOF'
+          PORT=3000
+          VITE_APP_ID=gatepass-ci
+          VITE_BASE_URL=http://127.0.0.1:3000
+          VITE_ROOT_URL=http://127.0.0.1:3000
+          VITE_NODE_ENV=production
+          VITE_BOX_ID=gatepass-ci
+          VITE_REALTIME_DOMAIN=localhost
+          GUEST_SERVICES_URL=http://127.0.0.1
+          DB_FILE_NAME=file:ci.db
+          QUEUE_DB_FILE_NAME=ci-queue.db
+          ERRORS_DB_FILE_NAME=ci-errors.db
+          API_KEY=ci-placeholder
+          STRIPE_SECRET_KEY=sk_test_ci_placeholder
+          RESEND_API_KEY=re_ci_placeholder
+          EOF
 
       - name: Type and configuration check
-        run: npm run check
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run check 2>&1 | tee test-artifacts/check.log
 
       - name: Lint
-        run: npm run lint
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run lint 2>&1 | tee test-artifacts/lint.log
 
-      - name: Build frontend and API bundles
-        run: npm run prod:build:vite
+      - name: Full production build
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run prod:build 2>&1 | tee test-artifacts/build.log
+
+      - name: Scan public source and build output for retired language
+        shell: bash
+        run: |
+          set -o pipefail
+          node <<'NODE' 2>&1 | tee test-artifacts/retired-language.log
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          const roots = ['src', 'public', 'dist', 'index.html'];
+          const allowedExtensions = new Set(['.js', '.jsx', '.ts', '.tsx', '.html', '.css', '.txt', '.xml']);
+          const banned = [
+            /\bProblem\b/i,
+            /\bSolution\b/i,
+            /\bWhy Now\b/i,
+            /\bWedge\b/i,
+            /\bMoat\b/i,
+            /\bTraction\b/i,
+            /\bProof\b/i,
+            /\bUse of Funds\b/i,
+            /\bSoftware wedge\b/i,
+            /\bMarketplace business\b/i,
+            /\bTransition-memory moat\b/i,
+            /\bCompliance memory\b/i,
+            /\bTransition memory\b/i,
+            /\bBoard-safe\b/i,
+            /\bMoat signal\b/i,
+            /\bFlywheel\b/i,
+            /\bdefensible memory record\b/i,
+            /\bHome Show\b/i,
+            /\bLOI\b/i,
+          ];
+
+          const files = [];
+          function walk(target) {
+            if (!fs.existsSync(target)) return;
+            const stat = fs.statSync(target);
+            if (stat.isDirectory()) {
+              for (const entry of fs.readdirSync(target)) walk(path.join(target, entry));
+              return;
+            }
+            if (target.endsWith('.map')) return;
+            if (allowedExtensions.has(path.extname(target))) files.push(target);
+          }
+          roots.forEach(walk);
+
+          const hits = [];
+          for (const file of files) {
+            const lines = fs.readFileSync(file, 'utf8').split(/\r?\n/);
+            lines.forEach((line, index) => {
+              for (const pattern of banned) {
+                if (pattern.test(line)) hits.push(`${file}:${index + 1}: ${pattern} :: ${line.trim().slice(0, 220)}`);
+              }
+            });
+          }
+
+          if (hits.length) {
+            console.error('Retired public language found:\n' + hits.join('\n'));
+            process.exit(1);
+          }
+          console.log(`Retired-language scan passed across ${files.length} source/build files.`);
+          NODE
+
+      - name: Install Chromium for browser verification
+        shell: bash
+        run: |
+          set -o pipefail
+          npm install --no-save --legacy-peer-deps playwright@1.55.0 2>&1 | tee test-artifacts/playwright-install.log
+          npx playwright install --with-deps chromium 2>&1 | tee -a test-artifacts/playwright-install.log
+
+      - name: Start production bundles
+        shell: bash
+        run: |
+          npm run prod > test-artifacts/server.log 2>&1 &
+          echo $! > test-artifacts/server.pid
+
+      - name: Wait for frontend and API
+        shell: bash
+        run: |
+          frontend_ready=0
+          for attempt in $(seq 1 90); do
+            if curl --fail --silent --show-error http://127.0.0.1:3000/ >/dev/null; then
+              frontend_ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$frontend_ready" -ne 1 ]; then
+            echo "Frontend did not become ready"
+            cat test-artifacts/server.log
+            exit 1
+          fi
+
+          api_ready=0
+          for attempt in $(seq 1 90); do
+            status=$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3001/ || true)
+            if [ "$status" != "000" ] && [ "$status" -lt 500 ]; then
+              api_ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$api_ready" -ne 1 ]; then
+            echo "API did not become ready"
+            cat test-artifacts/server.log
+            exit 1
+          fi
+
+      - name: Browser-test public routes, forms, CTAs, and board demo
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/verify-browser.mjs 2>&1 | tee test-artifacts/browser.log
+
+      - name: Stop test server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f test-artifacts/server.pid ]; then kill "$(cat test-artifacts/server.pid)" 2>/dev/null || true; fi
+          pkill -f "vite preview|nodemon dist/api/server.js|npm run prod" 2>/dev/null || true
+
+      - name: Upload browser evidence and server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gatepass-verification
+          path: test-artifacts
+          if-no-files-found: warn
