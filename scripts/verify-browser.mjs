@@ -1,10 +1,50 @@
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
+import path from "node:path";
 import { chromium } from "playwright";
 
 const baseUrl = process.env.GATEPASS_BASE_URL || "http://127.0.0.1:4173";
 const artifactDir = process.env.GATEPASS_ARTIFACT_DIR || "test-artifacts";
 await fs.mkdir(artifactDir, { recursive: true });
+
+async function captureSessionImplementation() {
+  const root = "node_modules/@adaptive-ai/sdk/dist";
+  const snippets = [];
+
+  async function walk(target) {
+    let entries;
+    try {
+      entries = await fs.readdir(target, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const file = path.join(target, entry.name);
+      if (entry.isDirectory()) {
+        await walk(file);
+        continue;
+      }
+      if (!entry.name.endsWith(".js") && !entry.name.endsWith(".mjs")) continue;
+      const content = await fs.readFile(file, "utf8");
+      for (const needle of ["/api/session", "api/session", "session"]) {
+        let index = content.indexOf(needle);
+        while (index !== -1) {
+          const start = Math.max(0, index - 900);
+          const end = Math.min(content.length, index + 1400);
+          snippets.push(`FILE: ${file}\nNEEDLE: ${needle}\n${content.slice(start, end)}\n---`);
+          index = content.indexOf(needle, index + needle.length);
+          if (snippets.length >= 30) return;
+        }
+        if (snippets.length >= 30) return;
+      }
+    }
+  }
+
+  await walk(root);
+  await fs.writeFile(path.join(artifactDir, "sdk-session-snippets.txt"), snippets.join("\n"));
+}
+
+await captureSessionImplementation();
 
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
@@ -26,16 +66,16 @@ page.on("console", (message) => {
   if (!text.includes("Failed to load resource")) browserErrors.push(`console: ${text}${suffix}`);
 });
 
-async function open(path, expectedText) {
-  const response = await page.goto(`${baseUrl}${path}`, { waitUntil: "networkidle" });
-  assert(response, `No document response for ${path}`);
-  assert(response.status() < 400, `${path} returned HTTP ${response.status()}`);
+async function open(route, expectedText) {
+  const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle" });
+  assert(response, `No document response for ${route}`);
+  assert(response.status() < 400, `${route} returned HTTP ${response.status()}`);
   if (expectedText) {
     await page.getByText(expectedText, { exact: false }).first().waitFor({ state: "visible" });
   }
   const body = await page.locator("body").innerText();
-  assert(!body.includes("Something went wrong"), `${path} rendered an application error`);
-  assert(!body.includes("Page not found"), `${path} rendered the 404 page`);
+  assert(!body.includes("Something went wrong"), `${route} rendered an application error`);
+  assert(!body.includes("Page not found"), `${route} rendered the 404 page`);
 }
 
 try {
@@ -50,7 +90,7 @@ try {
     ["/terms", null],
   ];
 
-  for (const [path, expectedText] of publicRoutes) await open(path, expectedText);
+  for (const [route, expectedText] of publicRoutes) await open(route, expectedText);
 
   await open("/", "The association-owned operating system for property work.");
   await page.screenshot({ path: `${artifactDir}/homepage-desktop.png`, fullPage: true });
