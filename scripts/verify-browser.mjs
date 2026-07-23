@@ -1,50 +1,10 @@
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
-import path from "node:path";
 import { chromium } from "playwright";
 
 const baseUrl = process.env.GATEPASS_BASE_URL || "http://127.0.0.1:4173";
 const artifactDir = process.env.GATEPASS_ARTIFACT_DIR || "test-artifacts";
 await fs.mkdir(artifactDir, { recursive: true });
-
-async function captureSessionImplementation() {
-  const root = "node_modules/@adaptive-ai/sdk/dist";
-  const snippets = [];
-
-  async function walk(target) {
-    let entries;
-    try {
-      entries = await fs.readdir(target, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    for (const entry of entries) {
-      const file = path.join(target, entry.name);
-      if (entry.isDirectory()) {
-        await walk(file);
-        continue;
-      }
-      if (!entry.name.endsWith(".js") && !entry.name.endsWith(".mjs")) continue;
-      const content = await fs.readFile(file, "utf8");
-      for (const needle of ["/api/session", "api/session", "session"]) {
-        let index = content.indexOf(needle);
-        while (index !== -1) {
-          const start = Math.max(0, index - 900);
-          const end = Math.min(content.length, index + 1400);
-          snippets.push(`FILE: ${file}\nNEEDLE: ${needle}\n${content.slice(start, end)}\n---`);
-          index = content.indexOf(needle, index + needle.length);
-          if (snippets.length >= 30) return;
-        }
-        if (snippets.length >= 30) return;
-      }
-    }
-  }
-
-  await walk(root);
-  await fs.writeFile(path.join(artifactDir, "sdk-session-snippets.txt"), snippets.join("\n"));
-}
-
-await captureSessionImplementation();
 
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
