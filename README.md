@@ -8,11 +8,12 @@ The GitHub repository is named `frontdoor`; the product is always called GatePas
 
 Read these before changing product behavior or copy:
 
-1. [`APP.md`](./APP.md) — controlling doctrine, public truth, pricing, and product boundaries.
-2. [`CODEX.md`](./CODEX.md) — implementation context, copy rules, routes, and verification requirements.
-3. Current public pages and modeled-demo constants.
+1. [`docs/GATEPASS-DOCTRINE.md`](./docs/GATEPASS-DOCTRINE.md) — controlling statement, operative sequence, and decision test.
+2. [`APP.md`](./APP.md) — public truth, pricing, routes, and product boundaries.
+3. [`CODEX.md`](./CODEX.md) — implementation context, copy rules, and verification requirements.
+4. Current public pages and modeled-demo constants.
 
-Files under `docs/` may contain historical architecture. They do not override `APP.md` or `CODEX.md`.
+Other files under `docs/` may contain historical architecture. They do not override the doctrine, `APP.md`, or `CODEX.md`.
 
 ## Product sequence
 
@@ -33,7 +34,7 @@ The exterior condition is a signal, not a diagnosis or authorization. The associ
 - Production contractor transactions: 0.
 - Production revenue: $0.
 - Public product screens use modeled demo data only.
-- HOA software is displayed at $20 per unit per year with no setup fee.
+- Association software is displayed at $20 per unit per year with no setup fee.
 - Founding contractor access is displayed at $99 once, after approval.
 
 ## Stack
@@ -60,8 +61,8 @@ npm run prod:build
 
 - `/` — public homepage
 - `/investors` — investor brief and current status
-- `/pricing` — HOA software pricing
-- `/onboard` — HOA workflow review form
+- `/pricing` — association software pricing
+- `/onboard` — association workflow review form
 - `/contractors` — contractor application
 - `/demo` — modeled product demo; noindex
 - `/privacy`, `/terms` — legal pages
