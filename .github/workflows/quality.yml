@@ -38,7 +38,30 @@ jobs:
           node-version: "22"
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        id: install
+        shell: bash
+        run: |
+          set +e
+          npm install --legacy-peer-deps > npm-install.log 2>&1
+          status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload dependency log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-install-log
+          path: npm-install.log
+          retention-days: 1
+
+      - name: Require successful install
+        shell: bash
+        run: |
+          if [ "${{ steps.install.outputs.status }}" != "0" ]; then
+            echo "Dependency installation failed. See npm-install-log artifact."
+            exit 1
+          fi
 
       - name: Type and configuration check
         run: npm run check
