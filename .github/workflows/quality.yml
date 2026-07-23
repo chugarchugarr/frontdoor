@@ -70,18 +70,28 @@ jobs:
           EOF
 
       - name: Type and configuration check
-        run: npm run check
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run check 2>&1 | tee test-artifacts/check.log
 
       - name: Lint
-        run: npm run lint
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run lint 2>&1 | tee test-artifacts/lint.log
 
       - name: Full production build
-        run: npm run prod:build
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run prod:build 2>&1 | tee test-artifacts/build.log
 
       - name: Scan public source and build output for retired language
         shell: bash
         run: |
-          node <<'NODE'
+          set -o pipefail
+          node <<'NODE' 2>&1 | tee test-artifacts/retired-language.log
           const fs = require('node:fs');
           const path = require('node:path');
 
@@ -140,9 +150,11 @@ jobs:
           NODE
 
       - name: Install Chromium for browser verification
+        shell: bash
         run: |
-          npm install --no-save --legacy-peer-deps playwright@1.55.0
-          npx playwright install --with-deps chromium
+          set -o pipefail
+          npm install --no-save --legacy-peer-deps playwright@1.55.0 2>&1 | tee test-artifacts/playwright-install.log
+          npx playwright install --with-deps chromium 2>&1 | tee -a test-artifacts/playwright-install.log
 
       - name: Start production bundles
         shell: bash
@@ -170,7 +182,10 @@ jobs:
           done
 
       - name: Browser-test public routes, forms, CTAs, and board demo
-        run: node scripts/verify-browser.mjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/verify-browser.mjs 2>&1 | tee test-artifacts/browser.log
 
       - name: Stop test server
         if: always()
