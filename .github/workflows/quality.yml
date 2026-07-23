@@ -41,7 +41,11 @@ jobs:
           node-version: "22"
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        shell: bash
+        run: |
+          mkdir -p test-artifacts
+          set -o pipefail
+          npm install --legacy-peer-deps 2>&1 | tee test-artifacts/npm-install.log
 
       - name: Write isolated production environment
         shell: bash
@@ -141,7 +145,6 @@ jobs:
       - name: Start production bundles
         shell: bash
         run: |
-          mkdir -p test-artifacts
           npm run prod > test-artifacts/server.log 2>&1 &
           echo $! > test-artifacts/server.pid
 
