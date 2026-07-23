@@ -1,16 +1,15 @@
-import { useState } from "react";
-import React from "react";
-import { Routes, Route, useNavigate, Navigate, useSearchParams, useLocation } from "react-router-dom";
-import { client as rpc } from "@/lib/client";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@adaptive-ai/sdk/client";
+import { client as rpc } from "@/lib/client";
 import LandingPage from "./pages/Landing";
 import Pricing from "./pages/Pricing";
 import Investors from "./pages/Investors";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import { T, GLOBAL_CSS } from "./components/tokens";
-import { Btn, FDInput, FDSelect, FDTextarea, Tag, Icons, Card, Label, EmptyState } from "./components/ui-kit";
+import { Btn, Card, EmptyState, FDInput, FDSelect, FDTextarea, Icons, Label, Tag } from "./components/ui-kit";
 import { Sidebar, type OSView } from "./components/Sidebar";
 import { Dashboard } from "./components/Dashboard";
 import { Homeowners } from "./components/Homeowners";
@@ -22,7 +21,7 @@ import { VoteBox } from "./components/VoteBox";
 import { WorkOrders } from "./components/WorkOrders";
 import { AmenityModule } from "./components/AmenityModule";
 import { CommHub } from "./components/CommHub";
-import { ContractorWaitlist as ContractorWaitlistPanel } from "./components/ContractorWaitlist";
+import { ContractorWaitlist } from "./components/ContractorWaitlist";
 import { HomeownerPortal } from "./components/HomeownerPortal";
 import { ContractorPortal } from "./components/ContractorPortal";
 import { LiveFeeds } from "./components/LiveFeeds";
@@ -33,129 +32,6 @@ import { InvestorProofDashboard } from "./components/InvestorProofDashboard";
 import AdminConsole from "./components/AdminConsole";
 import { ErrorBoundary } from "./components/error-boundary";
 import { DEMO_HOA_ID, MODELED_DEMO_BANNER, modeledDemoData } from "./lib/modeledDemoData";
-
-// ─── Success screens ──────────────────────────────────────────────────
-function _SuccessScreen({ type }: { type: "hoa" | "contractor" }) {
-  return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <style>{GLOBAL_CSS}</style>
-      <div className="anim-up" style={{ textAlign: "center", maxWidth: 480, padding: "40px 32px" }}>
-        <div style={{
-          width: 56, height: 56, borderRadius: "50%",
-          background: T.forestPale,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          margin: "0 auto 24px",
-        }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={T.forest} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        </div>
-        <h1 style={{ fontFamily: T.fontSans, fontSize: 32, fontWeight: 700, color: "var(--text)", marginBottom: 14, letterSpacing: "-0.03em" }}>
-          {type === "hoa" ? "You're enrolled." : "Founding access confirmed."}
-        </h1>
-        <p style={{ fontFamily: T.fontSans, fontSize: 15, color: "var(--text-mid)", lineHeight: 1.7, marginBottom: 32 }}>
-          {type === "hoa"
-            ? "Your community is now live on GatePass OS. We'll reach out within 24 hours to complete onboarding."
-            : "Your approved founding access is recorded. Each association still decides community access, and no lead or job volume is guaranteed."}
-        </p>
-        <Btn onClick={() => window.location.href = "/"}>Back to GatePass</Btn>
-      </div>
-    </div>
-  );
-}
-
-// Module icons as clean SVGs (no emoji)
-const _MODULE_ICONS: Record<string, React.ReactNode> = {
-  "GatePass Core": <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
-  "PayOS":          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>,
-  "FineBot":        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
-  "ARC Agent":      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
-  "WorkOrder":      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
-  "BoardRoom":      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
-  "VoteBox":        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>,
-  "Amenity":        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>,
-  "CommHub":        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
-};
-
-
-// ─── HOA Onboarding ───────────────────────────────────────────────────
-function HOAOnboarding({ onBack }: { onBack: () => void }) {
-  const [submitted, setSubmitted] = useState(false);
-  const [form, setForm] = useState({ community: "", zip: "", units: "", contactName: "", contactEmail: "", contactPhone: "", role: "", managementSetup: "", needsHelpWith: "" });
-  const totalCost = form.units ? Number(form.units) * 20 : 0;
-  const mutation = useMutation({
-    mutationFn: () => rpc.createHOAAccessReview({ community: form.community, zip: form.zip, units: Number(form.units), contactName: form.contactName, contactEmail: form.contactEmail, contactPhone: form.contactPhone, role: form.role, managementSetup: form.managementSetup, needsHelpWith: form.needsHelpWith }),
-    onSuccess: () => setSubmitted(true),
-  });
-  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
-  const canSubmit = form.community && form.zip && form.units && form.contactName && form.contactEmail && form.role && form.managementSetup && form.needsHelpWith && !mutation.isPending;
-
-  return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
-      <style>{GLOBAL_CSS}</style>
-      <header style={{ padding: "0 32px", height: 60, borderBottom: `1px solid var(--border)`, display: "flex", alignItems: "center", gap: 14, background: "var(--bg)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 100 }}>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: "var(--text-light)", display: "flex", alignItems: "center", gap: 6, fontFamily: T.fontSans, fontSize: 13, cursor: "pointer", letterSpacing: "-0.01em" }}><Icons.Back /> Back</button>
-        <div style={{ width: 1, height: 18, background: "var(--border)" }} />
-        <span style={{ fontFamily: T.fontSans, fontSize: 15, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>GatePass</span>
-        <Tag>HOA Access Review</Tag>
-      </header>
-      <div style={{ maxWidth: 560, margin: "0 auto", padding: "64px 32px" }}>
-        <div className="anim-up" style={{ marginBottom: 40 }}>
-          <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, fontWeight: 600 }}>For HOA boards</div>
-          <h1 style={{ fontFamily: T.fontSans, fontSize: 34, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.03em", marginBottom: 10 }}>Show us how your HOA handles contractor access.</h1>
-          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7 }}>GatePass reviews the association workflow before any agreement or payment. The HOA software is $20 per unit per year after approval.</p>
-        </div>
-        <Card style={{ padding: 32 }}>
-          {submitted ? (
-            <>
-              <h2 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>Access review received.</h2>
-              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7, marginBottom: 24 }}>No enrollment or payment was created. GatePass will follow up to review the association's workflow.</p>
-              <Btn onClick={onBack}>Back to GatePass</Btn>
-            </>
-          ) : (
-            <>
-              <h2 style={{ fontFamily: T.fontSans, fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 24, letterSpacing: "-0.025em" }}>Access review request</h2>
-              <FDInput label="Contact name" required placeholder="Your name" value={form.contactName} onChange={e => set("contactName", e.target.value)} />
-              <FDInput label="Email" required type="email" placeholder="you@example.com" value={form.contactEmail} onChange={e => set("contactEmail", e.target.value)} />
-              <FDInput label="Phone" type="tel" placeholder="512-555-0100" value={form.contactPhone} onChange={e => set("contactPhone", e.target.value)} />
-              <FDInput label="Board or management role" required placeholder="Board member, president, manager, etc." value={form.role} onChange={e => set("role", e.target.value)} />
-              <FDInput label="Community name" required placeholder="Sample Austin HOA" value={form.community} onChange={e => set("community", e.target.value)} />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <FDInput label="ZIP code" required placeholder="78732" value={form.zip} onChange={e => set("zip", e.target.value)} />
-                <FDInput label="Number of units" required type="number" placeholder="200" value={form.units} onChange={e => set("units", e.target.value)} />
-              </div>
-              <FDSelect label="Current management setup" required value={form.managementSetup} onChange={e => set("managementSetup", e.target.value)}>
-                <option value="">Select setup…</option>
-                <option value="management_company">Management company</option>
-                <option value="self_managed">Self-managed board</option>
-                <option value="hybrid">Hybrid / part-time manager</option>
-                <option value="unknown">Not sure</option>
-              </FDSelect>
-              <FDTextarea label="What the board needs help with" required placeholder="Tell us where contractor access, approvals, records, or exports break down today." value={form.needsHelpWith} onChange={e => set("needsHelpWith", e.target.value)} />
-              {totalCost > 0 && (
-                <div style={{ padding: "14px 18px", background: T.forestPale, borderRadius: T.radius, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div><Label>Estimated annual software price</Label><div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: "var(--text)" }}>${totalCost.toLocaleString()}</div></div>
-                  <div style={{ textAlign: "right", fontFamily: T.fontSans, fontSize: 12, color: T.inkLight }}>
-                    <div>{form.units} units × $20/yr</div>
-                    <div style={{ color: T.success, marginTop: 4 }}>No setup fee</div>
-                  </div>
-                </div>
-              )}
-              <Btn full onClick={() => mutation.mutate()} disabled={!canSubmit}>{mutation.isPending ? "Submitting…" : <>Request an access review <Icons.ArrowR /></>}</Btn>
-              {mutation.isError && <div style={{ marginTop: 14, padding: "10px 14px", background: T.dangerPale, borderRadius: T.radius, fontFamily: T.fontSans, fontSize: 13, color: T.danger }}>Something went wrong. Please try again.</div>}
-            </>
-          )}
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-// ContractorWaitlist is now in ./components/ContractorWaitlist.tsx
-const ContractorWaitlist = ContractorWaitlistPanel;
-
-// ─── Modeled Demo — 3-persona selector + OS shell ────────────────────
-type DemoPersona = "select" | "board" | "homeowner" | "contractor";
 
 const DEMO_VIEW_OPTIONS: { id: OSView; label: string }[] = [
   { id: "dashboard", label: "Overview" },
@@ -170,10 +46,104 @@ const DEMO_VIEW_OPTIONS: { id: OSView; label: string }[] = [
   { id: "commhub", label: "CommHub" },
   { id: "permits", label: "Permit Feed" },
   { id: "livefeeds", label: "Live Feeds" },
-  { id: "marketplace", label: "Contractor Access" },
+  { id: "marketplace", label: "Property Work Path" },
   { id: "transition", label: "Association Records" },
   { id: "compliance", label: "Compliance" },
 ];
+
+function HOAOnboarding({ onBack }: { onBack: () => void }) {
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({
+    community: "",
+    zip: "",
+    units: "",
+    contactName: "",
+    contactEmail: "",
+    contactPhone: "",
+    role: "",
+    managementSetup: "",
+    needsHelpWith: "",
+  });
+  const totalCost = form.units ? Number(form.units) * 20 : 0;
+  const set = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }));
+  const canSubmit = Boolean(form.community && form.zip && form.units && form.contactName && form.contactEmail && form.role && form.managementSetup && form.needsHelpWith && !submitted);
+  const mutation = useMutation({
+    mutationFn: () => rpc.createHOAAccessReview({
+      community: form.community,
+      zip: form.zip,
+      units: Number(form.units),
+      contactName: form.contactName,
+      contactEmail: form.contactEmail,
+      contactPhone: form.contactPhone,
+      role: form.role,
+      managementSetup: form.managementSetup,
+      needsHelpWith: form.needsHelpWith,
+    }),
+    onSuccess: () => setSubmitted(true),
+  });
+
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+      <style>{GLOBAL_CSS}</style>
+      <header style={{ padding: "0 32px", height: 60, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 14, background: "var(--bg)", position: "sticky", top: 0, zIndex: 100 }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", color: "var(--text-light)", display: "flex", alignItems: "center", gap: 6, fontFamily: T.fontSans, fontSize: 13, cursor: "pointer" }}><Icons.Back /> Back</button>
+        <div style={{ width: 1, height: 18, background: "var(--border)" }} />
+        <span style={{ fontFamily: T.fontSans, fontSize: 15, fontWeight: 700, color: "var(--text)" }}>GatePass</span>
+        <Tag>Association Workflow Review</Tag>
+      </header>
+
+      <main style={{ maxWidth: 600, margin: "0 auto", padding: "64px 32px" }}>
+        <div className="anim-up" style={{ marginBottom: 36 }}>
+          <div style={{ fontFamily: T.fontSans, fontSize: 11, color: T.forest, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, fontWeight: 600 }}>For association boards</div>
+          <h1 style={{ fontFamily: T.fontSans, fontSize: 34, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.03em", marginBottom: 12 }}>Show us how property work moves through your community.</h1>
+          <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7 }}>GatePass reviews the path from exterior signal to permission, contractor execution, and permanent association record before any agreement or payment. Software is $20 per unit per year after approval.</p>
+        </div>
+
+        <Card style={{ padding: 32 }}>
+          {submitted ? (
+            <>
+              <h2 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>Workflow review received.</h2>
+              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-mid)", lineHeight: 1.7, marginBottom: 24 }}>No enrollment or payment was created. GatePass will follow up to review the association's current workflow.</p>
+              <Btn onClick={onBack}>Back to GatePass</Btn>
+            </>
+          ) : (
+            <form onSubmit={(event) => { event.preventDefault(); if (canSubmit && !mutation.isPending) mutation.mutate(); }}>
+              <FDInput label="Contact name" required name="contactName" placeholder="Your name" value={form.contactName} onChange={(event) => set("contactName", event.target.value)} />
+              <FDInput label="Email" required name="contactEmail" type="email" placeholder="you@example.com" value={form.contactEmail} onChange={(event) => set("contactEmail", event.target.value)} />
+              <FDInput label="Phone" name="contactPhone" type="tel" placeholder="512-555-0100" value={form.contactPhone} onChange={(event) => set("contactPhone", event.target.value)} />
+              <FDInput label="Board or management role" required name="role" placeholder="Board member, president, manager, etc." value={form.role} onChange={(event) => set("role", event.target.value)} />
+              <FDInput label="Community name" required name="community" placeholder="Sample Austin Association" value={form.community} onChange={(event) => set("community", event.target.value)} />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <FDInput label="ZIP code" required name="zip" placeholder="78732" value={form.zip} onChange={(event) => set("zip", event.target.value)} />
+                <FDInput label="Number of units" required name="units" type="number" placeholder="200" value={form.units} onChange={(event) => set("units", event.target.value)} />
+              </div>
+              <FDSelect label="Current management setup" required name="managementSetup" value={form.managementSetup} onChange={(event) => set("managementSetup", event.target.value)}>
+                <option value="">Select setup…</option>
+                <option value="management_company">Management company</option>
+                <option value="self_managed">Self-managed board</option>
+                <option value="hybrid">Hybrid / part-time manager</option>
+                <option value="unknown">Not sure</option>
+              </FDSelect>
+              <FDTextarea label="Where the workflow breaks" required name="needsHelpWith" placeholder="Describe where signals, approvals, contractor access, completion evidence, or records break down today." value={form.needsHelpWith} onChange={(event) => set("needsHelpWith", event.target.value)} />
+
+              {totalCost > 0 && (
+                <div style={{ padding: "14px 18px", background: T.forestPale, borderRadius: T.radius, marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div><Label>Estimated annual software price</Label><div style={{ fontFamily: T.fontSans, fontSize: 26, fontWeight: 700, color: "var(--text)" }}>${totalCost.toLocaleString()}</div></div>
+                  <div style={{ textAlign: "right", fontFamily: T.fontSans, fontSize: 12, color: T.inkLight }}><div>{form.units} units × $20/year</div><div style={{ color: T.success, marginTop: 4 }}>No setup fee</div></div>
+                </div>
+              )}
+
+              <Btn full onClick={() => { if (canSubmit && !mutation.isPending) mutation.mutate(); }} disabled={!canSubmit || mutation.isPending}>{mutation.isPending ? "Submitting…" : <>Request a workflow review <Icons.ArrowR /></>}</Btn>
+              {mutation.isError && <div style={{ marginTop: 14, padding: "10px 14px", background: T.dangerPale, borderRadius: T.radius, fontFamily: T.fontSans, fontSize: 13, color: T.danger }}>Something went wrong. Please try again.</div>}
+            </form>
+          )}
+        </Card>
+      </main>
+    </div>
+  );
+}
+
+type DemoPersona = "select" | "board" | "homeowner" | "contractor";
 
 function MobileViewNav({ view, onChange }: { view: OSView; onChange: (view: OSView) => void }) {
   return (
@@ -186,142 +156,58 @@ function MobileViewNav({ view, onChange }: { view: OSView; onChange: (view: OSVi
   );
 }
 
-function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona, "select">) => void; onBack: () => void }) {
-  const PERSONAS = [
-    {
-      id: "board" as const,
-      label: "Board Member",
-      sub: "Full OS access — manage violations, payments, votes, work orders, and more.",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-      ),
-      accent: T.forest,
-      accentPale: T.forestPale,
-      tag: "Board OS",
-    },
-    {
-      id: "homeowner" as const,
-      label: "Homeowner",
-      sub: "Submit ARC requests, book amenities, cast votes, and view your property status.",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-      ),
-      accent: T.blue,
-      accentPale: T.bluePale,
-      tag: "Resident Portal",
-    },
-    {
-      id: "contractor" as const,
-      label: "Contractor",
-      sub: "Browse open work orders, track Austin permits, and manage your GatePass profile.",
-      icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-        </svg>
-      ),
-      accent: T.gold,
-      accentPale: T.goldLight,
-      tag: "Contractor Portal",
-    },
+function DemoSelector({ onSelect, onBack }: { onSelect: (persona: Exclude<DemoPersona, "select">) => void; onBack: () => void }) {
+  const personas = [
+    { id: "board" as const, label: "Board Member", sub: "See the association-owned workspace and the full property-work path.", tag: "Association OS", color: T.forest },
+    { id: "homeowner" as const, label: "Homeowner", sub: "Submit requests, view decisions, book amenities, and vote.", tag: "Resident Portal", color: T.blue },
+    { id: "contractor" as const, label: "Contractor", sub: "See approved work, public signals, and contractor records.", tag: "Trusted Access", color: T.gold },
   ];
 
   return (
     <div style={{ minHeight: "100vh", background: "#FFFFFF" }}>
       <style>{GLOBAL_CSS}</style>
-
-      {/* Top bar */}
-      <div style={{
-        background: "#FFFFFF", borderBottom: "1px solid #E5E5E5",
-        padding: "0 24px", height: 56,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        position: "sticky", top: 0, zIndex: 100,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 26, height: 26, borderRadius: 8, background: T.forest, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-          </div>
-          <span style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.02em" }}>GatePass</span>
-          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#A3A3A3", marginLeft: 4 }}>Modeled Demo</span>
-        </div>
-        <button
-          onClick={onBack}
-          style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", background: "none", border: "1px solid #E5E5E5", borderRadius: 999, padding: "5px 14px", cursor: "pointer" }}
-        >
-          ← Back to site
-        </button>
+      <div style={{ background: "#FFFFFF", borderBottom: "1px solid #E5E5E5", padding: "0 24px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}><strong style={{ color: "#0A0A0A" }}>GatePass</strong><span style={{ color: "#737373", fontSize: 12 }}>Modeled Demo</span></div>
+        <button onClick={onBack} style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", background: "none", border: "1px solid #E5E5E5", borderRadius: 999, padding: "5px 14px", cursor: "pointer" }}>← Back to site</button>
       </div>
-
-      {/* Content */}
-      <div style={{ maxWidth: 960, margin: "0 auto", padding: "72px 24px 80px" }}>
-        <div className="anim-up" style={{ textAlign: "center", marginBottom: 56 }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 6,
-            padding: "4px 12px",
-            background: T.forestPale, border: `1px solid rgba(42,82,64,0.15)`, borderRadius: 999,
-            marginBottom: 24,
-          }}>
-            <div style={{ width: 5, height: 5, borderRadius: "50%", background: T.forest }} />
-            <span style={{ fontFamily: T.fontSans, fontSize: 11, fontWeight: 500, color: T.forest }}>{MODELED_DEMO_BANNER}</span>
-          </div>
-          <h1 style={{ fontFamily: T.fontSans, fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 800, color: "#0A0A0A", letterSpacing: "-0.04em", lineHeight: 1.05, marginBottom: 14 }}>
-            Choose your perspective
-          </h1>
-          <p style={{ fontFamily: T.fontSans, fontSize: 15, color: "#737373", maxWidth: 460, margin: "0 auto", lineHeight: 1.7 }}>
-            Every role in GatePass sees a tailored view. Pick one to explore the modeled demo.
-          </p>
+      <main style={{ maxWidth: 960, margin: "0 auto", padding: "72px 24px 80px" }}>
+        <div style={{ textAlign: "center", marginBottom: 52 }}>
+          <Tag color={T.forest} bg={T.forestPale}>{MODELED_DEMO_BANNER}</Tag>
+          <h1 style={{ fontFamily: T.fontSans, fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 800, color: "#0A0A0A", letterSpacing: "-0.04em", lineHeight: 1.05, margin: "24px 0 14px" }}>Choose your perspective</h1>
+          <p style={{ fontFamily: T.fontSans, fontSize: 15, color: "#737373", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>Every view belongs to one operating path: exterior signal → association permission → verified execution → permanent record.</p>
         </div>
-
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-          {PERSONAS.map((p, i) => (
-            <button
-              key={p.id}
-              className={`anim-up-${i + 2}`}
-              onClick={() => onSelect(p.id)}
-              style={{
-                background: "#FFFFFF", border: "1px solid #E5E5E5", borderRadius: 20,
-                padding: "32px 28px", textAlign: "left", cursor: "pointer",
-                transition: "border-color 0.15s, transform 0.15s, box-shadow 0.15s",
-                display: "flex", flexDirection: "column", gap: 0,
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLButtonElement).style.borderColor = p.accent;
-                (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-3px)";
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 32px rgba(0,0,0,0.08)";
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#E5E5E5";
-                (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
-              }}
-            >
-              {/* Icon */}
-              <div style={{ width: 48, height: 48, borderRadius: 14, background: p.accent, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-                {p.icon}
-              </div>
-              {/* Tag */}
-              <div style={{ fontFamily: T.fontMono, fontSize: 10, color: p.accent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, fontWeight: 500 }}>
-                {p.tag}
-              </div>
-              {/* Label */}
-              <div style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "#0A0A0A", letterSpacing: "-0.025em", marginBottom: 10 }}>
-                {p.label}
-              </div>
-              {/* Sub */}
-              <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#737373", lineHeight: 1.65, flex: 1 }}>
-                {p.sub}
-              </div>
-              {/* CTA */}
-              <div style={{ marginTop: 24, display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontFamily: T.fontSans, fontSize: 13, fontWeight: 600, color: p.accent }}>Enter demo</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </div>
+          {personas.map((persona) => (
+            <button key={persona.id} onClick={() => onSelect(persona.id)} style={{ background: "#FFFFFF", border: "1px solid #E5E5E5", borderRadius: 20, padding: "30px 28px", textAlign: "left", cursor: "pointer" }}>
+              <div style={{ fontFamily: T.fontMono, fontSize: 10, color: persona.color, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>{persona.tag}</div>
+              <div style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 700, color: "#0A0A0A", marginBottom: 10 }}>{persona.label}</div>
+              <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "#737373", lineHeight: 1.65 }}>{persona.sub}</div>
+              <div style={{ marginTop: 24, color: persona.color, fontSize: 13, fontWeight: 600 }}>Enter demo →</div>
             </button>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function PermitFeedView() {
+  const { data: permits = [], isLoading } = useQuery({ queryKey: ["permits"], queryFn: () => rpc.getAustinPermits() });
+  type Permit = { id: string; type: string; contractor: string; value: string | null; address: string; date: string | null; status: string };
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, gap: 16 }}>
+          <div><h2 style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>Austin Permit Feed</h2><div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>Public Austin permit activity is a signal. It is not association permission or a property diagnosis.</div></div>
+          <Tag bg="rgba(90,158,122,0.12)" color="#2A5240">Austin Open Data</Tag>
+        </div>
+        {isLoading && <div style={{ textAlign: "center", padding: 48, color: "var(--text-light)", fontFamily: T.fontSans }}>Loading permits…</div>}
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {(permits as Permit[]).map((permit) => (
+            <Card key={permit.id} style={{ padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}><div><div style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{permit.type}</div><div style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", marginTop: 2 }}>{permit.contractor}</div></div>{permit.value && <div style={{ fontFamily: T.fontMono, fontSize: 12, fontWeight: 600, color: T.gold }}>{permit.value}</div>}</div>
+              <div style={{ display: "flex", gap: 12, marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border)", flexWrap: "wrap" }}>{permit.address && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)" }}>{permit.address}</span>}{permit.date && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)" }}>{permit.date}</span>}{permit.status && <Tag>{permit.status}</Tag>}</div>
+            </Card>
           ))}
         </div>
       </div>
@@ -329,75 +215,42 @@ function DemoSelector({ onSelect, onBack }: { onSelect: (p: Exclude<DemoPersona,
   );
 }
 
-function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; initialView?: OSView }) {
+function WorkspaceContent({ view, hoaId, hoaZip, demo = false }: { view: OSView; hoaId: string; hoaZip?: string; demo?: boolean }) {
+  if (view === "dashboard") return <Dashboard hoaId={hoaId} onNav={() => undefined} />;
+  if (view === "homeowners") return <Homeowners hoaId={hoaId} />;
+  if (view === "payos") return <PayOS hoaId={hoaId} />;
+  if (view === "violations") return <Violations hoaId={hoaId} />;
+  if (view === "arc") return <ARCAgent hoaId={hoaId} />;
+  if (view === "boardroom") return <BoardRoom hoaId={hoaId} />;
+  if (view === "votebox") return <VoteBox hoaId={hoaId} />;
+  if (view === "workorders") return <WorkOrders hoaId={hoaId} />;
+  if (view === "amenity") return <AmenityModule hoaId={hoaId} />;
+  if (view === "commhub") return <CommHub hoaId={hoaId} />;
+  if (view === "permits") return <PermitFeedView />;
+  if (view === "livefeeds") return <LiveFeeds hoaZip={hoaZip} />;
+  if (view === "transition") return <TransitionMoat hoaId={hoaId} />;
+  if (view === "compliance") return <ComplianceTimeline hoaId={hoaId} />;
+  if (view === "marketplace") return <MarketplaceProofLoop hoaId={hoaId} demo={demo} />;
+  if (view === "investor") return <InvestorProofDashboard hoaId={hoaId} demo={demo} />;
+  return <Dashboard hoaId={hoaId} onNav={() => undefined} />;
+}
+
+function BoardWorkspace({ onBack, initialView = "dashboard", demo = false, hoaId = DEMO_HOA_ID, hoaName, hoaZip }: { onBack: () => void; initialView?: OSView; demo?: boolean; hoaId?: string; hoaName?: string; hoaZip?: string }) {
   const [view, setView] = useState<OSView>(initialView);
-  const demoHoaId = DEMO_HOA_ID;
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "var(--bg)" }}>
       <style>{GLOBAL_CSS}</style>
-
-      {/* Demo banner */}
-      <div className="gp-demo-banner" style={{
-        background: "#FFFFFF",
-        borderBottom: "1px solid #E5E5E5",
-        padding: "10px 20px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-        flexShrink: 0,
-        position: "sticky",
-        top: "var(--guest-top-inset, 0px)",
-        zIndex: 200,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.forest, flexShrink: 0 }} />
-            <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", letterSpacing: "-0.01em" }}>
-              {MODELED_DEMO_BANNER}
-          </span>
+      {demo && (
+        <div className="gp-demo-banner" style={{ background: "#FFFFFF", borderBottom: "1px solid #E5E5E5", padding: "10px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, position: "sticky", top: 0, zIndex: 200 }}>
+          <span style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252" }}>{MODELED_DEMO_BANNER}</span>
+          <button onClick={onBack} style={{ fontFamily: T.fontSans, fontSize: 12, color: "#525252", background: "none", border: "1px solid #E5E5E5", borderRadius: 999, padding: "4px 14px", cursor: "pointer" }}>← Exit</button>
         </div>
-        <button
-          onClick={onBack}
-          style={{
-            fontFamily: T.fontSans, fontSize: 12, color: "#525252",
-            background: "none", border: "1px solid #E5E5E5",
-            borderRadius: 999, padding: "4px 14px", cursor: "pointer",
-            transition: "all 0.15s",
-            flexShrink: 0,
-            letterSpacing: "-0.01em",
-          }}
-        >
-          ← Exit
-        </button>
-      </div>
-
+      )}
       <MobileViewNav view={view} onChange={setView} />
-
-      {/* Full OS shell */}
-      <div className="gp-demo-shell" style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        <Sidebar
-          current={view}
-          onNav={(v) => { if (v === "landing") onBack(); else setView(v); }}
-          hoaName={`${modeledDemoData.hoa.community} (Modeled)`}
-        />
-        <main className="gp-demo-main" style={{ flex: 1, overflow: "auto", background: "var(--bg)" }}>
-          {view === "dashboard"  && <Dashboard hoaId={demoHoaId} onNav={setView} />}
-          {view === "homeowners" && <Homeowners hoaId={demoHoaId} />}
-          {view === "payos"      && <PayOS hoaId={demoHoaId} />}
-          {view === "violations" && <Violations hoaId={demoHoaId} />}
-          {view === "arc"        && <ARCAgent hoaId={demoHoaId} />}
-          {view === "boardroom"  && <BoardRoom hoaId={demoHoaId} />}
-          {view === "votebox"    && <VoteBox hoaId={demoHoaId} />}
-          {view === "workorders" && <WorkOrders hoaId={demoHoaId} />}
-          {view === "amenity"    && <AmenityModule hoaId={demoHoaId} />}
-          {view === "commhub"    && <CommHub hoaId={demoHoaId} />}
-          {view === "permits"    && <PermitFeedView />}
-          {view === "livefeeds"  && <LiveFeeds />}
-          {view === "transition" && <TransitionMoat hoaId={demoHoaId} />}
-          {view === "compliance" && <ComplianceTimeline hoaId={demoHoaId} />}
-          {view === "marketplace" && <MarketplaceProofLoop hoaId={demoHoaId} demo />}
-          {view === "investor" && <InvestorProofDashboard hoaId={demoHoaId} demo />}
+      <div style={{ display: "flex", flex: 1, minWidth: 0 }}>
+        <Sidebar current={view} onNav={(next) => { if (next === "landing") onBack(); else setView(next); }} hoaName={hoaName ?? `${modeledDemoData.hoa.community} (Modeled)`} />
+        <main style={{ flex: 1, overflow: "auto", minWidth: 0, background: "var(--bg)" }}>
+          {view === "dashboard" ? <Dashboard hoaId={hoaId} onNav={setView} /> : <WorkspaceContent view={view} hoaId={hoaId} hoaZip={hoaZip} demo={demo} />}
         </main>
       </div>
     </div>
@@ -406,198 +259,92 @@ function BoardDemo({ onBack, initialView = "dashboard" }: { onBack: () => void; 
 
 function GatePassDemo({ onBack }: { onBack: () => void }) {
   const [persona, setPersona] = useState<DemoPersona>("select");
-
-  if (persona === "board")      return <BoardDemo onBack={() => setPersona("select")} />;
-  if (persona === "homeowner")  return <HomeownerPortal onBack={() => setPersona("select")} />;
+  if (persona === "board") return <BoardWorkspace demo onBack={() => setPersona("select")} />;
+  if (persona === "homeowner") return <HomeownerPortal onBack={() => setPersona("select")} />;
   if (persona === "contractor") return <ContractorPortal onBack={() => setPersona("select")} />;
-
   return <DemoSelector onSelect={setPersona} onBack={onBack} />;
 }
 
-function PermitFeedView() {
-  const { data: permits, isLoading } = useQuery({ queryKey: ["permits"], queryFn: () => rpc.getAustinPermits() });
-  return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", padding: 28 }}>
-      <div style={{ maxWidth: 760, margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <div>
-            <h2 style={{ fontFamily: T.fontSans, fontSize: 22, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.025em", marginBottom: 4 }}>Austin Permit Feed</h2>
-            <div style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)" }}>Citywide Austin permit activity from Austin Open Data.</div>
-          </div>
-          <Tag bg="rgba(90,158,122,0.12)" color="#7EC99A">Live · Open Data</Tag>
-        </div>
-        {isLoading && <div style={{ textAlign: "center", padding: 48, color: "var(--text-light)", fontFamily: T.fontSans }}>Loading permits…</div>}
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {(permits ?? []).map((p: { id: string; type: string; contractor: string; value: string | null; address: string; date: string | null; status: string }) => (
-            <Card key={p.id} className="card-hover" style={{ padding: "16px 20px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div>
-                  <div style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{p.type}</div>
-                  <div style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", marginTop: 2 }}>{p.contractor}</div>
-                </div>
-                {p.value && <div style={{ fontFamily: T.fontMono, fontSize: 12, fontWeight: 600, color: T.gold }}>{p.value}</div>}
-              </div>
-              <div style={{ display: "flex", gap: 12, marginTop: 10, paddingTop: 10, borderTop: `1px solid var(--border)`, flexWrap: "wrap" }}>
-                {p.address && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)" }}>📍 {p.address}</span>}
-                {p.date && <span style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)" }}>{p.date}</span>}
-                {p.status && <Tag>{p.status}</Tag>}
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── HOA OS Shell ─────────────────────────────────────────────────────
-function HOAOSShell({ hoaId, onExit }: { hoaId: string; onExit: () => void }) {
-  const [view, setView] = useState<OSView>("dashboard");
-  const { data: hoa } = useQuery({ queryKey: ["hoa", hoaId], queryFn: () => rpc.getHOA(hoaId) });
-  const hoaZip = (hoa as {zip?: string} | null)?.zip;
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "var(--bg)" }}>
-      <style>{GLOBAL_CSS}</style>
-      <MobileViewNav view={view} onChange={setView} />
-      <div style={{ display: "flex", flex: 1, minWidth: 0 }}>
-        <Sidebar current={view} onNav={(v) => { if (v === "landing") { onExit(); } else { setView(v); } }} hoaName={(hoa as {community?: string} | null)?.community} />
-        <main style={{ flex: 1, overflow: "auto", background: "var(--bg)", minWidth: 0 }}>
-          {view === "dashboard"   && <Dashboard hoaId={hoaId} onNav={setView} />}
-          {view === "homeowners"  && <Homeowners hoaId={hoaId} />}
-          {view === "payos"       && <PayOS hoaId={hoaId} />}
-          {view === "violations"  && <Violations hoaId={hoaId} />}
-          {view === "arc"         && <ARCAgent hoaId={hoaId} />}
-          {view === "boardroom"   && <BoardRoom hoaId={hoaId} />}
-          {view === "votebox"     && <VoteBox hoaId={hoaId} />}
-          {view === "workorders"  && <WorkOrders hoaId={hoaId} />}
-          {view === "amenity"     && <AmenityModule hoaId={hoaId} />}
-          {view === "commhub"     && <CommHub hoaId={hoaId} />}
-          {view === "permits"     && <PermitFeedView />}
-          {view === "livefeeds"   && <LiveFeeds hoaZip={hoaZip} />}
-          {view === "transition"  && <TransitionMoat hoaId={hoaId} />}
-          {view === "compliance"  && <ComplianceTimeline hoaId={hoaId} />}
-          {view === "marketplace" && <MarketplaceProofLoop hoaId={hoaId} />}
-          {view === "investor"    && <InvestorProofDashboard hoaId={hoaId} />}
-        </main>
-      </div>
-    </div>
-  );
-}
-
-// ─── HOA Selector (pick or demo) ──────────────────────────────────────
 function HOASelector({ onSelect, onPublic }: { onSelect: (id: string) => void; onPublic: () => void }) {
   const { data: hoas = [], isLoading } = useQuery({ queryKey: ["hoa-list"], queryFn: () => rpc.getHOAList() });
-
+  type HOAListItem = { id: string; community: string; units: number; paid: boolean; plan: string };
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <style>{GLOBAL_CSS}</style>
-      <div style={{ width: "100%", maxWidth: 480 }} className="anim-up">
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 40 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: T.forest, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          </div>
-          <span style={{ fontFamily: T.fontSans, fontSize: 16, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>GatePass OS</span>
-        </div>
-        <h2 style={{ fontFamily: T.fontSans, fontSize: 28, fontWeight: 700, color: "var(--text)", marginBottom: 8, letterSpacing: "-0.03em" }}>Select a Community</h2>
-        <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-light)", marginBottom: 28, fontWeight: 400 }}>Choose an enrolled HOA to open its dashboard.</p>
-        {isLoading && <div style={{ color: T.inkLight, fontFamily: T.fontSans }}>Loading...</div>}
-        {!isLoading && (hoas as {id:string;community:string;units:number;paid:boolean;plan:string;_count:{violations:number;workOrders:number}}[]).length === 0 && (
-          <EmptyState icon="🏘️" title="No HOAs enrolled yet" sub="Enroll your first community from the public site." />
-        )}
+      <main style={{ width: "100%", maxWidth: 480 }}>
+        <h1 style={{ fontFamily: T.fontSans, fontSize: 28, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>Select an association</h1>
+        <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "var(--text-light)", marginBottom: 28 }}>Open the association-owned workspace for an enrolled community.</p>
+        {isLoading && <div style={{ color: T.inkLight, fontFamily: T.fontSans }}>Loading…</div>}
+        {!isLoading && (hoas as HOAListItem[]).length === 0 && <EmptyState icon="🏘️" title="No associations enrolled yet" sub="Begin with an association workflow review." />}
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-          {(hoas as {id:string;community:string;units:number;paid:boolean;plan:string}[]).map(h => (
-            <Card key={h.id} className="card-hover" style={{ padding: "16px 20px", cursor: "pointer" }} onClick={() => onSelect(h.id)}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <div style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{h.community}</div>
-                  <div style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)", marginTop: 3 }}>{h.units} units · {h.plan}</div>
-                </div>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <Tag color={h.paid ? T.success : T.warn} bg={h.paid ? T.successPale : T.warnPale}>{h.paid ? "Active" : "Pending"}</Tag>
-                  <Icons.ArrowR />
-                </div>
-              </div>
+          {(hoas as HOAListItem[]).map((hoa) => (
+            <Card key={hoa.id} style={{ padding: "16px 20px", cursor: "pointer" }} onClick={() => onSelect(hoa.id)}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div><div style={{ fontFamily: T.fontSans, fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{hoa.community}</div><div style={{ fontFamily: T.fontMono, fontSize: 11, color: "var(--text-light)", marginTop: 3 }}>{hoa.units} units · {hoa.plan}</div></div><Tag color={hoa.paid ? T.success : T.warn} bg={hoa.paid ? T.successPale : T.warnPale}>{hoa.paid ? "Active" : "Pending"}</Tag></div>
             </Card>
           ))}
         </div>
-        <button onClick={onPublic} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)", background: "none", border: "none", cursor: "pointer", marginTop: 8 }}>
-          ← Back to public site
-        </button>
-      </div>
+        <button onClick={onPublic} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)", background: "none", border: "none", cursor: "pointer" }}>← Back to public site</button>
+      </main>
     </div>
   );
 }
 
-// ─── Route wrappers ───────────────────────────────────────────────────
-
 function OnboardRoute() {
   const navigate = useNavigate();
-  return <ErrorBoundary><HOAOnboarding onBack={() => navigate('/')} /></ErrorBoundary>;
+  return <ErrorBoundary><HOAOnboarding onBack={() => navigate("/")} /></ErrorBoundary>;
 }
 
 function ContractorRoute() {
   const navigate = useNavigate();
-  return <ErrorBoundary><ContractorWaitlist onBack={() => navigate('/')} /></ErrorBoundary>;
+  return <ErrorBoundary><ContractorWaitlist onBack={() => navigate("/")} /></ErrorBoundary>;
 }
 
 function DemoRoute() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  if (searchParams.get("view") === "transition") {
-    return <ErrorBoundary><BoardDemo initialView="transition" onBack={() => navigate('/demo')} /></ErrorBoundary>;
-  }
-  if (searchParams.get("view") === "marketplace") {
-    return <ErrorBoundary><BoardDemo initialView="marketplace" onBack={() => navigate('/demo')} /></ErrorBoundary>;
-  }
-  if (searchParams.get("view") === "investor") {
-    return <Navigate to="/investors#current-status" replace />;
-  }
-  if (searchParams.get("view") === "compliance") {
-    return <ErrorBoundary><BoardDemo initialView="compliance" onBack={() => navigate('/demo')} /></ErrorBoundary>;
-  }
-  return <ErrorBoundary><GatePassDemo onBack={() => navigate('/')} /></ErrorBoundary>;
+  const requested = searchParams.get("view");
+  if (requested === "transition") return <ErrorBoundary><BoardWorkspace demo initialView="transition" onBack={() => navigate("/demo")} /></ErrorBoundary>;
+  if (requested === "marketplace") return <ErrorBoundary><BoardWorkspace demo initialView="marketplace" onBack={() => navigate("/demo")} /></ErrorBoundary>;
+  if (requested === "compliance") return <ErrorBoundary><BoardWorkspace demo initialView="compliance" onBack={() => navigate("/demo")} /></ErrorBoundary>;
+  if (requested === "investor") return <Navigate to="/investors#current-status" replace />;
+  return <ErrorBoundary><GatePassDemo onBack={() => navigate("/")} /></ErrorBoundary>;
 }
 
 function TransitionDemoRoute() {
   const navigate = useNavigate();
-  return <ErrorBoundary><BoardDemo initialView="transition" onBack={() => navigate('/demo')} /></ErrorBoundary>;
+  return <ErrorBoundary><BoardWorkspace demo initialView="transition" onBack={() => navigate("/demo")} /></ErrorBoundary>;
 }
 
-function MarketplaceLoopRoute() {
+function PropertyWorkPathRoute() {
   return <ErrorBoundary><MarketplaceProofLoop hoaId={DEMO_HOA_ID} demo /></ErrorBoundary>;
 }
 
-function InvestorProofRoute() {
-  return <Navigate to="/investors#current-status" replace />;
-}
-
 const ROUTE_META: Record<string, { title: string; description: string; noindex?: boolean }> = {
-  "/": { title: "GatePass | HOA-Controlled Contractor Access", description: "GatePass is a contractor marketplace the HOA controls, built in Austin for association-approved contractor access." },
-  "/investors": { title: "GatePass Pre-Seed | HOA-Controlled Contractor Marketplace", description: "GatePass is raising $500,000 to finish the production system for HOA-controlled contractor access." },
-  "/pricing": { title: "GatePass Pricing | $20 Per Unit Per Year", description: "GatePass HOA software is $20 per unit per year. Core board tools are included and there is no setup fee." },
-  "/contractors": { title: "GatePass for Contractors | Apply for HOA Access", description: "Apply for founding contractor access through GatePass. Approval happens before payment and lead volume is not guaranteed." },
-  "/onboard": { title: "GatePass for HOA Boards", description: "Request an access review for your HOA board and show GatePass how contractor access works today." },
-  "/demo": { title: "GatePass Product Demo", description: "Explore a modeled GatePass demo with no production customer data.", noindex: true },
-  "/demo/transition": { title: "GatePass Association Records Demo", description: "Explore modeled association-owned records with no production customer data.", noindex: true },
-  "/demo/marketplace": { title: "GatePass Contractor Access Demo", description: "Explore a modeled HOA-approved contractor access flow with no production transaction data.", noindex: true },
-  "/marketplace-loop": { title: "GatePass Contractor Access Review", description: "Internal modeled review of the GatePass contractor access flow.", noindex: true },
-  "/investor-status": { title: "GatePass Investor Status", description: "GatePass current status and modeled product boundary.", noindex: true },
-  "/os": { title: "GatePass OS", description: "GatePass operating workspace.", noindex: true },
-  "/admin": { title: "GatePass Admin", description: "GatePass admin workspace.", noindex: true },
-  "/privacy": { title: "GatePass Privacy", description: "Privacy information for the GatePass prelaunch website and access-review forms." },
-  "/terms": { title: "GatePass Terms", description: "Terms for the GatePass prelaunch website, modeled demo, and access-review forms." },
+  "/": { title: "GatePass | Association-Owned Operating System for Property Work", description: "GatePass routes property work from an exterior signal to association permission, verified execution, and a permanent record." },
+  "/investors": { title: "GatePass Pre-Seed | Operating System for Governed Property Work", description: "GatePass is raising $500,000 to move its modeled association-owned property-work system into production." },
+  "/pricing": { title: "GatePass Pricing | $20 Per Unit Per Year", description: "GatePass association software is $20 per unit per year with no setup fee." },
+  "/contractors": { title: "GatePass for Contractors | Apply for Trusted Access", description: "Apply for founding contractor access. Approval happens before payment, and access does not guarantee leads or work." },
+  "/onboard": { title: "GatePass for Association Boards | Workflow Review", description: "Request a review of how exterior signals, permissions, contractor work, and records move through your association." },
+  "/demo": { title: "GatePass Modeled Product Demo", description: "Explore a modeled GatePass demo with no production customer or transaction data.", noindex: true },
+  "/demo/transition": { title: "GatePass Association Records Demo", description: "Explore modeled association-owned records.", noindex: true },
+  "/demo/marketplace": { title: "GatePass Property Work Path Demo", description: "Explore the modeled path from exterior signal to permanent association record.", noindex: true },
+  "/marketplace-loop": { title: "GatePass Property Work Path", description: "Internal modeled review of the GatePass property-work sequence.", noindex: true },
+  "/investor-status": { title: "GatePass Investor Status", description: "GatePass current status and modeled-product boundary.", noindex: true },
+  "/os": { title: "GatePass Association Workspace", description: "GatePass association-owned operating workspace.", noindex: true },
+  "/admin": { title: "GatePass Admin", description: "GatePass administrative workspace.", noindex: true },
+  "/privacy": { title: "GatePass Privacy", description: "Privacy information for the GatePass prelaunch website and workflow-review forms." },
+  "/terms": { title: "GatePass Terms", description: "Terms for the GatePass prelaunch website, modeled demo, and workflow-review forms." },
 };
 
 function RouteMetadata() {
   const location = useLocation();
   React.useEffect(() => {
-    const meta = ROUTE_META[location.pathname] || ROUTE_META["/"];
+    const meta = ROUTE_META[location.pathname] ?? ROUTE_META["/"];
     const canonicalUrl = `https://www.gatepasshoa.com${location.pathname === "/" ? "" : location.pathname}`;
     document.title = meta.title;
-    const setMeta = (selector: string, attr: "content" | "href", value: string) => {
-      const el = document.head.querySelector(selector);
-      if (el) el.setAttribute(attr, value);
+    const setMeta = (selector: string, attribute: "content" | "href", value: string) => {
+      const element = document.head.querySelector(selector);
+      if (element) element.setAttribute(attribute, value);
     };
     setMeta('meta[name="description"]', "content", meta.description);
     setMeta('meta[property="og:title"]', "content", meta.title);
@@ -611,92 +358,60 @@ function RouteMetadata() {
   return null;
 }
 
-function NotFound() {
-  return (
-    <div className="min-h-screen bg-[#0a130d] text-white">
-      <div className="min-h-screen flex items-center justify-center px-6 text-center">
-        <div className="max-w-lg">
-          <p className="text-xs text-[#B8883A] tracking-[0.25em] uppercase">404</p>
-          <h1 className="gp-display text-5xl md:text-6xl mt-5">Page not found.</h1>
-          <p className="text-white/55 mt-5 leading-relaxed">That GatePass page does not exist. Return to the public site or open the modeled demo.</p>
-          <div className="flex flex-col sm:flex-row justify-center gap-3 mt-8">
-            <a href="/" className="inline-flex justify-center text-sm font-semibold text-[#0d1a12] bg-[#B8883A] hover:bg-[#c99840] px-7 py-3.5 rounded-full">Go home</a>
-            <a href="/demo" className="inline-flex justify-center text-sm text-white/70 border border-white/20 hover:border-white/40 px-7 py-3.5 rounded-full">Open demo</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function OSRoute() {
   const auth = useAuth({ required: false });
   const navigate = useNavigate();
-  const [activeHoaId, setActiveHoaId] = React.useState<string | null>(null);
-  const [osView, setOsView] = React.useState<'select' | 'shell'>('select');
-
-  if (auth.status !== 'authenticated') {
-    return (
-      <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <style>{GLOBAL_CSS}</style>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: T.fontSans, fontSize: 20, color: 'var(--text)', marginBottom: 16 }}>Sign in to access GatePass OS</div>
-          <Btn onClick={() => auth.signIn()}>Sign In</Btn>
-        </div>
-      </div>
-    );
+  const [activeHoaId, setActiveHoaId] = useState<string | null>(null);
+  const { data: activeHoa } = useQuery({ queryKey: ["active-hoa", activeHoaId], queryFn: () => activeHoaId ? rpc.getHOA(activeHoaId) : null, enabled: Boolean(activeHoaId) });
+  if (auth.status !== "authenticated") {
+    return <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}><style>{GLOBAL_CSS}</style><div style={{ textAlign: "center" }}><div style={{ fontFamily: T.fontSans, fontSize: 20, color: "var(--text)", marginBottom: 16 }}>Sign in to access the GatePass association workspace</div><Btn onClick={() => auth.signIn()}>Sign In</Btn></div></div>;
   }
-
-  if (osView === 'shell' && activeHoaId) {
-    return <HOAOSShell hoaId={activeHoaId} onExit={() => setOsView('select')} />;
+  if (activeHoaId) {
+    const hoa = activeHoa as { community?: string; zip?: string } | null;
+    return <BoardWorkspace hoaId={activeHoaId} hoaName={hoa?.community} hoaZip={hoa?.zip} onBack={() => setActiveHoaId(null)} />;
   }
-
-  return (
-    <HOASelector
-      onSelect={(id) => { setActiveHoaId(id); setOsView('shell'); }}
-      onPublic={() => navigate('/')}
-    />
-  );
+  return <HOASelector onSelect={setActiveHoaId} onPublic={() => navigate("/")} />;
 }
 
 function AdminRoute() {
   const auth = useAuth({ required: false });
-  if (auth.status !== 'authenticated') {
-    return (
-      <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <style>{GLOBAL_CSS}</style>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: T.fontSans, fontSize: 20, color: 'var(--text)', marginBottom: 16 }}>Sign in to access GatePass Admin</div>
-          <Btn onClick={() => auth.signIn()}>Sign In</Btn>
-        </div>
-      </div>
-    );
+  if (auth.status !== "authenticated") {
+    return <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center" }}><style>{GLOBAL_CSS}</style><div style={{ textAlign: "center" }}><div style={{ fontFamily: T.fontSans, fontSize: 20, color: "var(--text)", marginBottom: 16 }}>Sign in to access GatePass Admin</div><Btn onClick={() => auth.signIn()}>Sign In</Btn></div></div>;
   }
   return <ErrorBoundary><AdminConsole /></ErrorBoundary>;
 }
 
-// ─── App ──────────────────────────────────────────────────────────────
+function NotFound() {
+  return (
+    <div className="min-h-screen bg-[#0a130d] text-white">
+      <main className="min-h-screen flex items-center justify-center px-6 text-center">
+        <div className="max-w-lg"><p className="text-xs text-[#B8883A] tracking-[0.25em] uppercase">404</p><h1 className="gp-display text-5xl md:text-6xl mt-5">Page not found.</h1><p className="text-white/55 mt-5 leading-relaxed">Return to GatePass or open the modeled demo.</p><div className="flex flex-col sm:flex-row justify-center gap-3 mt-8"><a href="/" className="inline-flex justify-center text-sm font-semibold text-[#0d1a12] bg-[#B8883A] px-7 py-3.5 rounded-full">Go home</a><a href="/demo" className="inline-flex justify-center text-sm text-white/70 border border-white/20 px-7 py-3.5 rounded-full">Open demo</a></div></div>
+      </main>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <>
-    <RouteMetadata />
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/onboard" element={<OnboardRoute />} />
-      <Route path="/contractors" element={<ContractorRoute />} />
-      <Route path="/demo" element={<DemoRoute />} />
-      <Route path="/demo/transition" element={<TransitionDemoRoute />} />
-      <Route path="/demo/marketplace" element={<MarketplaceLoopRoute />} />
-      <Route path="/marketplace-loop" element={<MarketplaceLoopRoute />} />
-      <Route path="/investor-status" element={<InvestorProofRoute />} />
-      <Route path="/os" element={<OSRoute />} />
-      <Route path="/admin" element={<AdminRoute />} />
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/investors" element={<Investors />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/terms" element={<Terms />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+      <RouteMetadata />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/onboard" element={<OnboardRoute />} />
+        <Route path="/contractors" element={<ContractorRoute />} />
+        <Route path="/demo" element={<DemoRoute />} />
+        <Route path="/demo/transition" element={<TransitionDemoRoute />} />
+        <Route path="/demo/marketplace" element={<PropertyWorkPathRoute />} />
+        <Route path="/marketplace-loop" element={<PropertyWorkPathRoute />} />
+        <Route path="/investor-status" element={<Navigate to="/investors#current-status" replace />} />
+        <Route path="/os" element={<OSRoute />} />
+        <Route path="/admin" element={<AdminRoute />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/investors" element={<Investors />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </>
   );
 }
