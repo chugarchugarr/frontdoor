@@ -19,6 +19,34 @@ type MarketplaceDashboard = {
   proofLoop: { label: string; detail: string; value?: string }[];
 };
 
+const doctrineLoop = [
+  {
+    label: "Exterior signal",
+    detail: "A lawfully visible condition or a homeowner- or association-supplied observation enters as a signal, not a diagnosis or authorization.",
+    value: "Observed",
+  },
+  {
+    label: "Association permission",
+    detail: "The association applies community rules and approvals. The homeowner keeps contractor choice.",
+    value: "Governed",
+  },
+  {
+    label: "Trusted contractor access",
+    detail: "An approved contractor may respond through the community channel. Payment does not buy approval, ranking, a lead, or guaranteed work.",
+    value: "Approved",
+  },
+  {
+    label: "Verified execution",
+    detail: "Credentials, applicable licenses, insurance, scope, approvals, and completion evidence remain attached to the work.",
+    value: "Documented",
+  },
+  {
+    label: "Permanent association record",
+    detail: "The association keeps the workflow history and can export it when managers, vendors, or board members change.",
+    value: "Owned",
+  },
+];
+
 function LoopNode({ index, label, detail, value }: { index: number; label: string; detail: string; value?: string }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "34px 1fr", gap: 12, alignItems: "start" }}>
@@ -55,7 +83,6 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
           .gp-market-main { grid-template-columns: 1fr !important; gap: 14px !important; }
           .gp-card-title-row { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
           .gp-card-title-row button { width: 100% !important; min-height: 44px !important; justify-content: center !important; }
-          .gp-money-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
           .gp-loop-node-head { flex-direction: column !important; }
           .gp-loop-node-head > span { align-self: flex-start !important; }
         }
@@ -65,22 +92,22 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
       `}</style>
       <div style={{ maxWidth: 1180, margin: "0 auto" }}>
         <SectionHeader
-        title="Contractor Access Flow"
-          sub="Modeled demo of how contractor access works: an HOA-approved issue can become a quote and a record."
+          title="Property Work Path"
+          sub="Modeled demo of the GatePass sequence: exterior signal → association permission → verified execution → permanent record."
           action={<Tag color={T.gold} bg={T.goldLight}>{dashboard?.demo || demo ? "Demo data" : "Live records"}</Tag>}
         />
 
-        {isLoading && <Card style={{ padding: 28, color: "var(--text-light)", fontFamily: T.fontSans }}>Loading marketplace loop…</Card>}
+        {isLoading && <Card style={{ padding: 28, color: "var(--text-light)", fontFamily: T.fontSans }}>Loading property work path…</Card>}
 
         {dashboard && (
           <>
             <div className="gp-market-stats" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 22 }}>
               {[
+                ["Exterior work paths", dashboard.jobs.length],
+                ["Contractor responses", dashboard.quotes.length],
+                ["Documented completions", dashboard.transactions.length],
+                ["Permanent records", dashboard.complianceRecords.length],
                 ["Access categories", dashboard.slots.length],
-                ["Marketplace jobs", dashboard.jobs.length],
-                ["Quotes", dashboard.quotes.length],
-                ["Transactions", dashboard.transactions.length],
-                ["Modeled ledger", dashboard.demo ? "Placeholder" : fmtMoney(dashboard.credits.reduce((s, c) => s + c.amountCents, 0))],
               ].map(([label, value]) => (
                 <Card key={label} style={{ padding: 18 }}>
                   <Label>{label}</Label>
@@ -93,33 +120,20 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
               <Card style={{ padding: 22 }}>
                 <div className="gp-card-title-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
                   <div>
-                    <Label>Atomic transaction</Label>
-                    <h3 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>HOA-approved issue → contractor → modeled fee path → association record</h3>
+                    <Label>Controlling sequence</Label>
+                    <h3 style={{ fontFamily: T.fontSans, fontSize: 20, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>Signal → permission → trusted access → execution → record</h3>
                   </div>
-            <Btn variant="ghost" onClick={() => window.location.href = "/investors#current-status"}>Investor status</Btn>
+                  <Btn variant="ghost" onClick={() => window.location.href = "/investors#current-status"}>Current status</Btn>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  {dashboard.proofLoop.map((node, index) => <LoopNode key={node.label} index={index} {...node} />)}
+                  {doctrineLoop.map((node, index) => <LoopNode key={node.label} index={index} {...node} />)}
                 </div>
               </Card>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <Card style={{ padding: 20 }}>
-                  <Label>{dashboard.demo ? "Modeled economics" : "Transaction economics"}</Label>
-                  {dashboard.transactions.map((tx) => (
-                    <div key={tx.id} style={{ display: "grid", gap: 10 }}>
-                      <div style={{ fontFamily: T.fontSans, fontSize: 15, fontWeight: 700, color: "var(--text)" }}>{tx.contractor}</div>
-                      <div className="gp-money-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-                        <div><Label>Gross job</Label><strong>{fmtMoney(tx.grossAmountCents)}</strong></div>
-                        <div><Label>GatePass fee</Label><strong>{fmtMoney(tx.gatepassFeeCents)}</strong></div>
-                        <div><Label>Community / homeowner share</Label><strong>{tx.hoaShareCents > 0 ? fmtMoney(tx.hoaShareCents) : "Structure pending"}</strong></div>
-                      </div>
-                    </div>
-                  ))}
-                </Card>
-
-                <Card style={{ padding: 20 }}>
-                  <Label>Contractor access categories</Label>
+                  <Label>Trusted contractor access</Label>
+                  <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.55, margin: "0 0 14px" }}>Contractors apply before payment. Each association decides who may enter its approved channel.</p>
                   <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
                     {dashboard.slots.map((slot) => (
                       <div key={slot.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, paddingBottom: 9, borderBottom: "1px solid var(--border)" }}>
@@ -134,10 +148,16 @@ export function MarketplaceProofLoop({ hoaId = DEMO_HOA_ID, demo = false }: { ho
                 </Card>
 
                 <Card style={{ padding: 20 }}>
-                  <Label>Compliance record generated</Label>
+                  <Label>Association control</Label>
+                  <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.55, margin: 0 }}>The association applies its rules, controls the approved channel, owns the workflow history, and keeps the export. A management company may operate inside the system without owning it.</p>
+                </Card>
+
+                <Card style={{ padding: 20 }}>
+                  <Label>Permanent records generated</Label>
                   {dashboard.complianceRecords.map((record) => (
-                    <p key={record.id} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.55, margin: 0 }}>{record.summary}</p>
+                    <p key={record.id} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.55, margin: "0 0 8px" }}>{record.summary}</p>
                   ))}
+                  {dashboard.complianceRecords.length === 0 && <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-light)", lineHeight: 1.55, margin: 0 }}>No modeled records yet.</p>}
                 </Card>
               </div>
             </div>
