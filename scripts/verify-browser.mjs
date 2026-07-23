@@ -53,7 +53,7 @@ try {
   await page.getByText("The operating system for governed property work.", { exact: false }).waitFor();
 
   await open("/pricing", "The association-owned operating system is $20 per unit per year.");
-  await page.getByRole("link", { name: /Request a workflow review/i }).click();
+  await page.getByRole("main").getByRole("link", { name: /Request a workflow review/i }).click();
   await page.waitForURL(/\/onboard$/);
 
   const boardSubmit = page.getByRole("button", { name: /Request a workflow review/i });
