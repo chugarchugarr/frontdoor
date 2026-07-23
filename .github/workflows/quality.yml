@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,22 +13,24 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     env:
       PORT: "3000"
       VITE_APP_ID: "gatepass-ci"
-      VITE_BASE_URL: "http://localhost:3000"
-      VITE_ROOT_URL: "http://localhost:5173"
+      VITE_BASE_URL: "http://127.0.0.1:3000"
+      VITE_ROOT_URL: "http://127.0.0.1:4173"
       VITE_NODE_ENV: "test"
       VITE_BOX_ID: "gatepass-ci"
       VITE_REALTIME_DOMAIN: "localhost"
-      GUEST_SERVICES_URL: "http://localhost"
-      DB_FILE_NAME: "file:development.db"
-      QUEUE_DB_FILE_NAME: "development-queue.db"
-      ERRORS_DB_FILE_NAME: "errors.db"
+      GUEST_SERVICES_URL: "http://127.0.0.1"
+      DB_FILE_NAME: "file:ci.db"
+      QUEUE_DB_FILE_NAME: "ci-queue.db"
+      ERRORS_DB_FILE_NAME: "ci-errors.db"
       API_KEY: "ci-placeholder"
       STRIPE_SECRET_KEY: "sk_test_ci_placeholder"
       RESEND_API_KEY: "re_ci_placeholder"
+      GATEPASS_BASE_URL: "http://127.0.0.1:4173"
+      GATEPASS_ARTIFACT_DIR: "test-artifacts"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -36,10 +39,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
 
       - name: Install dependencies
         run: npm install
+
+      - name: Write isolated production environment
+        shell: bash
+        run: |
+          cat > .env.production <<'EOF'
+          PORT=3000
+          VITE_APP_ID=gatepass-ci
+          VITE_BASE_URL=http://127.0.0.1:3000
+          VITE_ROOT_URL=http://127.0.0.1:4173
+          VITE_NODE_ENV=test
+          VITE_BOX_ID=gatepass-ci
+          VITE_REALTIME_DOMAIN=localhost
+          GUEST_SERVICES_URL=http://127.0.0.1
+          DB_FILE_NAME=file:ci.db
+          QUEUE_DB_FILE_NAME=ci-queue.db
+          ERRORS_DB_FILE_NAME=ci-errors.db
+          API_KEY=ci-placeholder
+          STRIPE_SECRET_KEY=sk_test_ci_placeholder
+          RESEND_API_KEY=re_ci_placeholder
+          EOF
 
       - name: Type and configuration check
         run: npm run check
@@ -47,5 +69,115 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Build frontend and API bundles
-        run: npm run prod:build:vite
+      - name: Full production build
+        run: npm run prod:build
+
+      - name: Scan public source and build output for retired language
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          const roots = ['src', 'public', 'dist', 'index.html'];
+          const allowedExtensions = new Set(['.js', '.jsx', '.ts', '.tsx', '.html', '.css', '.txt', '.xml']);
+          const banned = [
+            /\bProblem\b/i,
+            /\bSolution\b/i,
+            /\bWhy Now\b/i,
+            /\bWedge\b/i,
+            /\bMoat\b/i,
+            /\bTraction\b/i,
+            /\bProof\b/i,
+            /\bUse of Funds\b/i,
+            /\bSoftware wedge\b/i,
+            /\bMarketplace business\b/i,
+            /\bTransition-memory moat\b/i,
+            /\bCompliance memory\b/i,
+            /\bTransition memory\b/i,
+            /\bBoard-safe\b/i,
+            /\bMoat signal\b/i,
+            /\bFlywheel\b/i,
+            /\bdefensible memory record\b/i,
+            /\bHome Show\b/i,
+            /\bLOI\b/i,
+          ];
+
+          const files = [];
+          function walk(target) {
+            if (!fs.existsSync(target)) return;
+            const stat = fs.statSync(target);
+            if (stat.isDirectory()) {
+              for (const entry of fs.readdirSync(target)) walk(path.join(target, entry));
+              return;
+            }
+            if (target.endsWith('.map')) return;
+            if (allowedExtensions.has(path.extname(target))) files.push(target);
+          }
+          roots.forEach(walk);
+
+          const hits = [];
+          for (const file of files) {
+            const lines = fs.readFileSync(file, 'utf8').split(/\r?\n/);
+            lines.forEach((line, index) => {
+              for (const pattern of banned) {
+                if (pattern.test(line)) hits.push(`${file}:${index + 1}: ${pattern} :: ${line.trim().slice(0, 220)}`);
+              }
+            });
+          }
+
+          if (hits.length) {
+            console.error('Retired public language found:\n' + hits.join('\n'));
+            process.exit(1);
+          }
+          console.log(`Retired-language scan passed across ${files.length} source/build files.`);
+          NODE
+
+      - name: Install Chromium for browser verification
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start production bundles
+        shell: bash
+        run: |
+          mkdir -p test-artifacts
+          npm run prod > test-artifacts/server.log 2>&1 &
+          echo $! > test-artifacts/server.pid
+
+      - name: Wait for frontend and API
+        shell: bash
+        run: |
+          for port in 3000 4173; do
+            ready=0
+            for attempt in $(seq 1 90); do
+              if (echo > "/dev/tcp/127.0.0.1/${port}") >/dev/null 2>&1; then
+                ready=1
+                break
+              fi
+              sleep 1
+            done
+            if [ "$ready" -ne 1 ]; then
+              echo "Port ${port} did not become ready"
+              cat test-artifacts/server.log
+              exit 1
+            fi
+          done
+
+      - name: Browser-test public routes, forms, CTAs, and board demo
+        run: node scripts/verify-browser.mjs
+
+      - name: Stop test server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f test-artifacts/server.pid ]; then kill "$(cat test-artifacts/server.pid)" 2>/dev/null || true; fi
+          pkill -f "vite preview|nodemon dist/api/server.js|npm run prod" 2>/dev/null || true
+
+      - name: Upload browser evidence and server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gatepass-verification
+          path: test-artifacts
+          if-no-files-found: warn
