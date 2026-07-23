@@ -12,8 +12,18 @@ const page = await context.newPage();
 const browserErrors = [];
 
 page.on("pageerror", (error) => browserErrors.push(`pageerror: ${error.message}`));
+page.on("response", (response) => {
+  if (response.status() >= 500) browserErrors.push(`http ${response.status()}: ${response.url()}`);
+});
+page.on("requestfailed", (request) => {
+  browserErrors.push(`request failed: ${request.method()} ${request.url()} — ${request.failure()?.errorText ?? "unknown error"}`);
+});
 page.on("console", (message) => {
-  if (message.type() === "error") browserErrors.push(`console: ${message.text()}`);
+  if (message.type() !== "error") return;
+  const location = message.location();
+  const suffix = location.url ? ` @ ${location.url}:${location.lineNumber ?? 0}` : "";
+  const text = message.text();
+  if (!text.includes("Failed to load resource")) browserErrors.push(`console: ${text}${suffix}`);
 });
 
 async function open(path, expectedText) {
@@ -85,6 +95,7 @@ try {
   await open("/demo", "Choose your perspective");
   await page.getByRole("button", { name: /Board Member/i }).click();
   await page.getByText("MODELED DEMO — NO PRODUCTION CUSTOMER OR TRANSACTION DATA", { exact: true }).waitFor({ timeout: 15000 });
+  await page.waitForLoadState("networkidle");
   await page.screenshot({ path: `${artifactDir}/board-demo-desktop.png`, fullPage: true });
 
   await page.setViewportSize({ width: 390, height: 844 });
@@ -93,14 +104,14 @@ try {
   const moduleValues = await mobileNav.locator("option").evaluateAll((options) => options.map((option) => option.value));
   for (const moduleValue of moduleValues) {
     await mobileNav.selectOption(moduleValue);
-    await page.waitForTimeout(350);
+    await page.waitForLoadState("networkidle");
     const body = await page.locator("body").innerText();
     assert(!body.includes("Something went wrong"), `Board demo module ${moduleValue} rendered an application error`);
   }
   await page.screenshot({ path: `${artifactDir}/board-demo-mobile.png`, fullPage: true });
 
   if (browserErrors.length) {
-    throw new Error(`Browser console/runtime errors:\n${browserErrors.join("\n")}`);
+    throw new Error(`Browser console/runtime errors:\n${[...new Set(browserErrors)].join("\n")}`);
   }
 
   console.log(`GatePass browser verification passed for ${publicRoutes.length} public routes, both forms, primary CTAs, and ${moduleValues.length} board-demo views.`);
