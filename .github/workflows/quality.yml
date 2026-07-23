@@ -19,8 +19,8 @@ jobs:
       PORT: "3000"
       VITE_APP_ID: "gatepass-ci"
       VITE_BASE_URL: "http://127.0.0.1:3000"
-      VITE_ROOT_URL: "http://127.0.0.1:4173"
-      VITE_NODE_ENV: "test"
+      VITE_ROOT_URL: "http://127.0.0.1:3000"
+      VITE_NODE_ENV: "production"
       VITE_BOX_ID: "gatepass-ci"
       VITE_REALTIME_DOMAIN: "localhost"
       GUEST_SERVICES_URL: "http://127.0.0.1"
@@ -30,7 +30,7 @@ jobs:
       API_KEY: "ci-placeholder"
       STRIPE_SECRET_KEY: "sk_test_ci_placeholder"
       RESEND_API_KEY: "re_ci_placeholder"
-      GATEPASS_BASE_URL: "http://127.0.0.1:4173"
+      GATEPASS_BASE_URL: "http://127.0.0.1:3000"
       GATEPASS_ARTIFACT_DIR: "test-artifacts"
     steps:
       - name: Check out repository
@@ -56,8 +56,8 @@ jobs:
           PORT=3000
           VITE_APP_ID=gatepass-ci
           VITE_BASE_URL=http://127.0.0.1:3000
-          VITE_ROOT_URL=http://127.0.0.1:4173
-          VITE_NODE_ENV=test
+          VITE_ROOT_URL=http://127.0.0.1:3000
+          VITE_NODE_ENV=production
           VITE_BOX_ID=gatepass-ci
           VITE_REALTIME_DOMAIN=localhost
           GUEST_SERVICES_URL=http://127.0.0.1
@@ -165,7 +165,7 @@ jobs:
       - name: Wait for frontend and API
         shell: bash
         run: |
-          for port in 3000 4173; do
+          for port in 3000 3001; do
             ready=0
             for attempt in $(seq 1 90); do
               if (echo > "/dev/tcp/127.0.0.1/${port}") >/dev/null 2>&1; then
