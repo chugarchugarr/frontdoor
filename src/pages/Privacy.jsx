@@ -11,18 +11,26 @@ export default function Privacy() {
         <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-8">Privacy Policy</h1>
         <p className="text-sm text-white/40 mb-12">Last updated: July 2026</p>
         <div className="space-y-8 text-white/60 text-base leading-relaxed">
-          <p>GatePass is currently a prelaunch website and modeled product demo. This policy describes the information the website collects today.</p>
+          <p>GatePass is currently a prelaunch website and modeled product demo. This policy describes the information the website collects today. Production data practices will be documented before live association workflows begin.</p>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">What we collect today</h2>
-            <p>When you submit an HOA access review or contractor application, we collect the contact and organization details you provide, such as name, email, phone number, company or community name, ZIP code, trade category, role, unit count, management setup, and notes about what you need help with.</p>
+            <p>When you submit an association workflow review or contractor application, we collect the contact and organization details you provide, such as name, email, phone number, company or community name, ZIP code, trade category, role, unit count, management setup, and notes about what you need help with.</p>
           </div>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">How we use it</h2>
             <p>We use submitted information to review fit, respond to requests, and prepare potential onboarding conversations. GatePass does not sell submitted contact information.</p>
           </div>
           <div>
+            <h2 className="text-white font-semibold text-lg mb-3">Association control</h2>
+            <p>GatePass is designed so associations retain control of the workflow data and records created for their communities. Production access, retention, export, deletion, and vendor terms will be defined in the applicable written agreement before live deployment.</p>
+          </div>
+          <div>
+            <h2 className="text-white font-semibold text-lg mb-3">Property and contractor records</h2>
+            <p>The current public website does not operate a live property-condition registry or production contractor-performance system. Before those workflows launch, GatePass will publish the applicable collection, access, retention, correction, and deletion rules.</p>
+          </div>
+          <div>
             <h2 className="text-white font-semibold text-lg mb-3">Modeled demo data</h2>
-            <p>The public demo uses modeled sample data. It is not production customer data and should not be treated as live HOA, resident, or contractor activity.</p>
+            <p>The public demo uses modeled sample data. It is not production customer data and should not be treated as live association, resident, property, contractor, or transaction activity.</p>
           </div>
           <div>
             <h2 className="text-white font-semibold text-lg mb-3">Contact</h2>
