@@ -5,9 +5,8 @@ import { T, GLOBAL_CSS } from "./tokens";
 import { Btn, Card, Label, SectionHeader, Tag } from "./ui-kit";
 
 const DEMO_HOA_ID = "cmprlyrux00005etlni6qod8x";
-const fmtMoney = (cents: number) => `$${Math.round(cents / 100).toLocaleString()}`;
 
-type ProofMetrics = {
+type InvestorMetrics = {
   demo: boolean;
   headline: string;
   metrics: Record<string, number>;
@@ -17,8 +16,16 @@ type ProofMetrics = {
   caution: string[];
 };
 
+const doctrineChecks = [
+  "Exterior signal enters as an observation, not a diagnosis or authorization.",
+  "The association applies its rules and permissions; the homeowner keeps contractor choice.",
+  "Contractor payment does not buy approval, ranking, a lead, or guaranteed work.",
+  "Credentials, scope, approvals, and completion evidence remain attached to the work.",
+  "The association owns the workflow history and export.",
+];
+
 export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { hoaId?: string; demo?: boolean }) {
-  const { data, isLoading } = useQuery<ProofMetrics>({
+  const { data, isLoading } = useQuery<InvestorMetrics>({
     queryKey: ["investor-status", hoaId, demo],
     queryFn: () => rpc.getInvestorProofMetrics({ hoaId, demo }),
   });
@@ -32,7 +39,6 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
           .gp-investor-hero h2 { font-size: 30px !important; line-height: .96 !important; }
           .gp-investor-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
           .gp-investor-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
-          .gp-investor-money { grid-template-columns: 1fr !important; }
           .gp-investor-check-row { align-items: flex-start !important; }
           .gp-investor-actions { flex-direction: column !important; }
           .gp-investor-actions button { width: 100% !important; min-height: 44px !important; justify-content: center !important; }
@@ -43,19 +49,19 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
       `}</style>
       <div style={{ maxWidth: 1160, margin: "0 auto" }}>
         <SectionHeader
-        title="Investor Status Dashboard"
-        sub="One screen for the $500K SAFE / $6M post-money question: what exists, what is demo-only, and what the first paid pilot must finish."
+          title="Investor Status Dashboard"
+          sub="Internal review of what exists, what is modeled, and what the first paid association must complete."
           action={<Tag color={T.gold} bg={T.goldLight}>{data?.demo || demo ? "Demo + real boundary" : "Live records"}</Tag>}
         />
 
-      {isLoading && <Card style={{ padding: 28, color: "var(--text-light)", fontFamily: T.fontSans }}>Loading investor status…</Card>}
+        {isLoading && <Card style={{ padding: 28, color: "var(--text-light)", fontFamily: T.fontSans }}>Loading investor status…</Card>}
 
         {data && (
           <>
             <Card className="gp-investor-hero" style={{ padding: 26, marginBottom: 18, background: T.ink, color: T.white }}>
-              <Label style={{ color: "rgba(255,255,255,0.45)" }}>Core investor line</Label>
-              <h2 style={{ fontFamily: T.fontSans, fontSize: "clamp(28px, 4vw, 44px)", lineHeight: 1, letterSpacing: "-0.055em", marginBottom: 10 }}>{data.headline}</h2>
-              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "rgba(255,255,255,0.58)", lineHeight: 1.65, maxWidth: 740 }}>GatePass opens HOA-approved contractor access so real work can become exportable association records. This screen is modeled only.</p>
+              <Label style={{ color: "rgba(255,255,255,0.45)" }}>Controlling doctrine</Label>
+              <h2 style={{ fontFamily: T.fontSans, fontSize: "clamp(28px, 4vw, 44px)", lineHeight: 1, letterSpacing: "-0.055em", marginBottom: 10 }}>Exterior signal → permission → verified execution → permanent record.</h2>
+              <p style={{ fontFamily: T.fontSans, fontSize: 14, color: "rgba(255,255,255,0.58)", lineHeight: 1.65, maxWidth: 820 }}>GatePass is the association-owned operating system for governed property work. Contractors pay for trusted access; associations retain control of the workflow and data. This screen is modeled only.</p>
             </Card>
 
             <div className="gp-investor-stats" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12, marginBottom: 18 }}>
@@ -69,17 +75,16 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
 
             <div className="gp-investor-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, alignItems: "start" }}>
               <Card style={{ padding: 22 }}>
-                <Label>Marketplace economics demo</Label>
-                <div className="gp-investor-money" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginTop: 14 }}>
-                  <div><Label>Demo GMV</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.demoGmvCents)}</strong></div>
-                  <div><Label>GatePass fee</Label><strong style={{ fontSize: 24 }}>{fmtMoney(data.money.gatepassFeeCents)}</strong></div>
-                  <div><Label>Community / homeowner share</Label><strong style={{ fontSize: 24 }}>{data.money.hoaCreditsCents > 0 ? fmtMoney(data.money.hoaCreditsCents) : "Pending"}</strong></div>
+                <Label>Doctrine integrity</Label>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
+                  {doctrineChecks.map((item) => (
+                    <div key={item} style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.5, paddingBottom: 10, borderBottom: "1px solid var(--border)" }}>{item}</div>
+                  ))}
                 </div>
-                <p style={{ fontFamily: T.fontSans, fontSize: 12, color: "var(--text-light)", lineHeight: 1.55, marginTop: 14 }}>These are modeled economics until real contractor transactions are processed. The community or homeowner share remains unset until legal and payment approval.</p>
               </Card>
 
               <Card style={{ padding: 22 }}>
-                <Label>First paid pilot checklist</Label>
+                <Label>First paid association checklist</Label>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {data.checklist.map((item) => (
                     <div className="gp-investor-check-row" key={item.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
@@ -93,7 +98,7 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
 
             <div className="gp-investor-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginTop: 18 }}>
               <Card style={{ padding: 22 }}>
-            <Label>Review routes</Label>
+                <Label>Review routes</Label>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {data.proofLinks.map((link) => (
                     <button key={link.href} onClick={() => window.location.href = link.href} style={{ textAlign: "left", background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: 12, padding: 14, cursor: "pointer" }}>
@@ -114,9 +119,14 @@ export function InvestorProofDashboard({ hoaId = DEMO_HOA_ID, demo = false }: { 
               </Card>
             </div>
 
+            <Card style={{ padding: 22, marginTop: 18 }}>
+              <Label>Economics boundary</Label>
+              <p style={{ fontFamily: T.fontSans, fontSize: 13, color: "var(--text-mid)", lineHeight: 1.55, margin: 0 }}>HOA software is displayed at $20 per unit per year. Founding contractor access is $99 once, after approval. Any future association or homeowner economic benefit remains counsel-gated and is not part of the current doctrine or public promise.</p>
+            </Card>
+
             <div className="gp-investor-actions" style={{ display: "flex", gap: 10, marginTop: 18 }}>
-              <Btn variant="gold" onClick={() => window.location.href = "/marketplace-loop"}>View marketplace loop</Btn>
-              <Btn variant="ghost" onClick={() => window.location.href = "/demo?view=transition"}>View transition graph</Btn>
+              <Btn variant="gold" onClick={() => window.location.href = "/marketplace-loop"}>View property work path</Btn>
+              <Btn variant="ghost" onClick={() => window.location.href = "/demo?view=transition"}>View association record</Btn>
             </div>
           </>
         )}
