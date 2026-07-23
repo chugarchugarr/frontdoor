@@ -13,7 +13,7 @@ const browserErrors = [];
 
 page.on("pageerror", (error) => browserErrors.push(`pageerror: ${error.message}`));
 page.on("response", (response) => {
-  if (response.status() >= 500) browserErrors.push(`http ${response.status()}: ${response.url()}`);
+  if (response.status() >= 500) browserErrors.push(`http ${response.status()}: ${response.request().method()} ${response.url()}`);
 });
 page.on("requestfailed", (request) => {
   browserErrors.push(`request failed: ${request.method()} ${request.url()} — ${request.failure()?.errorText ?? "unknown error"}`);
