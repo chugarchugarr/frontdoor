@@ -46,7 +46,6 @@ jobs:
         run: |
           mkdir -p test-artifacts
           set -o pipefail
-          npm view @radix-ui/react-progress version 2>&1 | tee test-artifacts/radix-progress-version.log
           npm install --legacy-peer-deps 2>&1 | tee test-artifacts/npm-install.log
 
       - name: Write isolated production environment
@@ -165,21 +164,34 @@ jobs:
       - name: Wait for frontend and API
         shell: bash
         run: |
-          for port in 3000 3001; do
-            ready=0
-            for attempt in $(seq 1 90); do
-              if (echo > "/dev/tcp/127.0.0.1/${port}") >/dev/null 2>&1; then
-                ready=1
-                break
-              fi
-              sleep 1
-            done
-            if [ "$ready" -ne 1 ]; then
-              echo "Port ${port} did not become ready"
-              cat test-artifacts/server.log
-              exit 1
+          frontend_ready=0
+          for attempt in $(seq 1 90); do
+            if curl --fail --silent --show-error http://127.0.0.1:3000/ >/dev/null; then
+              frontend_ready=1
+              break
             fi
+            sleep 1
           done
+          if [ "$frontend_ready" -ne 1 ]; then
+            echo "Frontend did not become ready"
+            cat test-artifacts/server.log
+            exit 1
+          fi
+
+          api_ready=0
+          for attempt in $(seq 1 90); do
+            status=$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3001/ || true)
+            if [ "$status" != "000" ] && [ "$status" -lt 500 ]; then
+              api_ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$api_ready" -ne 1 ]; then
+            echo "API did not become ready"
+            cat test-artifacts/server.log
+            exit 1
+          fi
 
       - name: Browser-test public routes, forms, CTAs, and board demo
         shell: bash
