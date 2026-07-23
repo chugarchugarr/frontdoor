@@ -41,7 +41,7 @@ jobs:
           node-version: "22"
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Write isolated production environment
         shell: bash
@@ -135,7 +135,7 @@ jobs:
 
       - name: Install Chromium for browser verification
         run: |
-          npm install --no-save playwright@1.55.0
+          npm install --no-save --legacy-peer-deps playwright@1.55.0
           npx playwright install --with-deps chromium
 
       - name: Start production bundles
